@@ -43,6 +43,7 @@ def prepare_plotfolder(run_name,run_number):
     path_times = '{}/timeseries'.format(path)
     path_spectra = '{}/spectra'.format(path)
     path_lux = '{}/lux'.format(path)
+    path_turbint = '{}/turbint'.format(path)    
     path_palminput = '../current_version/JOBS/{}/INPUT'.format(run_name) 
 
     # initial 
@@ -67,6 +68,7 @@ def prepare_plotfolder(run_name,run_number):
             os.mkdir(path_times)
             os.mkdir(path_spectra)
             os.mkdir(path_lux)
+            os.mkdir(path_turbint)
             # copies INPUT-file of PALM-run to path
             os.system('cp {}/{}_p3d {}'.format(path_palminput,run_name,path))
         except OSError:

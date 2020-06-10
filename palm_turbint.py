@@ -1,7 +1,7 @@
 ################
 """ 
 author: benedikt.seitzer
-purpose: - process timeseries and calculate spectra
+purpose: - process timeseries and calculate Turbulence intensities
 """
 ################
 
@@ -33,50 +33,38 @@ FUNCTIONS
 ################
 
 
-def plot_lux_profile(lux, height, var_name, run_name, run_number):
+def plot_turbint_profile(turbint, height, var_name, run_name, run_number):
     """
-    Plot Lux-profiles.
+    Plot turbulence intensities Iu or Iv.
     @parameter ax: axis passed to function
     """
 
-    ref_path = None
-    Lux_10,Lux_1,Lux_01,Lux_001,Lux_obs_smooth,Lux_obs_rough = \
-    papy.get_lux_referencedata(ref_path)
+    # ref_path = None
 
     plt.style.use('classic')
     fig, ax = plt.subplots()
 
-    err = 0.1 * lux
+    err = 0.1 * turbint
     if run_number == '':
         run_number = '.000'
 
-    h1 = ax.errorbar(lux, height_list, xerr=err, fmt='o', markersize=3,
-                label=r'PALM - $u$')
-    ref1 = ax.plot(Lux_10[1,:],Lux_10[0,:],'k-',linewidth=1,label=r'$z_0=10\ m$ (theory)')
-    ref2 = ax.plot(Lux_1[1,:],Lux_1[0,:],'k--',linewidth=1,label=r'$z_0=1\ m$ (theory)')
-    ref3 = ax.plot(Lux_01[1,:],Lux_01[0,:],'k-.',linewidth=1,label=r'$z_0=0.1\ m$ (theory)')
-    ref4 = ax.plot(Lux_001[1,:],Lux_001[0,:],'k:',linewidth=1,label=r'$z_0=0.01\ m$ (theory)')
-    ref5 = ax.plot(Lux_obs_smooth[1,:],Lux_obs_smooth[0,:],'k+',
-                    linewidth=1,label='observations smooth surface')
-    ref6 = ax.plot(Lux_obs_rough[1,:],Lux_obs_rough[0,:],'kx',linewidth=1,label='observations rough surface')
+    h1 = ax.errorbar(turbint, height_list, xerr=err, fmt='o', markersize=3,
+                label=r'PALM - $I _{}$'.format(var_name))
     
     set_limits = True
     if set_limits:
-        ax.set_xlim(10,1000)
-        ax.set_ylim(10,1000)
+        ax.set_xlim(0,0.3)
+        ax.set_ylim(0,300)
 
-
-    ax.set_yscale('log')
-    ax.set_xscale('log')
-    ax.set_xlabel(r"$L _{ux}$ [m]")
+    ax.set_xlabel(r"$I _{}$ [-]".format(var_name))
     ax.set_ylabel(r"$z$ [m]" )
     ax.legend(loc='upper left', fontsize=11)
     ax.grid()
 
     if testing:
-        fig.savefig('../palm_results/testing/lux/testing_{}_lux.png'.format(var_name), bbox_inches='tight')
+        fig.savefig('../palm_results/testing/turbint/testing_{}_turbint.png'.format(var_name), bbox_inches='tight')
     else:
-        plt.savefig('../palm_results/{}/run_{}/lux/{}_{}_lux.png'.format(run_name,run_number[-3:],
+        plt.savefig('../palm_results/{}/run_{}/turbint/{}_{}_turbint.png'.format(run_name,run_number[-3:],
                     run_name,var_name), bbox_inches='tight')
 
 
@@ -111,25 +99,27 @@ MAIN
 # prepare the outputfolders
 papy.prepare_plotfolder(run_name,run_number)
 
-lux = np.zeros(len(height_list))
+Iu = np.zeros(len(height_list))
+Iv = np.zeros(len(height_list))
 
 grid_name = 'zu'
 z, z_unit = papy.read_nc_grid(nc_file_path,nc_file_grid,grid_name)
-var_name = 'u'
 i = 0 
 
 for mask_name in mask_name_list: 
     nc_file = '{}_masked_{}{}.nc'.format(run_name,mask_name,run_number)
     height = height_list[i]
-        
+    
+    var_u, var_unit_u = papy.read_nc_var_ms(nc_file_path,nc_file,'u')
+    var_v, var_unit_v = papy.read_nc_var_ms(nc_file_path,nc_file,'v')
 
-    time, time_unit = papy.read_nc_var_ms(nc_file_path,nc_file,'time')        
-    var, var_unit = papy.read_nc_var_ms(nc_file_path,nc_file,var_name)
-    
-    lux[i] = papy.calc_lux(np.abs(time[1]-time[0]),var)
-    
+    turbint_dat = papy.calc_turbint(var_u,var_v)
+
+    Iu[i] = turbint_dat[0]
+    Iv[i] = turbint_dat[1]
     i = i + 1
-    print('\n calculated integral length scale for {}'.format(str(height)))
+    print('\n calculated turbulence intensities scale for {}'.format(str(height)))
 
-plot_lux_profile(lux, height_list, var_name, run_name, run_number)
-print('\n plotted integral length scale profiles')
+# plot_lux_profile(lux, height_list, var_name, run_name, run_number)
+plot_turbint_profile(Iu, height_list, 'u', run_name, run_number)
+print('\n plotted turbulence intensity profiles')

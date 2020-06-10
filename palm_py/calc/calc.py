@@ -88,6 +88,7 @@ def calc_spectra(phi,t_eq,height,u_mean):
 
     return freq_sm_sort, S_uu_sort, phi_aliasing
 
+
 def calc_autocorr(timeseries, maxlags):
     """ Full autocorrelation of time series for lags up to maxlags.
     @parameter timeseries: np.array or list
@@ -153,5 +154,23 @@ def calc_lux(dt, u_comp):
 
     Lux = abs(Lux * np.mean(u_comp) * dt)
     return Lux
+
+
+def calc_turbint(u_comp,v_comp):
+    """
+    calculate turbulence intensities for u and v-component
+    """
+    
+    M = np.mean(np.sqrt(u_comp**2 +v_comp**2))
+    u_std = np.std(u_comp)
+    v_std = np.std(v_comp)
+    ##  TURBULENCE INTENSITY
+    I_u = u_std/np.mean(M)
+    I_v = v_std/np.mean(M)
+
+    # output array of function    
+    data = np.array([I_u,I_v])
+    
+    return data
 
 
