@@ -72,7 +72,7 @@ GLOBAL VARIABLES
 ################
 
 run_name = 'thunder_balcony_resstudy_precursor'
-run_number = '.012'
+run_number = '.013'
 crosssection = 'xy'
 
 nc_file = '{}_3d{}.nc'.format(run_name, run_number)

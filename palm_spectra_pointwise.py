@@ -244,7 +244,7 @@ GLOBAL VARIABLES
 ################
 
 run_name = 'thunder_balcony_resstudy_precursor'
-run_number = '.012'
+run_number = '.013'
 nc_file = '{}_masked_M01{}.nc'.format(run_name,run_number)
 nc_file_grid = '{}_pr{}.nc'.format(run_name,run_number)
 nc_file_path = '../current_version/JOBS/{}/OUTPUT/'.format(run_name)
@@ -282,136 +282,136 @@ else:
     f_refspecs = np.logspace(-4, 3, num=100, base = 10) 
 
     i = 0
-    # for mask_name in mask_name_list:
+    for mask_name in mask_name_list:
 
-    #     nc_file = '{}_masked_{}{}.nc'.format(run_name, mask_name, run_number)
-    #     try:
-    #         time, time_unit = papy.read_nc_var_ms(nc_file_path,nc_file,'time')   
-    #         height = height_list[i]
-    #     except: 
-    #         print('\n Mask {} not in dataset. \n Check {} and the corresponding heights in the *_p3d-file'.format(mask_name, nc_file_path))
-    #     i = i + 1
+        nc_file = '{}_masked_{}{}.nc'.format(run_name, mask_name, run_number)
+        try:
+            time, time_unit = papy.read_nc_var_ms(nc_file_path,nc_file,'time')   
+            height = height_list[i]
+        except: 
+            print('\n Mask {} not in dataset. \n Check {} and the corresponding heights in the *_p3d-file'.format(mask_name, nc_file_path))
+        i = i + 1
 
-    #     print('\n HEIGHT = {} m'.format(height))
-    #     for var_name in var_name_list:
-    #         var, var_unit = papy.read_nc_var_ms(nc_file_path,nc_file,var_name)
-    #         if var_name == 'u':
-    #             u_mean  = np.mean(var)            
-    #         f_sm, S_uu_sm, u_aliasing = papy.calc_spectra(var,time,height,u_mean)
-    #         print('    calculated spectra for {}'.format(var_name))
-    #         ref_specs = papy.get_reference_spectra(height,None)
+        print('\n HEIGHT = {} m'.format(height))
+        for var_name in var_name_list:
+            var, var_unit = papy.read_nc_var_ms(nc_file_path,nc_file,var_name)
+            if var_name == 'u':
+                u_mean  = np.mean(var)            
+            f_sm, S_uu_sm, u_aliasing = papy.calc_spectra(var,time,height,u_mean)
+            print('    calculated spectra for {}'.format(var_name))
+            ref_specs = papy.get_reference_spectra(height,None)
 
-    #         E_min, E_max = papy.calc_ref_spectra(f_refspecs, ref_specs, var_name)
+            E_min, E_max = papy.calc_ref_spectra(f_refspecs, ref_specs, var_name)
 
-    #         plot_spectra(f_sm, S_uu_sm, u_aliasing, height,var_name)
-    #         print('    plotted spectra for {} \n'.format(var_name))
+            plot_spectra(f_sm, S_uu_sm, u_aliasing, height,var_name)
+            print('    plotted spectra for {} \n'.format(var_name))
 
     # wind-tunnel spectrum
-    # height = 8.0
-    # mask_name = ''
-    # var_name = 'u_wt'
-    # wt_u, wt_v, wt_t = papy.read_wt_ts(wt_file)
-    # u_mean = np.mean(wt_u*3.4555)
-    # f_sm, S_uu_sm, u_aliasing = papy.calc_spectra(wt_u, wt_t, height,u_mean)
-    # print('\n calculated spectra for {}'.format(var_name))
-    # # ref-spectra
-    # ref_specs = papy.get_reference_spectra(height,None)
-    # E_min, E_max = papy.calc_ref_spectra(f_refspecs, ref_specs, var_name)
-    # plot_spectra(f_sm, S_uu_sm, u_aliasing, height, var_name)
-    # print(' plotted spectra for {} \n'.format(var_name))
+    height = 8.0
+    mask_name = ''
+    var_name = 'u_wt'
+    wt_u, wt_v, wt_t = papy.read_wt_ts(wt_file)
+    u_mean = np.mean(wt_u*3.4555)
+    f_sm, S_uu_sm, u_aliasing = papy.calc_spectra(wt_u, wt_t, height,u_mean)
+    print('\n calculated spectra for {}'.format(var_name))
+    # ref-spectra
+    ref_specs = papy.get_reference_spectra(height,None)
+    E_min, E_max = papy.calc_ref_spectra(f_refspecs, ref_specs, var_name)
+    plot_spectra(f_sm, S_uu_sm, u_aliasing, height, var_name)
+    print(' plotted spectra for {} \n'.format(var_name))
 
 
 
 
     # gaussian filter demonstration
 
-    from scipy.ndimage import gaussian_filter1d
+    # from scipy.ndimage import gaussian_filter1d
 
-    height = 8.0
-    var_name = 'u_wt'
-    mask_name = ''
+    # height = 8.0
+    # var_name = 'u_wt'
+    # mask_name = ''
 
-    filter_sigs = [ 1., 10, 100.,0.00001]
-
-
-    plt.style.use('classic')
-    fig, ax = plt.subplots()
+    # filter_sigs = [ 1., 10, 100.,0.00001]
 
 
-    for filter_sig in filter_sigs:
-        wt_u, wt_v, wt_t = papy.read_wt_ts(wt_file)
-        wt_u = gaussian_filter1d(wt_u,filter_sig)
-        u_mean = np.mean(wt_u*3.4555)
-        f_sm, S_uu_sm, u_aliasing = papy.calc_spectra(wt_u, wt_t, height,u_mean)
-        print('\n calculated spectra for {}'.format(var_name))
-        # ref-spectra
-        ref_specs = papy.get_reference_spectra(height,None)
-        E_min, E_max = papy.calc_ref_spectra(f_refspecs, ref_specs, var_name)
+    # plt.style.use('classic')
+    # fig, ax = plt.subplots()
 
-        #plot
-        f_sm = [f_sm][np.argmin([np.nanmax(f_sm)])]
-        f_sm = f_sm[:len(S_uu_sm)]
 
-        if filter_sig == filter_sigs[3]:
-            h1 = ax.loglog(f_sm[:u_aliasing], S_uu_sm[:u_aliasing], 'c:', markersize=3,
-                        label=r'original signal'.format(filter_sig))
-        elif filter_sig == filter_sigs[0]:
-            h2 = ax.loglog(f_sm[:u_aliasing], S_uu_sm[:u_aliasing], 'y-.', markersize=3,
-                        label=r'$\Delta _1$')
-        if filter_sig == filter_sigs[1]:
-            h3 = ax.loglog(f_sm[:u_aliasing], S_uu_sm[:u_aliasing], 'b--', markersize=3,
-                        label=r'$\Delta _2$')
-        elif filter_sig == filter_sigs[2]:
-            h4 = ax.loglog(f_sm[:u_aliasing-37], S_uu_sm[:u_aliasing-37], 'r-', markersize=3,
-                        label=r'$\Delta _3$')
+    # for filter_sig in filter_sigs:
+    #     wt_u, wt_v, wt_t = papy.read_wt_ts(wt_file)
+    #     wt_u = gaussian_filter1d(wt_u,filter_sig)
+    #     u_mean = np.mean(wt_u*3.4555)
+    #     f_sm, S_uu_sm, u_aliasing = papy.calc_spectra(wt_u, wt_t, height,u_mean)
+    #     print('\n calculated spectra for {}'.format(var_name))
+    #     # ref-spectra
+    #     ref_specs = papy.get_reference_spectra(height,None)
+    #     E_min, E_max = papy.calc_ref_spectra(f_refspecs, ref_specs, var_name)
 
-    try:
-        href = ax.fill_between(f_refspecs,E_min, E_max, facecolor=(1.,0.6,0.6),edgecolor='none',alpha=0.2,
-                                label=r'VDI-range $S _{uu}$')
-    except:
-        print('\n There are no reference-spectra available for this flow \n')        
+    #     #plot
+    #     f_sm = [f_sm][np.argmin([np.nanmax(f_sm)])]
+    #     f_sm = f_sm[:len(S_uu_sm)]
 
-    ax.set_xlim([10**-4,250])
-    ax.set_ylim([10 ** -6, 1])    
-    ax.set_xlabel(r"$f\cdot z\cdot U^{-1}$")
-    ax.set_ylabel(r"$f\cdot S_{ij}\cdot (\sigma_i\sigma_j)^{-1}$")
-    ax.legend(loc='lower left', fontsize=11)
-    ax.grid()
+    #     if filter_sig == filter_sigs[3]:
+    #         h1 = ax.loglog(f_sm[:u_aliasing], S_uu_sm[:u_aliasing], 'c:', markersize=3,
+    #                     label=r'original signal'.format(filter_sig))
+    #     elif filter_sig == filter_sigs[0]:
+    #         h2 = ax.loglog(f_sm[:u_aliasing], S_uu_sm[:u_aliasing], 'y-.', markersize=3,
+    #                     label=r'$\Delta _1$')
+    #     if filter_sig == filter_sigs[1]:
+    #         h3 = ax.loglog(f_sm[:u_aliasing], S_uu_sm[:u_aliasing], 'b--', markersize=3,
+    #                     label=r'$\Delta _2$')
+    #     elif filter_sig == filter_sigs[2]:
+    #         h4 = ax.loglog(f_sm[:u_aliasing-37], S_uu_sm[:u_aliasing-37], 'r-', markersize=3,
+    #                     label=r'$\Delta _3$')
 
-    plt.savefig('../palm_results/testing/spectra/filter_tests/spectra_{}_{}.png'.format(
-                var_name,'filter'), bbox_inches='tight')    
+    # try:
+    #     href = ax.fill_between(f_refspecs,E_min, E_max, facecolor=(1.,0.6,0.6),edgecolor='none',alpha=0.2,
+    #                             label=r'VDI-range $S _{uu}$')
+    # except:
+    #     print('\n There are no reference-spectra available for this flow \n')        
 
-    print(' plotted spectra for {} \n'.format(var_name))    
+    # ax.set_xlim([10**-4,250])
+    # ax.set_ylim([10 ** -6, 1])    
+    # ax.set_xlabel(r"$f\cdot z\cdot U^{-1}$")
+    # ax.set_ylabel(r"$f\cdot S_{ij}\cdot (\sigma_i\sigma_j)^{-1}$")
+    # ax.legend(loc='lower left', fontsize=11)
+    # ax.grid()
 
-    colors = ['c:', 'y-.', 'b--', 'r-']
-    filter_sigs = [0.00001, 1., 10, 100.]
+    # plt.savefig('../palm_results/testing/spectra/filter_tests/spectra_{}_{}.png'.format(
+    #             var_name,'filter'), bbox_inches='tight')    
 
-    plt.style.use('classic')
-    fig, ax = plt.subplots()
+    # print(' plotted spectra for {} \n'.format(var_name))    
 
-    i = 0
-    for filter_sig in filter_sigs:
-        wt_u, wt_v, wt_t = papy.read_wt_ts(wt_file)
-        wt_u = gaussian_filter1d(wt_u,filter_sig)
-        u_mean = np.mean(wt_u*3.4555)
-        if filter_sig == filter_sigs[0]:
-            h1 = ax.plot(wt_t, wt_u, colors[i],label=r'original signal')
-        elif filter_sig == filter_sigs[1]:
-            h2 = ax.plot(wt_t, wt_u, colors[i],label=r'$\Delta _{}$'.format(i))
-        elif filter_sig == filter_sigs[2]:
-            h3 = ax.plot(wt_t, wt_u, colors[i],label=r'$\Delta _{}$'.format(i))
-        elif filter_sig == filter_sigs[3]:
-            h4 = ax.plot(wt_t, wt_u, colors[i],label=r'$\Delta _{}$'.format(i))
-        i = i + 1
-        print(filter_sig)
+    # colors = ['c:', 'y-.', 'b--', 'r-']
+    # filter_sigs = [0.00001, 1., 10, 100.]
 
-    ax.set(xlabel=r'$t$ $[s]$', ylabel=r'$u$ $[-]$')
+    # plt.style.use('classic')
+    # fig, ax = plt.subplots()
 
-    # ax.set_ylim(-5.,5.)
-    ax.grid()
-    # ax.yaxis.set_major_formatter(FormatStrFormatter('%.2e'))
-    plt.xlim(0,50)
-    plt.ylim(0.4,1.)
-    ax.legend(loc='lower left', fontsize=11)
-    fig.savefig('../palm_results/testing/spectra/filter_tests/testing_{}_ts.png'.format('filter'), bbox_inches='tight')
+    # i = 0
+    # for filter_sig in filter_sigs:
+    #     wt_u, wt_v, wt_t = papy.read_wt_ts(wt_file)
+    #     wt_u = gaussian_filter1d(wt_u,filter_sig)
+    #     u_mean = np.mean(wt_u*3.4555)
+    #     if filter_sig == filter_sigs[0]:
+    #         h1 = ax.plot(wt_t, wt_u, colors[i],label=r'original signal')
+    #     elif filter_sig == filter_sigs[1]:
+    #         h2 = ax.plot(wt_t, wt_u, colors[i],label=r'$\Delta _{}$'.format(i))
+    #     elif filter_sig == filter_sigs[2]:
+    #         h3 = ax.plot(wt_t, wt_u, colors[i],label=r'$\Delta _{}$'.format(i))
+    #     elif filter_sig == filter_sigs[3]:
+    #         h4 = ax.plot(wt_t, wt_u, colors[i],label=r'$\Delta _{}$'.format(i))
+    #     i = i + 1
+    #     print(filter_sig)
+
+    # ax.set(xlabel=r'$t$ $[s]$', ylabel=r'$u$ $[-]$')
+
+    # # ax.set_ylim(-5.,5.)
+    # ax.grid()
+    # # ax.yaxis.set_major_formatter(FormatStrFormatter('%.2e'))
+    # plt.xlim(0,50)
+    # plt.ylim(0.4,1.)
+    # ax.legend(loc='lower left', fontsize=11)
+    # fig.savefig('../palm_results/testing/spectra/filter_tests/testing_{}_ts.png'.format('filter'), bbox_inches='tight')
 

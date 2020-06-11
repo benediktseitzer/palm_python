@@ -132,7 +132,7 @@ GLOBAL VARIABLES
 
 # PATHS
 run_name = 'thunder_balcony_resstudy_precursor'
-run_number = '.012'
+run_number = '.013'
 nc_file = '{}_pr{}.nc'.format(run_name,run_number)
 nc_file_path = '../current_version/JOBS/{}/OUTPUT/'.format(run_name)
 #wt_file = '../../Documents/phd/palm/input_data/u_profile.txt'

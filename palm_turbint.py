@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 ################
 """ 
 author: benedikt.seitzer
@@ -39,7 +40,8 @@ def plot_turbint_profile(turbint, height, var_name, run_name, run_number):
     @parameter ax: axis passed to function
     """
 
-    # ref_path = None
+    ref_path = None
+    I_slight, I_moderate, I_rough, I_very = papy.get_turbint_referencedata(var_name, ref_path)
 
     plt.style.use('classic')
     fig, ax = plt.subplots()
@@ -48,9 +50,18 @@ def plot_turbint_profile(turbint, height, var_name, run_name, run_number):
     if run_number == '':
         run_number = '.000'
 
+    # plot data
     h1 = ax.errorbar(turbint, height_list, xerr=err, fmt='o', markersize=3,
                 label=r'PALM - $I _{}$'.format(var_name))
-    
+    # plot ref-data
+    r1 = ax.plot(I_slight[1,:],I_slight[0,:],'k-', linewidth=0.5,
+                label= 'VDI slightly rough (lower bound)')
+    r2 = ax.plot(I_moderate[1,:],I_moderate[0,:],'k-.', linewidth=0.5,
+                label= 'VDI moderately rough (lower bound)')
+    r3 = ax.plot(I_rough[1,:],I_rough[0,:],'k--', linewidth=0.5,
+                label= 'VDI rough (lower bound)')
+    r4 = ax.plot(I_very[1,:],I_very[0,:],'k:', linewidth=0.5,
+                label= 'VDI very rough (lower bound)')                
     set_limits = True
     if set_limits:
         ax.set_xlim(0,0.3)
@@ -62,10 +73,11 @@ def plot_turbint_profile(turbint, height, var_name, run_name, run_number):
     ax.grid()
 
     if testing:
-        fig.savefig('../palm_results/testing/turbint/testing_{}_turbint.png'.format(var_name), bbox_inches='tight')
+        fig.savefig('../palm_results/testing/turbint/testing_{}_turbint.png'.format(var_name), 
+                    bbox_inches='tight')
     else:
-        plt.savefig('../palm_results/{}/run_{}/turbint/{}_{}_turbint.png'.format(run_name,run_number[-3:],
-                    run_name,var_name), bbox_inches='tight')
+        plt.savefig('../palm_results/{}/run_{}/turbint/{}_{}_turbint.png'.format(run_name,
+                    run_number[-3:], run_name, var_name), bbox_inches='tight')
 
 
 ################
@@ -120,6 +132,7 @@ for mask_name in mask_name_list:
     i = i + 1
     print('\n calculated turbulence intensities scale for {}'.format(str(height)))
 
-# plot_lux_profile(lux, height_list, var_name, run_name, run_number)
 plot_turbint_profile(Iu, height_list, 'u', run_name, run_number)
-print('\n plotted turbulence intensity profiles')
+print('\n plotted turbulence intensity profiles for u-component')
+plot_turbint_profile(Iv, height_list, 'v', run_name, run_number)
+print('\n plotted turbulence intensity profiles for v-component')

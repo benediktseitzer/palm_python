@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 ################
 """ 
 author: benedikt.seitzer
@@ -21,6 +22,7 @@ import pandas as pd
 FUNCTIONS
 """
 ################
+
 
 def calc_theoretical_profile(m_u, m_u_ref, m_z, z, par):
     """
@@ -97,7 +99,7 @@ def get_reference_spectra(height, ref_path=None):
 
 def get_lux_referencedata(ref_path=None):
     """
-    Reads and returns reference data for the integral length scale (Lux). 
+    Reads reference data for the integral length scale (Lux). 
     """
     if ref_path == None:
         ref_path = '../../Documents/phd/palm/input_data/reference_lux/'
@@ -118,4 +120,32 @@ def get_lux_referencedata(ref_path=None):
     return Lux_10, Lux_1, Lux_01, Lux_001, Lux_obs_smooth, Lux_obs_rough
 
 
+def get_turbint_referencedata(var_name, ref_path=None):
+    """
+    Read reference data files for the turbulence intensity Iu, Iv
+    """
+    if ref_path == None:
+        ref_path = '../../Documents/phd/palm/input_data/reference_turbint/'
 
+    if var_name == 'u':
+        ref_dat = ref_path + 'Iu_data.dat'
+        Iu_slight = np.genfromtxt(ref_dat, skip_header=11, skip_footer=367, 
+                                    usecols=(0,1), unpack=True, encoding='latin1')
+        Iu_moderate = np.genfromtxt(ref_dat, skip_header=41, skip_footer=337, 
+                                    usecols=(0,1), unpack=True, encoding='latin1')
+        Iu_rough = np.genfromtxt(ref_dat, skip_header=69, skip_footer=310, 
+                                    usecols=(0,1), unpack=True, encoding='latin1')
+        Iu_very = np.genfromtxt(ref_dat, skip_header=103, skip_footer=269, 
+                                    usecols=(0,1), unpack=True, encoding='latin1')
+        return Iu_slight, Iu_moderate, Iu_rough, Iu_very
+    if var_name == 'v': 
+        ref_dat = ref_path + 'Iv_data.dat'
+        Iv_slight = np.genfromtxt(ref_dat, skip_header=7, skip_footer=40, 
+                                usecols=(0,1), unpack=True, encoding='latin1')
+        Iv_moderate = np.genfromtxt(ref_dat, skip_header=20, skip_footer=29, 
+                                usecols=(0,1), unpack=True, encoding='latin1')
+        Iv_rough = np.genfromtxt(ref_dat, skip_header=31, skip_footer=15, 
+                                usecols=(0,1), unpack=True, encoding='latin1')
+        Iv_very = np.genfromtxt(ref_dat, skip_header=45, skip_footer=0, 
+                                usecols=(0,1), unpack=True, encoding='latin1')
+        return Iv_slight, Iv_moderate, Iv_rough, Iv_very
