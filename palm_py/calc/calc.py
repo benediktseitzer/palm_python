@@ -96,7 +96,8 @@ def calc_autocorr(timeseries, maxlags):
     @parameter maxlags: int"""
 
     timeseries = timeseries[~np.isnan(timeseries)]
-    acorr = np.asarray([1. if x == 0 else np.corrcoef(timeseries[x:], timeseries[:-x])[0][1] for x in range(maxlags)])
+    acorr = np.asarray([1. if x == 0 else np.corrcoef(timeseries[x:], 
+                        timeseries[:-x])[0][1] for x in range(maxlags)])
     return acorr
 
 
@@ -157,7 +158,7 @@ def calc_lux(dt, u_comp):
     return Lux
 
 
-def calc_turbint(u_comp,v_comp):
+def calc_turbint(u_comp, v_comp, w_comp):
     """
     calculate turbulence intensities for u and v-component
     """
@@ -165,12 +166,14 @@ def calc_turbint(u_comp,v_comp):
     M = np.mean(np.sqrt(u_comp**2 +v_comp**2))
     u_std = np.std(u_comp)
     v_std = np.std(v_comp)
+    w_std = np.std(w_comp)
     ##  TURBULENCE INTENSITY
     I_u = u_std/np.mean(M)
     I_v = v_std/np.mean(M)
+    I_w = w_std/np.mean(M)
 
     # output array of function    
-    data = np.array([I_u,I_v])
+    data = np.array([I_u, I_v, I_w])
     
     return data
 

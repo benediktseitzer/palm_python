@@ -113,6 +113,7 @@ papy.prepare_plotfolder(run_name,run_number)
 
 Iu = np.zeros(len(height_list))
 Iv = np.zeros(len(height_list))
+Iw = np.zeros(len(height_list))
 
 grid_name = 'zu'
 z, z_unit = papy.read_nc_grid(nc_file_path,nc_file_grid,grid_name)
@@ -122,17 +123,23 @@ for mask_name in mask_name_list:
     nc_file = '{}_masked_{}{}.nc'.format(run_name,mask_name,run_number)
     height = height_list[i]
     
-    var_u, var_unit_u = papy.read_nc_var_ms(nc_file_path,nc_file,'u')
-    var_v, var_unit_v = papy.read_nc_var_ms(nc_file_path,nc_file,'v')
+    var_u, var_unit_u = papy.read_nc_var_ms(nc_file_path, nc_file, 'u')
+    var_v, var_unit_v = papy.read_nc_var_ms(nc_file_path, nc_file, 'v')
+    var_w, var_unit_w = papy.read_nc_var_ms(nc_file_path, nc_file, 'w')
 
-    turbint_dat = papy.calc_turbint(var_u,var_v)
+    turbint_dat = papy.calc_turbint(var_u, var_v, var_w)
 
     Iu[i] = turbint_dat[0]
     Iv[i] = turbint_dat[1]
+    Iw[i] = turbint_dat[2]
     i = i + 1
     print('\n calculated turbulence intensities scale for {}'.format(str(height)))
 
 plot_turbint_profile(Iu, height_list, 'u', run_name, run_number)
 print('\n plotted turbulence intensity profiles for u-component')
+
 plot_turbint_profile(Iv, height_list, 'v', run_name, run_number)
 print('\n plotted turbulence intensity profiles for v-component')
+
+plot_turbint_profile(Iw, height_list, 'w', run_name, run_number)
+print('\n plotted turbulence intensity profiles for w-component')

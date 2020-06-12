@@ -149,3 +149,14 @@ def get_turbint_referencedata(var_name, ref_path=None):
         Iv_very = np.genfromtxt(ref_dat, skip_header=45, skip_footer=0, 
                                 usecols=(0,1), unpack=True, encoding='latin1')
         return Iv_slight, Iv_moderate, Iv_rough, Iv_very
+    if var_name == 'w': 
+        ref_dat = ref_path + 'Iw_data.dat'
+        Iw_slight = np.genfromtxt(ref_dat, skip_header=11, skip_footer=347, 
+                                usecols=(0,1), unpack=True, encoding='latin1')
+        Iw_moderate = np.genfromtxt(ref_dat, skip_header=37, skip_footer=321, 
+                                usecols=(0,1), unpack=True, encoding='latin1')
+        Iw_rough = np.genfromtxt(ref_dat, skip_header=63, skip_footer=295, 
+                                usecols=(0,1), unpack=True, encoding='latin1')
+        Iw_very = np.genfromtxt(ref_dat, skip_header=89, skip_footer=269, 
+                                usecols=(0,1), unpack=True, encoding='latin1')
+        return Iw_slight, Iw_moderate, Iw_rough, Iw_very
