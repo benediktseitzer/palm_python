@@ -2,7 +2,15 @@
 Read and process model output of the PALM model
 
 ## scripts
-Located in the palm_python/ root directory, there are example scripts which call functions located in the module and do some useful tasks. 
+Located in the palm_python/ root directory, there are example scripts which call functions located in the module and do some useful tasks as:
+
+* deliver raw timeseries of (non-)dimensionalized values
+* deliver vertical profiles of horizontally averaged flow measures
+* deliver vertical and horizontal crosssections of all three velocity components
+* calculate temporal autocorrelations 
+* calculate energy density spectra
+* calculate turbulence intensities of horizontal velocity components
+* calculate integral length scales of the flow
 
 ## modules
 
