@@ -29,7 +29,7 @@ FUNCTIONS
 """
 ################
 
-def plot_semilog_u(var, var_unit, z, z_unit, time, time_unit,run_number):
+def plot_semilog_u(var, var_unit, z, z_unit, time, time_unit, run_number):
     """
     semilog-plot u-profile for all available times
     """    
@@ -65,7 +65,8 @@ def plot_semilog_u(var, var_unit, z, z_unit, time, time_unit,run_number):
                     run_name,var_name), bbox_inches='tight')
     # plt.show()
 
-def plot_ver_profile(var_plt, var_unit, z, z_unit, time, time_unit,run_number):
+
+def plot_ver_profile(var_plt, var_unit, z, z_unit, time, time_unit, run_number):
     """
     plot height profile for all available times
     """    
@@ -136,7 +137,7 @@ run_number = '.014'
 nc_file = '{}_pr{}.nc'.format(run_name,run_number)
 nc_file_path = '../current_version/JOBS/{}/OUTPUT/'.format(run_name)
 #wt_file = '../../Documents/phd/palm/input_data/u_profile.txt'
-wt_file = '../../Documents/phd/palm/input_data/windtunnel_data/HG_BL_MR_DOK_UV_015_means.txt'
+wt_file_pr = '../../Documents/phd/palm/input_data/windtunnel_data/HG_BL_MR_DOK_UV_015_means.txt'
 
 # PHYSICS
 # roughness length
@@ -164,7 +165,7 @@ papy.prepare_plotfolder(run_name,run_number)
 time, time_unit = papy.read_nc_time(nc_file_path,nc_file)
 
 # read wind tunnel profile
-wt_pr, wt_u_ref, wt_z = papy.read_wt_ver_pr(wt_file)
+wt_pr, wt_u_ref, wt_z = papy.read_wt_ver_pr(wt_file_pr)
 print('\n wind tunnel profile loaded \n') 
 
 
