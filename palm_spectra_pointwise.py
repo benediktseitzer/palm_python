@@ -244,7 +244,7 @@ GLOBAL VARIABLES
 ################
 
 run_name = 'thunder_balcony_resstudy_precursor'
-run_number = '.013'
+run_number = '.014'
 nc_file = '{}_masked_M01{}.nc'.format(run_name,run_number)
 nc_file_grid = '{}_pr{}.nc'.format(run_name,run_number)
 nc_file_path = '../current_version/JOBS/{}/OUTPUT/'.format(run_name)
@@ -257,13 +257,17 @@ height_list = [5., 10., 12.5, 15., 17.5, 20., 25., 30., 35., 40., 45., 50., 60.,
 
 wt_file = '../../Documents/phd/palm/input_data/windtunnel_data/HG_BL_MR_DOK_UV_014_000001_timeseries_test.txt'
 
-# testing parameters
+# mode to run scrupt in
 mode_list = ['testing', 'heights', 'compare', 'filtercheck'] 
-mode = modelist[1]
+mode = mode_list[1]
+
+# testing parameters
+testing = False
 test_case_list = ['frequency_peak']
 
 # reference spectra
 calc_kai_sim = False
+
 
 ################
 """
@@ -274,10 +278,10 @@ MAIN
 # prepare the outputfolders
 papy.prepare_plotfolder(run_name,run_number)
 
-if mode == modelist[0]: 
+if mode == mode_list[0]: 
     print('\n Testing: \n')
     testing_spec()
-elif mode == modelist[1]:
+elif mode == mode_list[1]:
     # heights mode
     print('\n Compute at different heights: \n')
     grid_name = 'zu'
@@ -325,7 +329,7 @@ elif mode == modelist[1]:
     print(' plotted spectra for {} \n'.format(var_name))
 
 
-elif mode == modelist[2]:
+elif mode == mode_list[2]:
     print('\n Compute for comparison: \n')
     # plot wind tunnel spectrum together with PALM spectrum
     grid_name = 'zu'
@@ -391,7 +395,7 @@ elif mode == modelist[2]:
     plt.savefig('../palm_results/{}/run_{}/spectra/{}_{}_spectra{}_all.png'.format(run_name, run_number[-3:],
                 run_name, var_name, mask_name), bbox_inches='tight')
 
-elif mode == modelist[3]:
+elif mode == mode_list[3]:
     print('\n Gaussian Filter: \n')
     # gaussian filter demonstration
 
