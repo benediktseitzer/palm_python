@@ -87,7 +87,7 @@ GLOBAL VARIABLES
 ################
 
 run_name = 'thunder_balcony_resstudy_precursor'
-run_number = '.013'
+run_number = '.014'
 nc_file = '{}_masked_M02{}.nc'.format(run_name,run_number)
 nc_file_grid = '{}_pr{}.nc'.format(run_name,run_number)
 nc_file_path = '../current_version/JOBS/{}/OUTPUT/'.format(run_name)
