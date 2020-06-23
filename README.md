@@ -2,7 +2,7 @@
 Read and process model output of the PALM model
 
 ## scripts
-Located in the palm_python/ root directory, there are example scripts which call functions located in the module and do some useful tasks as:
+Located in the palm_python/ root directory, there is an example-script which calls functions located in the palm_py-module and do some useful tasks as:
 
 * deliver raw timeseries of (non-)dimensionalized values
 * deliver vertical profiles of horizontally averaged flow measures
