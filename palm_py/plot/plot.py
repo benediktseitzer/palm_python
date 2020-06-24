@@ -264,6 +264,8 @@ def plot_spectra(f_comp1_sm, S_comp1_sm,
     ref_specs = papy.get_reference_spectra(height,None)
     E_min, E_max = papy.calc_ref_spectra(f_refspecs, ref_specs, var_name)
 
+    # global calc_kai_sim
+    calc_kai_sim = False
 
     f_sm = [f_comp1_sm][np.argmin([np.nanmax(f_comp1_sm)])]
     f_sm = f_sm[:len(S_comp1_sm)]
@@ -388,8 +390,6 @@ def plot_spectra(f_comp1_sm, S_comp1_sm,
     else:
         plt.savefig('../palm_results/{}/run_{}/spectra/{}_{}_spectra{}.png'.format(run_name, run_number[-3:],
                     run_name, var_name, mask_name), bbox_inches='tight')
-
-
 
 
 def plot_contour_crosssection(x, y, var, var_name, o_grid, o_level, vert_gridname, x_grid_name, run_name, run_number, crosssection):

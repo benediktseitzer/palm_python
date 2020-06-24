@@ -105,12 +105,12 @@ mode_list = ['testing', 'heights', 'compare', 'filtercheck']
 mode = mode_list[1]
 
 # Steeringflags
-compute_lux = True
-compute_timeseries = True
-compute_turbint = True
-compute_vertprof = True
+compute_lux = False
+compute_timeseries = False
+compute_turbint = False
+compute_vertprof = False
 compute_spectra = True
-compute_crosssections = True
+compute_crosssections = False
 
 # PHYSICS
 # roughness length
@@ -249,8 +249,6 @@ if compute_vertprof:
 # Copmute spectra
 if compute_spectra:
     var_name_list = ['u', 'v', 'w']
-    # reference spectra
-    calc_kai_sim = False
 
     if mode == mode_list[0]: 
         print('\n Testing: \n')
@@ -337,8 +335,8 @@ if compute_spectra:
                     fillstyle='none')
         h3 = ax.loglog(f_sm_wt[:wt_aliasing+1], S_wt_sm[:wt_aliasing+1], 'c', markersize=3,
                     label=r'Windtunnel $u$ at $8$ m')
-        h4 = ax.loglog(f_sm_wt[wt_aliasing:], S_wt_sm[wt_aliasing:], 'b', markersize=3,
-                    fillstyle='none')
+        # h4 = ax.loglog(f_sm_wt[wt_aliasing:], S_wt_sm[wt_aliasing:], 'b', markersize=3,
+        #             fillstyle='none')
         try:
             h5 = ax.fill_between(f_refspecs, E_min, E_max,
                             facecolor=(1.,0.6,0.6),edgecolor='none',alpha=0.2,
