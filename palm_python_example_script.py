@@ -81,13 +81,6 @@ GLOBAL VARIABLES
 """
 ################
 
-# initialize globals-object
-papy.globals.testing = False
-papy.globals.calc_kai_sim = False
-# papy.globals()
-# testi = papy.globals.globals.testing
-# print(testi)
-
 papy.globals.run_name = 'thunder_balcony_resstudy_precursor'
 papy.globals.run_number = '.014'
 nc_file_grid = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
