@@ -31,7 +31,7 @@ FUNCTIONS
 ################
 
 
-def plot_lux_profile(lux, height_list, var_name, run_name, run_number, testing):
+def plot_lux_profile(lux, height_list, var_name):
     """
     Plot Lux-profiles.
     @parameter ax: axis passed to function
@@ -45,8 +45,8 @@ def plot_lux_profile(lux, height_list, var_name, run_name, run_number, testing):
     fig, ax = plt.subplots()
 
     err = 0.1 * lux
-    if run_number == '':
-        run_number = '.000'
+    if papy.globals.run_number == '':
+        papy.globals.run_number = '.000'
 
     h1 = ax.errorbar(lux, height_list, xerr=err, fmt='o', markersize=3,
                 label=r'PALM - $u$')
@@ -71,20 +71,20 @@ def plot_lux_profile(lux, height_list, var_name, run_name, run_number, testing):
     ax.legend(loc='upper left', fontsize=11)
     ax.grid()
 
-    if testing:
+    if papy.globals.testing:
         fig.savefig('../palm_results/testing/lux/testing_{}_lux.png'.format(var_name), bbox_inches='tight')
     else:
-        plt.savefig('../palm_results/{}/run_{}/lux/{}_{}_lux.png'.format(run_name,run_number[-3:],
-                    run_name,var_name), bbox_inches='tight')
+        plt.savefig('../palm_results/{}/run_{}/lux/{}_{}_lux.png'.format(papy.globals.run_name,papy.globals.run_number[-3:],
+                    papy.globals.run_name,var_name), bbox_inches='tight')
 
 
-def plot_timeseries(var, var_unit, var_name, time, time_unit, run_name, run_number):
+def plot_timeseries(var, var_unit, var_name, time, time_unit):
     """
     plot height profile for all available times
     """    
 
-    if run_number == '':
-        run_number = '.000'
+    if papy.globals.run_number == '':
+        papy.globals.run_number = '.000'
 
     plt.style.use('classic')
     fig, ax = plt.subplots()
@@ -98,12 +98,12 @@ def plot_timeseries(var, var_unit, var_name, time, time_unit, run_name, run_numb
     ax.yaxis.set_major_formatter(FormatStrFormatter('%.2e'))
 
     plt.xlim(min(time),max(time))
-    fig.savefig('../palm_results/{}/run_{}/timeseries/{}_{}_ts.png'.format(run_name,run_number[-3:],
-                run_name,var_name), bbox_inches='tight')
+    fig.savefig('../palm_results/{}/run_{}/timeseries/{}_{}_ts.png'.format(papy.globals.run_name,papy.globals.run_number[-3:],
+                papy.globals.run_name,var_name), bbox_inches='tight')
     # plt.show()
 
 
-def plot_turbint_profile(turbint, height_list, var_name, run_name, run_number, testing):
+def plot_turbint_profile(turbint, height_list, var_name):
     """
     Plot turbulence intensities Iu or Iv.
     @parameter ax: axis passed to function
@@ -116,8 +116,8 @@ def plot_turbint_profile(turbint, height_list, var_name, run_name, run_number, t
     fig, ax = plt.subplots()
 
     err = 0.1 * turbint
-    if run_number == '':
-        run_number = '.000'
+    if papy.globals.run_number == '':
+        papy.globals.run_number = '.000'
 
     # plot data
     h1 = ax.errorbar(turbint, height_list, xerr=err, fmt='o', markersize=3,
@@ -141,25 +141,25 @@ def plot_turbint_profile(turbint, height_list, var_name, run_name, run_number, t
     ax.legend(loc='upper left', fontsize=11)
     ax.grid()
 
-    if testing:
+    if papy.globals.testing:
         fig.savefig('../palm_results/testing/turbint/testing_{}_turbint.png'.format(var_name), 
                     bbox_inches='tight')
     else:
-        plt.savefig('../palm_results/{}/run_{}/turbint/{}_{}_turbint.png'.format(run_name,
-                    run_number[-3:], run_name, var_name), bbox_inches='tight')
+        plt.savefig('../palm_results/{}/run_{}/turbint/{}_{}_turbint.png'.format(papy.globals.run_name,
+                    papy.globals.run_number[-3:], papy.globals.run_name, var_name), bbox_inches='tight')
 
 
-def plot_semilog_u(var, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_ref, time, time_unit, run_name, run_number, phys_params):
+def plot_semilog_u(var, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_ref, time, time_unit):
     """
     semilog-plot u-profile for all available times
     """    
 
     # calculate theoretical wind profile
-    u_pr, u_pw, u_fric = papy.calc_theoretical_profile(wt_pr, wt_u_ref, wt_z,z,phys_params)
+    u_pr, u_pw, u_fric = papy.calc_theoretical_profile(wt_pr, wt_u_ref, wt_z,z)
 
     xerror = 0.03*wt_pr
-    if run_number == '':
-        run_number = '.000'
+    if papy.globals.run_number == '':
+        papy.globals.run_number = '.000'
 
     fig2, ax2 = plt.subplots()    
     ax2.set_yscale("log", nonposy='clip')    
@@ -184,22 +184,22 @@ def plot_semilog_u(var, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_ref, ti
     ax2.grid()
     ax2.grid(which='minor', alpha=0.2)
     ax2.grid(which='major', alpha=0.2)
-    fig2.savefig('../palm_results/{}/run_{}/profiles/{}_{}_pr_verpr_log.png'.format(run_name,run_number[-3:],
-                    run_name,var_name), bbox_inches='tight')
+    fig2.savefig('../palm_results/{}/run_{}/profiles/{}_{}_pr_verpr_log.png'.format(papy.globals.run_name,papy.globals.run_number[-3:],
+                    papy.globals.run_name,var_name), bbox_inches='tight')
     # plt.show()
 
 
-def plot_ver_profile(var_plt, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_ref, time, time_unit, run_name, run_number, phys_params):
+def plot_ver_profile(var_plt, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_ref, time, time_unit):
     """
     plot height profile for all available times
     """    
 
     # calculate theoretical wind profile
-    u_pr, u_pw, u_fric = papy.calc_theoretical_profile(wt_pr, wt_u_ref, wt_z, z, phys_params)
+    u_pr, u_pw, u_fric = papy.calc_theoretical_profile(wt_pr, wt_u_ref, wt_z, z)
     
     xerror = 0.03*wt_pr
-    if run_number == '':
-        run_number = '.000'
+    if papy.globals.run_number == '':
+        papy.globals.run_number = '.000'
 
     plt.style.use('classic')
     fig, ax = plt.subplots()
@@ -246,26 +246,21 @@ def plot_ver_profile(var_plt, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_r
      
     ax.legend(loc='best')
     plt.ylim(min(z),max(z[:-1]))
-    fig.savefig('../palm_results/{}/run_{}/profiles/{}_{}_verpr.png'.format(run_name,run_number[-3:],
-                run_name,var_name), bbox_inches='tight')
+    fig.savefig('../palm_results/{}/run_{}/profiles/{}_{}_verpr.png'.format(papy.globals.run_name,papy.globals.run_number[-3:],
+                papy.globals.run_name,var_name), bbox_inches='tight')
     # plt.show()
 
 
 def plot_spectra(f_comp1_sm, S_comp1_sm,
-                 comp1_aliasing, u_mean, height, var_name, run_name, run_number, mask_name, testing):
+                 comp1_aliasing, u_mean, height, var_name, mask_name):
     """
     Plots spectra using INPUT with reference data.
-    @parameter ax: axis passed to function
     """
-
 
     # reference spectra
     f_refspecs = np.logspace(-4, 3, num=100, base = 10) 
     ref_specs = papy.get_reference_spectra(height,None)
     E_min, E_max = papy.calc_ref_spectra(f_refspecs, ref_specs, var_name)
-
-    # global calc_kai_sim
-    calc_kai_sim = False
 
     f_sm = [f_comp1_sm][np.argmin([np.nanmax(f_comp1_sm)])]
     f_sm = f_sm[:len(S_comp1_sm)]
@@ -279,7 +274,7 @@ def plot_spectra(f_comp1_sm, S_comp1_sm,
         h2 = ax.loglog(f_sm[comp1_aliasing:], S_comp1_sm[comp1_aliasing:], 'bo', markersize=3,
                     fillstyle='none')
         try:
-            if not calc_kai_sim:
+            if not papy.globals.calc_kai_sim:
                 h3 = ax.fill_between(f_refspecs, E_min, E_max,
                                 facecolor=(1.,0.6,0.6),edgecolor='none',alpha=0.2,
                                 label=r'VDI-range $S _{uu}$')
@@ -294,7 +289,7 @@ def plot_spectra(f_comp1_sm, S_comp1_sm,
         h2 = ax.loglog(f_sm[comp1_aliasing:], S_comp1_sm[comp1_aliasing:], 'bo', markersize=3,
                     fillstyle='none')
         try:
-            if not calc_kai_sim:
+            if not papy.globals.calc_kai_sim:
                 h3 = ax.fill_between(f_refspecs, E_min, E_max,
                                 facecolor=(1.,0.6,0.6),edgecolor='none',alpha=0.2,
                                 label=r'VDI-range $S _{vv}$')
@@ -309,7 +304,7 @@ def plot_spectra(f_comp1_sm, S_comp1_sm,
         h2 = ax.loglog(f_sm[comp1_aliasing:], S_comp1_sm[comp1_aliasing:], 'bo', markersize=3,
                     fillstyle='none')
         try:
-            if not calc_kai_sim:
+            if not papy.globals.calc_kai_sim:
                 h3 = ax.fill_between(f_refspecs, E_min, E_max,
                                 facecolor=(1.,0.6,0.6),edgecolor='none',alpha=0.2,
                                 label=r'VDI-range $S _{ww}$')
@@ -347,7 +342,7 @@ def plot_spectra(f_comp1_sm, S_comp1_sm,
         h2 = ax.loglog(f_sm[comp1_aliasing:], S_comp1_sm[comp1_aliasing:], 'bo', markersize=3,
                     fillstyle='none')
         try:
-            if not calc_kai_sim:
+            if not papy.globals.calc_kai_sim:
                 h3 = ax.fill_between(f_refspecs,E_min, E_max,
                                 facecolor=(1.,0.6,0.6),edgecolor='none',alpha=0.2,
                                 label=r'VDI-range $S _{uu}$')
@@ -360,7 +355,7 @@ def plot_spectra(f_comp1_sm, S_comp1_sm,
     set_limits = True
 
     if set_limits:
-        if testing:
+        if papy.globals.testing:
             if var_name == 'phi1':
                 ax.set_xlim(0.,0.1)
             if var_name == 'phi2':
@@ -385,20 +380,20 @@ def plot_spectra(f_comp1_sm, S_comp1_sm,
     ax.legend(loc='lower left', fontsize=11)
     ax.grid()
 
-    if testing:
+    if papy.globals.testing:
         fig.savefig('../palm_results/testing/spectra/testing_{}_spectra.png'.format(var_name), bbox_inches='tight')
     else:
-        plt.savefig('../palm_results/{}/run_{}/spectra/{}_{}_spectra{}.png'.format(run_name, run_number[-3:],
-                    run_name, var_name, mask_name), bbox_inches='tight')
+        plt.savefig('../palm_results/{}/run_{}/spectra/{}_{}_spectra{}.png'.format(papy.globals.run_name, papy.globals.run_number[-3:],
+                    papy.globals.run_name, var_name, mask_name), bbox_inches='tight')
 
 
-def plot_contour_crosssection(x, y, var, var_name, o_grid, o_level, vert_gridname, x_grid_name, run_name, run_number, crosssection):
+def plot_contour_crosssection(x, y, var, var_name, o_grid, o_level, vert_gridname, x_grid_name, crosssection):
     """
     plot cross sections
     """    
 
-    if run_number == '':
-        run_number = '.000'
+    if papy.globals.run_number == '':
+        papy.globals.run_number = '.000'
 
     plt.style.use('classic')
     fig, ax = plt.subplots()
@@ -423,7 +418,7 @@ def plot_contour_crosssection(x, y, var, var_name, o_grid, o_level, vert_gridnam
             ylabel=r'${}$ [m]'.format(vert_gridname))
 
     # file output
-    fig.savefig('../palm_results/{}/run_{}/crosssections/{}_{}_cs_{}_{}.png'.format(run_name,run_number[-3:],
-                run_name,var_name,str(round(o_grid[o_level],2)),crosssection), bbox_inches='tight')
+    fig.savefig('../palm_results/{}/run_{}/crosssections/{}_{}_cs_{}_{}.png'.format(papy.globals.run_name,papy.globals.run_number[-3:],
+                papy.globals.run_name,var_name,str(round(o_grid[o_level],2)),crosssection), bbox_inches='tight')
     # plt.show()
     plt.close()

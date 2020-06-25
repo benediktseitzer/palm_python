@@ -68,9 +68,9 @@ def testing_spec():
 
         f_sm, S_uu_sm, u_aliasing = papy.calc_spectra(var,time,1.)
         print('\n calculated spectra for {} \n'.format(var_name))
-        papy.plot_spectra(f_sm, S_uu_sm, u_aliasing, 1., 1., var_name, '', '', '', testing)
+        papy.plot_spectra(f_sm, S_uu_sm, u_aliasing, 1., 1., var_name, '', '', '')
         print('\n plotted spectra for {} \n'.format(var_name))
-        papy.plot_timeseries(var, '-', var_name, time,'s', run_name, run_number)
+        papy.plot_timeseries(var, '-', var_name, time,'s')
         print('\n plotted timeseries for {} \n'.format(var_name))
         print('\n test-case: {} done \n'.format(test_case))   
 
@@ -81,49 +81,43 @@ GLOBAL VARIABLES
 """
 ################
 
-run_name = 'thunder_balcony_resstudy_precursor'
-run_number = '.014'
+# initialize globals-object
+papy.globals.testing = False
+papy.globals.calc_kai_sim = False
+# papy.globals()
+# testi = papy.globals.globals.testing
+# print(testi)
 
-nc_file_grid = '{}_pr{}.nc'.format(run_name,run_number)
-nc_file_path = '../current_version/JOBS/{}/OUTPUT/'.format(run_name)
-
+papy.globals.run_name = 'thunder_balcony_resstudy_precursor'
+papy.globals.run_number = '.014'
+nc_file_grid = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
+nc_file_path = '../current_version/JOBS/{}/OUTPUT/'.format(papy.globals.run_name)
 mask_name_list = ['M01', 'M02', 'M03', 'M04', 'M05', 'M06', 'M07', 'M08', 'M09', 
                     'M10','M11', 'M12', 'M13', 'M14', 'M15', 'M16', 'M17', 'M18', 'M19', 'M20']
 height_list = [5., 10., 12.5, 15., 17.5, 20., 25., 30., 35., 40., 45., 50., 60.,
                      70., 80., 90., 100., 110., 120., 130.]
-
 # wind tunnel input files
 wt_file = '../../Documents/phd/palm/input_data/windtunnel_data/HG_BL_MR_DOK_UV_014_000001_timeseries_test.txt'
 wt_file_pr = '../../Documents/phd/palm/input_data/windtunnel_data/HG_BL_MR_DOK_UV_015_means.txt'
 
-# testing parameters
-testing = False
-test_case_list = ['frequency_peak']
+# PHYSICS
+papy.globals.z0 = 0.066
+papy.globals.alpha = 0.17
+papy.globals.ka = 0.41
+papy.globals.d0 = 0.
 
+# test-cases for spectral analysis testing
+test_case_list = ['frequency_peak']
 # spectra mode to run scrupt in
 mode_list = ['testing', 'heights', 'compare', 'filtercheck'] 
 mode = mode_list[1]
-
 # Steeringflags
-compute_lux = False
-compute_timeseries = False
-compute_turbint = False
-compute_vertprof = False
+compute_lux = True
+compute_timeseries = True
+compute_turbint = True
+compute_vertprof = True
 compute_spectra = True
-compute_crosssections = False
-
-# PHYSICS
-# roughness length
-z0 = 0.066
-# exponent for powerlaw-fit
-alpha = 0.17
-# von Karman constant
-ka = 0.41
-# displacement height
-d0 = 0.
-# save physical parameters to list
-phys_params = [z0,alpha,ka,d0]
-
+compute_crosssections = True
 
 ################
 """
@@ -132,12 +126,12 @@ MAIN
 ################
 
 # prepare the outputfolders
-papy.prepare_plotfolder(run_name,run_number)
+papy.prepare_plotfolder(papy.globals.run_name,papy.globals.run_number)
 
 ################
 # Intergral length scale Lux
 if compute_lux:
-    nc_file = '{}_masked_M02{}.nc'.format(run_name,run_number)
+    nc_file = '{}_masked_M02{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
 
     lux = np.zeros(len(height_list))
 
@@ -147,7 +141,7 @@ if compute_lux:
     i = 0 
 
     for mask_name in mask_name_list: 
-        nc_file = '{}_masked_{}{}.nc'.format(run_name,mask_name,run_number)
+        nc_file = '{}_masked_{}{}.nc'.format(papy.globals.run_name,mask_name,papy.globals.run_number)
         height = height_list[i]
             
 
@@ -159,13 +153,13 @@ if compute_lux:
         i = i + 1
         print('\n calculated integral length scale for {}'.format(str(height)))
 
-    papy.plot_lux_profile(lux, height_list, var_name, run_name, run_number, testing)
+    papy.plot_lux_profile(lux, height_list, var_name)
     print('\n plotted integral length scale profiles')
 
 ################
 # Timeseries of several measures
 if compute_timeseries:
-    nc_file = '{}_ts{}.nc'.format(run_name,run_number)
+    nc_file = '{}_ts{}.nc'.format(papy.globals.run_name, papy.globals.run_number)
     var_name_list = ['umax', 'w"u"0', 'E', 'E*', 'div_old', 'div_new', 'dt', 'us*']
 
     # read variables for plot and call plot-function
@@ -174,24 +168,24 @@ if compute_timeseries:
     for var_name in var_name_list:
         var, var_unit = papy.read_nc_var_ts(nc_file_path,nc_file,var_name)
         print('\n READ {} from {}{} \n'.format(var_name, nc_file_path, nc_file))
-        papy.plot_timeseries(var, var_unit, var_name, time, time_unit, run_name, run_number)
+        papy.plot_timeseries(var, var_unit, var_name, time, time_unit)
         print('\n plotted {} \n'.format(var_name))
 
 ################
 # Copmute turbulence intensities
 if compute_turbint:
-    nc_file = '{}_masked_M02{}.nc'.format(run_name,run_number)
+    nc_file = '{}_masked_M02{}.nc'.format(papy.globals.run_name, papy.globals.run_number)
 
     Iu = np.zeros(len(height_list))
     Iv = np.zeros(len(height_list))
     Iw = np.zeros(len(height_list))
 
     grid_name = 'zu'
-    z, z_unit = papy.read_nc_grid(nc_file_path,nc_file_grid,grid_name)
+    z, z_unit = papy.read_nc_grid(nc_file_path, nc_file_grid, grid_name)
     i = 0 
 
     for mask_name in mask_name_list: 
-        nc_file = '{}_masked_{}{}.nc'.format(run_name,mask_name,run_number)
+        nc_file = '{}_masked_{}{}.nc'.format(papy.globals.run_name, mask_name, papy.globals.run_number)
         height = height_list[i]
         
         var_u, var_unit_u = papy.read_nc_var_ms(nc_file_path, nc_file, 'u')
@@ -206,19 +200,19 @@ if compute_turbint:
         i = i + 1
         print('\n calculated turbulence intensities scale for {}'.format(str(height)))
 
-    papy.plot_turbint_profile(Iu, height_list, 'u', run_name, run_number, testing)
+    papy.plot_turbint_profile(Iu, height_list, 'u')
     print('\n plotted turbulence intensity profiles for u-component')
 
-    papy.plot_turbint_profile(Iv, height_list, 'v', run_name, run_number, testing)
+    papy.plot_turbint_profile(Iv, height_list, 'v')
     print('\n plotted turbulence intensity profiles for v-component')
 
-    papy.plot_turbint_profile(Iw, height_list, 'w', run_name, run_number, testing)
+    papy.plot_turbint_profile(Iw, height_list, 'w')
     print('\n plotted turbulence intensity profiles for w-component')
 
 ################
 # Copmute vertical profiles
 if compute_vertprof:
-    nc_file = '{}_pr{}.nc'.format(run_name,run_number)
+    nc_file = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
     # read variables for plot
     time, time_unit = papy.read_nc_time(nc_file_path,nc_file)
     # read wind tunnel profile
@@ -234,15 +228,14 @@ if compute_vertprof:
             print('\n       u_max = {} \n'.format(var_max))
             z, z_unit = papy.read_nc_grid(nc_file_path,nc_file,grid_name)
             print('\n       wt_u_ref = {} \n'.format(wt_u_ref))
-#            print('\n       th_u_fric = {} \n'.format(u_fric))
-            papy.plot_ver_profile(var/wt_u_ref, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_ref, time, time_unit, run_name, run_number, phys_params)
-            papy.plot_semilog_u(var/wt_u_ref, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_ref, time, time_unit, run_name, run_number, phys_params)
+            papy.plot_ver_profile(var/wt_u_ref, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_ref, time, time_unit)
+            papy.plot_semilog_u(var/wt_u_ref, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_ref, time, time_unit)
             print('\n --> plottet {} \n'.format(var_name))
         else:
             grid_name = 'z{}'.format(var_name)
             var, var_max, var_unit = papy.read_nc_var_ver_pr(nc_file_path,nc_file,var_name)
             z, z_unit = papy.read_nc_grid(nc_file_path,nc_file,grid_name)
-            papy.plot_ver_profile(var, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_ref, time, time_unit, run_name, run_number, phys_params)
+            papy.plot_ver_profile(var, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_ref, time, time_unit)
             print('\n --> plottet {} \n'.format(var_name))
 
 ################
@@ -261,7 +254,7 @@ if compute_spectra:
         i = 0
         for mask_name in mask_name_list:
 
-            nc_file = '{}_masked_{}{}.nc'.format(run_name, mask_name, run_number)
+            nc_file = '{}_masked_{}{}.nc'.format(papy.globals.run_name, mask_name, papy.globals.run_number)
             try:
                 time, time_unit = papy.read_nc_var_ms(nc_file_path,nc_file,'time')   
                 height = height_list[i]
@@ -276,7 +269,7 @@ if compute_spectra:
                     u_mean  = np.mean(var)            
                 f_sm, S_uu_sm, u_aliasing = papy.calc_spectra(var,time,height,u_mean)
                 print('    calculated spectra for {}'.format(var_name))
-                papy.plot_spectra(f_sm, S_uu_sm, u_aliasing, u_mean, height, var_name, run_name, run_number, mask_name, testing)
+                papy.plot_spectra(f_sm, S_uu_sm, u_aliasing, u_mean, height, var_name, mask_name)
                 print('    plotted spectra for {} \n'.format(var_name))
 
         # wind-tunnel spectrum
@@ -287,7 +280,7 @@ if compute_spectra:
         u_mean = np.mean(wt_u*3.4555)
         f_sm, S_uu_sm, u_aliasing = papy.calc_spectra(wt_u, wt_t, height,u_mean)
         print('\n calculated spectra for {}'.format(var_name))
-        papy.plot_spectra(f_sm, S_uu_sm, u_aliasing, u_mean, height, var_name, run_name, run_number, mask_name, testing)
+        papy.plot_spectra(f_sm, S_uu_sm, u_aliasing, u_mean, height, var_name, mask_name)
         print(' plotted spectra for {} \n'.format(var_name))
     elif mode == mode_list[2]:
         print('\n Compute for comparison: \n')
@@ -308,7 +301,7 @@ if compute_spectra:
         height = 5.
         var_name = 'u'
         mask_name = 'M01'
-        nc_file = '{}_masked_{}{}.nc'.format(run_name, mask_name, run_number)
+        nc_file = '{}_masked_{}{}.nc'.format(papy.globals.run_name, mask_name, papy.globals.run_number)
         time, time_unit = papy.read_nc_var_ms(nc_file_path,nc_file,'time')   
         var, var_unit = papy.read_nc_var_ms(nc_file_path,nc_file,var_name)
         if var_name == 'u':
@@ -352,8 +345,8 @@ if compute_spectra:
         ax.legend(loc='lower left', fontsize=11)
         ax.grid()
 
-        plt.savefig('../palm_results/{}/run_{}/spectra/{}_{}_spectra{}_all.png'.format(run_name, run_number[-3:],
-                    run_name, var_name, mask_name), bbox_inches='tight')
+        plt.savefig('../palm_results/{}/run_{}/spectra/{}_{}_spectra{}_all.png'.format(papy.globals.run_name, papy.globals.run_number[-3:],
+                    papy.globals.run_name, var_name, mask_name), bbox_inches='tight')
     elif mode == mode_list[3]:
         print('\n Gaussian Filter: \n')
         # gaussian filter demonstration
@@ -451,8 +444,8 @@ if compute_spectra:
 ################
 # plot crosssections
 if compute_crosssections:
-    nc_file = '{}_3d{}.nc'.format(run_name, run_number)
-    nc_file_path = '../current_version/JOBS/{}/OUTPUT/'.format(run_name)
+    nc_file = '{}_3d{}.nc'.format(papy.globals.run_name, papy.globals.run_number)
+    nc_file_path = '../current_version/JOBS/{}/OUTPUT/'.format(papy.globals.run_name)
 
     # read variables for plot
     x_grid_name = 'x'
@@ -479,7 +472,7 @@ if compute_crosssections:
         vert_gridname = 'z'
         cut_gridname = y_grid_name
         var, var_unit = papy.read_nc_var_ver_3d(nc_file_path,nc_file,var_name, y_level, time_show)
-        papy.plot_contour_crosssection(x_grid, z_grid, var, var_name, y_grid, y_level, vert_gridname, cut_gridname, run_name, run_number, crosssection)
+        papy.plot_contour_crosssection(x_grid, z_grid, var, var_name, y_grid, y_level, vert_gridname, cut_gridname, crosssection)
         
         # elif crosssection == 'xy':
         crosssection = 'xy'
@@ -488,4 +481,4 @@ if compute_crosssections:
         cut_gridname = 'z'
         print('     z={}    level={}'.format(round(z_grid[z_level],2), z_level))
         var, var_unit = papy.read_nc_var_hor_3d(nc_file_path,nc_file,var_name, z_level, time_show)
-        papy.plot_contour_crosssection(x_grid, y_grid, var, var_name, z_grid, z_level, vert_gridname, cut_gridname, run_name, run_number, crosssection)
+        papy.plot_contour_crosssection(x_grid, y_grid, var, var_name, z_grid, z_level, vert_gridname, cut_gridname, crosssection)

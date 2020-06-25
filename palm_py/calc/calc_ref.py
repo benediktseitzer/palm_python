@@ -17,6 +17,8 @@ IMPORTS
 import numpy as np
 import pandas as pd
 
+import palm_py as papy
+
 ################
 """
 FUNCTIONS
@@ -24,7 +26,7 @@ FUNCTIONS
 ################
 
 
-def calc_theoretical_profile(m_u, m_u_ref, m_z, z, par):
+def calc_theoretical_profile(m_u, m_u_ref, m_z, z):
     """
     calculate theoretical u-profile using measurement data
     u_prandtl: Prandtl-Layer (neutral case boundary layer)
@@ -32,20 +34,15 @@ def calc_theoretical_profile(m_u, m_u_ref, m_z, z, par):
     u_fric: friction velocity
     """
 
-    # get fitting parameters 
-    z0 = par[0]
-    alpha = par[1]
-    ka = par[2]
-    d0 = par[3]
+    testi = papy.globals.z0
 
     # calculate friction velocity
     ident = 17
-    ident_low = 8
-    u_fric = (ka*m_u[ident]) / (np.log(m_z[ident]/z0))
+    u_fric = (papy.globals.ka * m_u[ident]) / (np.log(m_z[ident]/papy.globals.z0))
 
     # calculate theoretical profiles
-    u_prandtl = u_fric/ka * np.log((z[1:]-d0)/z0)
-    u_powerlaw = 1.* (z[1:]/200.)**alpha
+    u_prandtl = u_fric/papy.globals.ka * np.log((z[1:]-papy.globals.d0)/papy.globals.z0)
+    u_powerlaw = 1.* (z[1:]/200.)**papy.globals.alpha
 
     # no-slip bc:
     u_powerlaw = np.insert(u_powerlaw,0,0.)

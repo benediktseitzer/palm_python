@@ -7,3 +7,4 @@ from .env import *
 from .read import *
 from .calc import *
 from .plot import *
+from .globals import *
