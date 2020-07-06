@@ -105,12 +105,12 @@ test_case_list = ['frequency_peak']
 mode_list = ['testing', 'heights', 'compare', 'filtercheck'] 
 mode = mode_list[1]
 # Steeringflags
-compute_lux = False
+compute_lux = True
 compute_timeseries = False
-compute_turbint = False
+compute_turbint = True
 compute_vertprof = False
-compute_spectra = False
-compute_crosssections = True
+compute_spectra = True
+compute_crosssections = False
 
 ################
 """
@@ -266,15 +266,17 @@ if compute_spectra:
                 print('    plotted spectra for {} \n'.format(var_name))
 
         # wind-tunnel spectrum
-        height = 8.0
-        mask_name = ''
-        var_name = 'u_wt'
-        wt_u, wt_v, wt_t = papy.read_wt_ts(wt_file)
-        u_mean = np.mean(wt_u*3.4555)
-        f_sm, S_uu_sm, u_aliasing = papy.calc_spectra(wt_u, wt_t, height,u_mean)
-        print('\n calculated spectra for {}'.format(var_name))
-        papy.plot_spectra(f_sm, S_uu_sm, u_aliasing, u_mean, height, var_name, mask_name)
-        print(' plotted spectra for {} \n'.format(var_name))
+        compute_wt_spectra = False
+        if compute_wt_spectra:
+            height = 8.0
+            mask_name = ''
+            var_name = 'u_wt'
+            wt_u, wt_v, wt_t = papy.read_wt_ts(wt_file)
+            u_mean = np.mean(wt_u*3.4555)
+            f_sm, S_uu_sm, u_aliasing = papy.calc_spectra(wt_u, wt_t, height,u_mean)
+            print('\n calculated spectra for {}'.format(var_name))
+            papy.plot_spectra(f_sm, S_uu_sm, u_aliasing, u_mean, height, var_name, mask_name)
+            print(' plotted spectra for {} \n'.format(var_name))
     elif mode == mode_list[2]:
         print('\n Compute for comparison: \n')
         # plot wind tunnel spectrum together with PALM spectrum
