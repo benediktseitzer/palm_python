@@ -82,7 +82,7 @@ GLOBAL VARIABLES
 ################
 
 papy.globals.run_name = 'thunder_balcony_resstudy_precursor'
-papy.globals.run_number = '.014'
+papy.globals.run_number = '.015'
 nc_file_grid = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
 nc_file_path = '../current_version/JOBS/{}/OUTPUT/'.format(papy.globals.run_name)
 mask_name_list = ['M01', 'M02', 'M03', 'M04', 'M05', 'M06', 'M07', 'M08', 'M09', 
@@ -90,7 +90,7 @@ mask_name_list = ['M01', 'M02', 'M03', 'M04', 'M05', 'M06', 'M07', 'M08', 'M09',
 height_list = [5., 10., 12.5, 15., 17.5, 20., 25., 30., 35., 40., 45., 50., 60.,
                      70., 80., 90., 100., 110., 120., 130.]
 # wind tunnel input files
-wt_file = '../../Documents/phd/palm/input_data/windtunnel_data/HG_BL_MR_DOK_UV_014_000001_timeseries_test.txt'
+wt_file = '../../Documents/phd/palm/input_data/windtunnel_data/HG_BL_MR_DOK_UV_014_000001_timeseries.txt'
 wt_file_pr = '../../Documents/phd/palm/input_data/windtunnel_data/HG_BL_MR_DOK_UV_015_means.txt'
 
 # PHYSICS
@@ -105,11 +105,11 @@ test_case_list = ['frequency_peak']
 mode_list = ['testing', 'heights', 'compare', 'filtercheck'] 
 mode = mode_list[1]
 # Steeringflags
-compute_lux = True
-compute_timeseries = True
-compute_turbint = True
-compute_vertprof = True
-compute_spectra = True
+compute_lux = False
+compute_timeseries = False
+compute_turbint = False
+compute_vertprof = False
+compute_spectra = False
 compute_crosssections = True
 
 ################
