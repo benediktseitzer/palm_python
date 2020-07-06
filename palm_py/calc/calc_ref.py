@@ -84,7 +84,8 @@ def get_reference_spectra(height, ref_path=None):
     """ Get referemce spectra from pre-defined location."""
     #  REFERENCE SPAECTRA RANGE FIT
     if ref_path == None:
-        ref_path = '../../Documents/phd/palm/input_data/reference_spectra/'
+        ref_path = 'reference_data/'
+
     ref_heights = np.array([7.00, 10.50, 14.00, 17.50, 22.75, 42.00, 70.00, 105.00])
     idx = (np.abs(ref_heights - height)).argmin()
     value = ref_heights[idx]
@@ -99,7 +100,7 @@ def get_lux_referencedata(ref_path=None):
     Reads reference data for the integral length scale (Lux). 
     """
     if ref_path == None:
-        ref_path = '../../Documents/phd/palm/input_data/reference_lux/'
+        ref_path = 'reference_data/'
 
     Lux_10 = np.genfromtxt(ref_path + 'Lux_data.dat', skip_header=7, skip_footer=421,
                            usecols=(0, 1), unpack=True)
@@ -122,12 +123,12 @@ def get_turbint_referencedata(var_name, ref_path=None):
     Read reference data files for the turbulence intensity Iu, Iv
     """
     if ref_path == None:
-        ref_path = '../../Documents/phd/palm/input_data/reference_turbint/'
+        ref_path = 'reference_data/'
 
     if var_name == 'u':
         ref_dat = ref_path + 'Iu_data.dat'
         Iu_slight = np.genfromtxt(ref_dat, skip_header=11, skip_footer=367, 
-                                    usecols=(0,1), unpack=True, encoding='latin1')
+                                    usecols=(0,1), unpack=True, encoding='latin1')  
         Iu_moderate = np.genfromtxt(ref_dat, skip_header=41, skip_footer=337, 
                                     usecols=(0,1), unpack=True, encoding='latin1')
         Iu_rough = np.genfromtxt(ref_dat, skip_header=69, skip_footer=310, 
