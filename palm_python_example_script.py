@@ -106,11 +106,11 @@ mode_list = ['testing', 'heights', 'compare', 'filtercheck']
 mode = mode_list[1]
 # Steeringflags
 compute_lux = True
-compute_timeseries = False
+compute_timeseries = True
 compute_turbint = True
-compute_vertprof = False
+compute_vertprof = True
 compute_spectra = True
-compute_crosssections = False
+compute_crosssections = True
 
 ################
 """
