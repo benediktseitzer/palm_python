@@ -90,11 +90,14 @@ mask_name_list = ['M01', 'M02', 'M03', 'M04', 'M05', 'M06', 'M07', 'M08', 'M09',
 height_list = [5., 10., 12.5, 15., 17.5, 20., 25., 30., 35., 40., 45., 50., 60.,
                      70., 80., 90., 100., 110., 120., 130.]
 # wind tunnel input files
-wt_file = '../../Documents/phd/palm/input_data/windtunnel_data/HG_BL_MR_DOK_UV_014_000001_timeseries.txt'
-wt_file_pr = '../../Documents/phd/palm/input_data/windtunnel_data/HG_BL_MR_DOK_UV_015_means.txt'
+wt_filename = 'BA_BL_UW_001'
+print(wt_filename[3:5])
+wt_path = '../../Documents/phd/experiments/balcony/{}'.format(wt_filename[3:5], wt_filename)
+wt_file = '{}/coincidence/timeseries/{}.txt'.format(wt_path, wt_filename)
+wt_file_pr = '{}/coincidence/mean/{}.000001.txt'.format(wt_path, wt_filename)
 
 # PHYSICS
-papy.globals.z0 = 0.066
+papy.globals.z0 = 0.021
 papy.globals.alpha = 0.17
 papy.globals.ka = 0.41
 papy.globals.d0 = 0.
@@ -104,13 +107,16 @@ test_case_list = ['frequency_peak']
 # spectra mode to run scrupt in
 mode_list = ['testing', 'heights', 'compare', 'filtercheck'] 
 mode = mode_list[1]
+
 # Steeringflags
-compute_lux = True
-compute_timeseries = True
-compute_turbint = True
-compute_vertprof = True
-compute_spectra = True
-compute_crosssections = True
+compute_lux = False
+compute_timeseries = False
+compute_turbint = False
+compute_vertprof = False
+compute_spectra = False
+compute_crosssections = False
+compute_modelinput = True
+
 
 ################
 """
@@ -477,3 +483,24 @@ if compute_crosssections:
         print('     z={}    level={}'.format(round(z_grid[z_level],2), z_level))
         var, var_unit = papy.read_nc_var_hor_3d(nc_file_path,nc_file,var_name, z_level, time_show)
         papy.plot_contour_crosssection(x_grid, y_grid, var, var_name, z_grid, z_level, vert_gridname, cut_gridname, crosssection)
+
+################
+# compute model input data
+if compute_modelinput:
+    # read wind tunnel profile
+    wt_u_pr, wt_z = papy.from_file(wt_file_pr)
+    print('\n wind tunnel profile loaded \n')
+    # calculate z
+    z = np.linspace(0.0,300,65)
+
+    # calculate theoretical profile
+    u_pr, u_fric = papy.calc_input_profile(wt_u_pr, wt_z, z)
+
+    print(u_pr)
+    print(z)
+
+    plt.plot(u_pr, z, label='input profile')
+    plt.xlabel(r'$u$ (m/s)')
+    plt.ylabel(r'$z$ (m)')
+    plt.legend()
+    plt.show()
