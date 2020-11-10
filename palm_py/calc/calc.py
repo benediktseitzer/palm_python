@@ -89,7 +89,6 @@ def calc_spectra(phi,t_eq,height,u_mean):
 
     return freq_sm_sort, S_uu_sort, phi_aliasing
 
-
 def calc_autocorr(timeseries, maxlags):
     """ Full autocorrelation of time series for lags up to maxlags.
     @parameter timeseries: np.array or list
@@ -99,7 +98,6 @@ def calc_autocorr(timeseries, maxlags):
     acorr = np.asarray([1. if x == 0 else np.corrcoef(timeseries[x:], 
                         timeseries[:-x])[0][1] for x in range(maxlags)])
     return acorr
-
 
 def calc_lux(dt, u_comp):
     """ Calculates the integral length scale according to R. Fischer (2011) 
@@ -156,7 +154,6 @@ def calc_lux(dt, u_comp):
 
     Lux = abs(Lux * np.mean(u_comp) * dt)
     return Lux
-
 
 def calc_turbint(u_comp, v_comp, w_comp):
     """

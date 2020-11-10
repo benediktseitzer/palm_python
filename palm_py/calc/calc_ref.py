@@ -25,7 +25,6 @@ FUNCTIONS
 """
 ################
 
-
 def calc_theoretical_profile(m_u, m_u_ref, m_z, z):
     """
     calculate theoretical u-profile using measurement data
@@ -49,7 +48,6 @@ def calc_theoretical_profile(m_u, m_u_ref, m_z, z):
     u_prandtl = np.insert(u_prandtl,0,0.)
 
     return u_prandtl, u_powerlaw, u_fric
-
 
 def calc_ref_spectra(freq_red, ref_specs, var_name):
     """ 
@@ -79,7 +77,6 @@ def calc_ref_spectra(freq_red, ref_specs, var_name):
 
     return E_simiu, E_kaimal
 
-
 def get_reference_spectra(height, ref_path=None):
     """ Get referemce spectra from pre-defined location."""
     #  REFERENCE SPAECTRA RANGE FIT
@@ -93,7 +90,6 @@ def get_reference_spectra(height, ref_path=None):
     ref_specs = np.genfromtxt(ref_path + 'ref_spectra_S_ii_z_10.50m.txt')
 
     return ref_specs
-
 
 def get_lux_referencedata(ref_path=None):
     """
@@ -116,7 +112,6 @@ def get_lux_referencedata(ref_path=None):
                                   skip_footer=276, usecols=(0, 1), unpack=True)
 
     return Lux_10, Lux_1, Lux_01, Lux_001, Lux_obs_smooth, Lux_obs_rough
-
 
 def get_turbint_referencedata(var_name, ref_path=None):
     """
