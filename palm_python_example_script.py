@@ -15,7 +15,6 @@ IMPORTS
 import os
 import numpy as np
 import math as m
-import netCDF4
 import pandas as pd
 
 import matplotlib.pyplot as plt
@@ -80,21 +79,23 @@ def testing_spec():
 GLOBAL VARIABLES
 """
 ################
-
-papy.globals.run_name = 'thunder_balcony_resstudy_precursor'
-papy.globals.run_number = '.015'
+# PALM input files
+papy.globals.run_name = 'BA_BL_UW_001'
+papy.globals.run_number = '.000'
 nc_file_grid = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
-nc_file_path = '../current_version/JOBS/{}/OUTPUT/'.format(papy.globals.run_name)
+nc_file_path = '../palm/current_version/JOBS/{}/OUTPUT/'.format(papy.globals.run_name)
 mask_name_list = ['M01', 'M02', 'M03', 'M04', 'M05', 'M06', 'M07', 'M08', 'M09', 
                     'M10','M11', 'M12', 'M13', 'M14', 'M15', 'M16', 'M17', 'M18', 'M19', 'M20']
 height_list = [5., 10., 12.5, 15., 17.5, 20., 25., 30., 35., 40., 45., 50., 60.,
                      70., 80., 90., 100., 110., 120., 130.]
+
 # wind tunnel input files
 wt_filename = 'BA_BL_UW_001'
-print(wt_filename[3:5])
 wt_path = '../../Documents/phd/experiments/balcony/{}'.format(wt_filename[3:5], wt_filename)
 wt_file = '{}/coincidence/timeseries/{}.txt'.format(wt_path, wt_filename)
 wt_file_pr = '{}/coincidence/mean/{}.000001.txt'.format(wt_path, wt_filename)
+wt_file_ref = '{}/wtref/{}_wtref.txt'.format(wt_path, wt_filename)
+wt_scale = 100.
 
 # PHYSICS
 papy.globals.z0 = 0.021
@@ -112,11 +113,10 @@ mode = mode_list[1]
 compute_lux = False
 compute_timeseries = False
 compute_turbint = False
-compute_vertprof = False
+compute_vertprof = True
 compute_spectra = False
 compute_crosssections = False
-compute_modelinput = True
-
+compute_modelinput = False
 
 ################
 """
@@ -215,7 +215,7 @@ if compute_vertprof:
     # read variables for plot
     time, time_unit = papy.read_nc_time(nc_file_path,nc_file)
     # read wind tunnel profile
-    wt_pr, wt_u_ref, wt_z = papy.read_wt_ver_pr(wt_file_pr)
+    wt_pr, wt_u_ref, wt_z = papy.read_wt_ver_pr(wt_file_pr, wt_file_ref ,wt_scale)
     print('\n wind tunnel profile loaded \n') 
 
     # call plot-functions
@@ -227,8 +227,8 @@ if compute_vertprof:
             print('\n       u_max = {} \n'.format(var_max))
             z, z_unit = papy.read_nc_grid(nc_file_path,nc_file,grid_name)
             print('\n       wt_u_ref = {} \n'.format(wt_u_ref))
-            papy.plot_ver_profile(var/wt_u_ref, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_ref, time, time_unit)
-            papy.plot_semilog_u(var/wt_u_ref, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_ref, time, time_unit)
+            papy.plot_ver_profile(var, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_ref, time, time_unit)
+            papy.plot_semilog_u(var, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_ref, time, time_unit)
             print('\n --> plottet {} \n'.format(var_name))
         else:
             grid_name = 'z{}'.format(var_name)
@@ -236,6 +236,15 @@ if compute_vertprof:
             z, z_unit = papy.read_nc_grid(nc_file_path,nc_file,grid_name)
             papy.plot_ver_profile(var, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_ref, time, time_unit)
             print('\n --> plottet {} \n'.format(var_name))
+
+    grid_name = 'zw*u*'
+    var1, var_max1, var_unit1 = papy.read_nc_var_ver_pr(nc_file_path, nc_file, 'w*u*')
+    var2, var_max2, var_unit2 = papy.read_nc_var_ver_pr(nc_file_path, nc_file, 'w"u"')
+    var = var1 + var2
+    z, z_unit = papy.read_nc_grid(nc_file_path,nc_file,grid_name)
+    papy.plot_ver_profile(var, var_unit1, 'fluxes', z, z_unit, wt_pr, wt_z, wt_u_ref, time, time_unit)
+    print('plotted total fluxes')
+    
 
 ################
 # Copmute spectra
@@ -446,15 +455,15 @@ if compute_spectra:
 # plot crosssections
 if compute_crosssections:
     nc_file = '{}_3d{}.nc'.format(papy.globals.run_name, papy.globals.run_number)
-    nc_file_path = '../current_version/JOBS/{}/OUTPUT/'.format(papy.globals.run_name)
+    nc_file_path = '../palm/current_version/JOBS/{}/OUTPUT/'.format(papy.globals.run_name)
 
     # read variables for plot
     x_grid_name = 'x'
     y_grid_name = 'y'
     z_grid_name = 'zw_3d'
-    x_grid, x_unit = papy.read_nc_grid(nc_file_path,nc_file,x_grid_name)
-    y_grid, y_unit = papy.read_nc_grid(nc_file_path,nc_file,y_grid_name)
-    z_grid, z_unit = papy.read_nc_grid(nc_file_path,nc_file,z_grid_name)
+    x_grid, x_unit = papy.read_nc_grid(nc_file_path, nc_file, x_grid_name)
+    y_grid, y_unit = papy.read_nc_grid(nc_file_path, nc_file, y_grid_name)
+    z_grid, z_unit = papy.read_nc_grid(nc_file_path, nc_file, z_grid_name)
 
     time, time_unit = papy.read_nc_time(nc_file_path,nc_file)
     time_show = len(time)-1
@@ -487,8 +496,9 @@ if compute_crosssections:
 ################
 # compute model input data
 if compute_modelinput:
+    wt_scale = 100.
     # read wind tunnel profile
-    wt_u_pr, wt_z = papy.from_file(wt_file_pr)
+    wt_u_pr, wt_u_ref, wt_z = papy.read_wt_ver_pr(wt_file_pr, wt_file_ref, wt_scale)
     print('\n wind tunnel profile loaded \n')
     # calculate z
     z = np.linspace(0.0,300,65)
