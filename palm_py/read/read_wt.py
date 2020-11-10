@@ -42,26 +42,16 @@ def read_wt_ts(wt_file):
     return u, v, t
 
 
-def read_wt_ver_pr(wt_file):
-    """
-    read wind tunnel profile-data
-    """
 
-    df = pd.read_table(wt_file, delimiter=' ', header=7, usecols=[3,5,8])
-    
-    u_ref_dat = df.iloc[:,1].to_numpy()
-    
-    # u_ref_dat = np.mean(u_ref_dat)
-
-    u = df.iloc[:,2].to_numpy()
-    z = df.iloc[:,0].to_numpy()
-    
-    return u, u_ref_dat, z
-
-def from_file(wt_file):
+def read_wt_ver_pr(wt_file, wt_ref_file, scale):
     """ Create Timeseries object from file."""
 
-    z, u = np.genfromtxt(wt_file,usecols=(3,8),
-                                            skip_header=6,unpack=True)
+    z, u = np.genfromtxt(wt_file, usecols=(3, 8),
+                        skip_header=6, unpack=True)
 
-    return u, z
+    u_ref = np.genfromtxt(wt_ref_file, usecols=3, 
+                        skip_header=1, unpack=True)
+
+    z = z*scale/1000
+
+    return u, u_ref, z
