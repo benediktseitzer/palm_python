@@ -115,6 +115,7 @@ def read_nc_var_ts(nc_file_path,nc_file,var_name):
         fh = netCDF4.Dataset('{}{}'.format(nc_file_path, nc_file), mode='r')
     except:
         print('\n Exception occured: {} not found \n'.format(nc_file))
+        
 
     try:    
         var = fh.variables[var_name][:]
@@ -123,7 +124,7 @@ def read_nc_var_ts(nc_file_path,nc_file,var_name):
         return var, var_unit
     except:
         print('\n Exception occured: no variable called {} in {} \n'.format(var_name,nc_file))
-
+        
 
 def read_nc_var_av_3d(var_name,z_level):
     """
@@ -136,6 +137,7 @@ def read_nc_var_av_3d(var_name,z_level):
         fh = netCDF4.Dataset('{}{}'.format(nc_file_path,nc_file), mode='r')
     except:
         print('\n Exception occured: {} not found \n'.format(nc_file))
+        
 
     try: 
         var = fh.variables[var_name][1,z_level,:,:]
@@ -143,7 +145,8 @@ def read_nc_var_av_3d(var_name,z_level):
         fh.close()
         return var, var_unit
     except: 
-        print('\n Exception occured: no variable called {} in {} \n'.format(var_name,nc_file))        
+        print('\n Exception occured: no variable called {} in {} \n'.format(var_name,nc_file))
+        
 
 
 def read_nc_grid(nc_file_path,nc_file,grid_name):
@@ -179,6 +182,7 @@ def read_nc_time(nc_file_path,nc_file):
         fh = netCDF4.Dataset('{}{}'.format(nc_file_path,nc_file), mode='r')
     except:
         print('\n Exception occured: {} not found \n'.format(nc_file))
+        
 
     time = fh.variables['time'][:]
     time_unit = fh.variables['time'].units
@@ -199,6 +203,7 @@ def read_nc_var_ms(nc_file_path,nc_file,var_name):
         fh = netCDF4.Dataset('{}{}'.format(nc_file_path, nc_file), mode='r')
     except:
         print('\n Exception occured: {} not found \n'.format(nc_file))
+        
 
     try:    
         if var_name == 'time':
@@ -211,3 +216,4 @@ def read_nc_var_ms(nc_file_path,nc_file,var_name):
         return var, var_unit
     except:
         print('\n Exception occured: no variable called {} in {} \n'.format(var_name,nc_file))
+        
