@@ -66,8 +66,8 @@ def plot_lux_profile(lux, height_list, var_name):
 
     ax.set_yscale('log')
     ax.set_xscale('log')
-    ax.set_xlabel(r"$L _{ux}$ [m]")
-    ax.set_ylabel(r"$z$ [m]" )
+    ax.set_xlabel(r"$L _{ux}$ (m)")
+    ax.set_ylabel(r"$z$ (m)" )
     ax.legend(loc='upper left', fontsize=11)
     ax.grid()
 
@@ -76,7 +76,6 @@ def plot_lux_profile(lux, height_list, var_name):
     else:
         plt.savefig('../palm_results/{}/run_{}/lux/{}_{}_lux.png'.format(papy.globals.run_name,papy.globals.run_number[-3:],
                     papy.globals.run_name,var_name), bbox_inches='tight')
-
 
 def plot_timeseries(var, var_unit, var_name, time, time_unit):
     """
@@ -91,7 +90,7 @@ def plot_timeseries(var, var_unit, var_name, time, time_unit):
     ax.plot(time, var, color='green')
     
 
-    ax.set(xlabel=r'$t$ $[{}]$'.format(time_unit), ylabel=r'{} $[{}]$'.format(var_name,var_unit), 
+    ax.set(xlabel=r'$t$ $({})$'.format(time_unit), ylabel=r'{} $({})$'.format(var_name,var_unit), 
             title= 'Timeseries {}'.format(var_name))
 
     ax.grid()
@@ -101,7 +100,6 @@ def plot_timeseries(var, var_unit, var_name, time, time_unit):
     fig.savefig('../palm_results/{}/run_{}/timeseries/{}_{}_ts.png'.format(papy.globals.run_name,papy.globals.run_number[-3:],
                 papy.globals.run_name,var_name), bbox_inches='tight')
     # plt.show()
-
 
 def plot_turbint_profile(turbint, height_list, var_name):
     """
@@ -136,8 +134,8 @@ def plot_turbint_profile(turbint, height_list, var_name):
         ax.set_xlim(0,0.3)
         ax.set_ylim(0,300)
 
-    ax.set_xlabel(r"$I _{}$ [-]".format(var_name))
-    ax.set_ylabel(r"$z$ [m]" )
+    ax.set_xlabel(r"$I _{}$ (-)".format(var_name))
+    ax.set_ylabel(r"$z$ (m)" )
     ax.legend(loc='upper left', fontsize=11)
     ax.grid()
 
@@ -147,7 +145,6 @@ def plot_turbint_profile(turbint, height_list, var_name):
     else:
         plt.savefig('../palm_results/{}/run_{}/turbint/{}_{}_turbint.png'.format(papy.globals.run_name,
                     papy.globals.run_number[-3:], papy.globals.run_name, var_name), bbox_inches='tight')
-
 
 def plot_semilog_u(var, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_ref, time, time_unit):
     """
@@ -179,7 +176,7 @@ def plot_semilog_u(var, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_ref, ti
     plt.style.use('classic')
 
     ax2.legend(loc='best')
-    ax2.set(xlabel=r'$u/u_{ref}$ $[-]$', ylabel=r'$z$ $[{}]$'.format(z_unit), 
+    ax2.set(xlabel=r'$u/u_{ref}$ $(-)$', ylabel=r'$z$ $({})$'.format(z_unit), 
             title= r'Logarithmic profile of $u/u_{ref}$')
     ax2.grid()
     ax2.grid(which='minor', alpha=0.2)
@@ -187,7 +184,6 @@ def plot_semilog_u(var, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_ref, ti
     fig2.savefig('../palm_results/{}/run_{}/profiles/{}_{}_pr_verpr_log.png'.format(papy.globals.run_name,papy.globals.run_number[-3:],
                     papy.globals.run_name,var_name), bbox_inches='tight')
     # plt.show()
-
 
 def plot_ver_profile(var_plt, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_ref, time, time_unit):
     """
@@ -223,26 +219,26 @@ def plot_ver_profile(var_plt, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_r
             print('Exception has occurred: Stop wt-plotting - plot_ver_profile')
 
     if var_name == 'w"u"':
-        ax.set(xlabel=r'$\tau _{31}$'+'$[m^2/s^2]$', 
-                ylabel=r'$z$ $[m]$', title= r'Height profile of $\tau _{31}$')
+        ax.set(xlabel=r'$\tau _{31}$'+'$(m^2/s^2)$', 
+                ylabel=r'$z$ $(m)$', title= r'Height profile of $\tau _{31}$')
     elif var_name == 'w*u*':
-        ax.set(xlabel=r'$\tau^* _{31}$'+'$[m^2/s^2]$', 
-                ylabel=r'$z$ $[m]$', title= r'Height profile of $\tau^* _{31}$')
+        ax.set(xlabel=r'$\tau^* _{31}$'+'$([)m^2/s^2)$', 
+                ylabel=r'$z$ $(m)$', title= r'Height profile of $\tau^* _{31}$')
     elif var_name == 'u':
-        ax.set(xlabel=r'$u/u_{ref}$'+'$[-]$', 
-                ylabel=r'$z$ $[m]$', title= r'Height profile of $u/u_{ref}$')
+        ax.set(xlabel=r'$u/u_{ref}$'+'$(-)$', 
+                ylabel=r'$z$ $(m)$', title= r'Height profile of $u/u_{ref}$')
     elif var_name == 'e*':
         ax.set(xlabel=r'$e^*$'+'$[m^2/s^2]$', 
-                ylabel=r'$z$ $[m]$', title= r'Height profile of $e^*$')
+                ylabel=r'$z$ $(m)$', title= r'Height profile of $e^*$')
     elif var_name == 'u*2':
         ax.set(xlabel=r'$\tau _{11}$'+'$[m^2/s^2]$', 
-                ylabel=r'$z$ $[m]$', title= r'Height profile of $\tau _{11}$')                
+                ylabel=r'$z$ $(m)$', title= r'Height profile of $\tau _{11}$')                
     elif var_name == 'e':
-        ax.set(xlabel=r'$e$'+'$[m^2/s^2]$', 
-                ylabel=r'$z$ $[m]$', title= r'Height profile of $e$')                
+        ax.set(xlabel=r'$e$'+'$(m^2/s^2)$', 
+                ylabel=r'$z$ $(m)$', title= r'Height profile of $e$')                
     else:     
-        ax.set(xlabel=r'${}$ $[{}]$'.format(var_name,var_unit), 
-                ylabel=r'$z$ $[{}]$'.format(z_unit), title= r'Height profile of ${}$'.format(var_name))
+        ax.set(xlabel=r'${}$ $({})$'.format(var_name,var_unit), 
+                ylabel=r'$z$ $({})$'.format(z_unit), title= r'Height profile of ${}$'.format(var_name))
      
     ax.legend(loc='best')
     plt.ylim(min(z),max(z[:-1]))
@@ -414,8 +410,8 @@ def plot_contour_crosssection(x, y, var, var_name, o_grid, o_level, vert_gridnam
 
     # labeling 
     fig.colorbar(im, label=r'${}$ [m/s]'.format(var_name),orientation="horizontal")
-    ax.set(xlabel=r'${}$ [m]'.format(x_grid_name), 
-            ylabel=r'${}$ [m]'.format(vert_gridname))
+    ax.set(xlabel=r'${}$ (m)'.format(x_grid_name), 
+            ylabel=r'${}$ (m)'.format(vert_gridname))
 
     # file output
     fig.savefig('../palm_results/{}/run_{}/crosssections/{}_{}_cs_{}_{}.png'.format(papy.globals.run_name,papy.globals.run_number[-3:],
