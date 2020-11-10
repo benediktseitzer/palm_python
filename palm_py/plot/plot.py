@@ -165,7 +165,7 @@ def plot_semilog_u(var, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_ref, ti
     for i in range(len(time)-1,len(time)):
         try:
             ax2.plot(var[i,1:-1], z[1:-1], label='PALM', color=next(colors))
-            ax2.plot(u_pw[1:-1], z[1:-1], label='power law', color='red',linestyle='--')
+            # ax2.plot(u_pw[1:-1], z[1:-1], label='power law', color='red',linestyle='--')
             ax2.plot(u_pr[1:-1], z[1:-1], label='prandtls law', color='blue',linestyle='--')
             ax2.errorbar(wt_pr[:],wt_z[:],xerr=xerror[:],label='wind tunnel',fmt='x',color='grey')
         except:
@@ -203,6 +203,7 @@ def plot_ver_profile(var_plt, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_r
     colors = iter(jet(np.linspace(0,1,10)))
     ax.grid()
     ax.xaxis.set_major_locator(plt.MaxNLocator(7))
+    plt.ylim(min(z),max(z[:-1]))
 
     for i in range(len(time)-1,len(time)):
         try:
@@ -212,40 +213,47 @@ def plot_ver_profile(var_plt, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_r
             print('Exception has occurred: StopIteration - plot_ver_profile')
     if var_name == 'u':
         try:
-            ax.plot(u_pw[:-1], z[:-1], label='power law', color='red',linestyle='--')
+            # ax.plot(u_pw[:-1], z[:-1], label='power law', color='red',linestyle='--')
             ax.plot(u_pr[:-1], z[:-1], label='prandtls law', color='blue',linestyle='--')
             ax.errorbar(wt_pr[:-1],wt_z[:-1],xerr=xerror[:-1],label='wind tunnel',fmt='x',c='gray')
         except:
             print('Exception has occurred: Stop wt-plotting - plot_ver_profile')
 
     if var_name == 'w"u"':
-        ax.set(xlabel=r'$\tau _{31}$'+'$(m^2/s^2)$', 
+        ax.set(xlabel=r'$\tau _{31}$' + ' $(m^2/s^2)$', 
                 ylabel=r'$z$ $(m)$', title= r'Height profile of $\tau _{31}$')
+        ax.set_yscale('log', nonposy='clip')
     elif var_name == 'w*u*':
-        ax.set(xlabel=r'$\tau^* _{31}$'+'$([)m^2/s^2)$', 
+        ax.set(xlabel=r'$\tau^* _{31}$'+ ' $(m^2/s^2)$', 
                 ylabel=r'$z$ $(m)$', title= r'Height profile of $\tau^* _{31}$')
+        ax.set_yscale('log', nonposy='clip')                
     elif var_name == 'u':
-        ax.set(xlabel=r'$u/u_{ref}$'+'$(-)$', 
+        ax.set(xlabel=r'$u/u_{ref}$'+' $(-)$', 
                 ylabel=r'$z$ $(m)$', title= r'Height profile of $u/u_{ref}$')
     elif var_name == 'e*':
-        ax.set(xlabel=r'$e^*$'+'$[m^2/s^2]$', 
+        ax.set(xlabel=r'$e^*$'+' $(m^2/s^2)$', 
                 ylabel=r'$z$ $(m)$', title= r'Height profile of $e^*$')
     elif var_name == 'u*2':
-        ax.set(xlabel=r'$\tau _{11}$'+'$[m^2/s^2]$', 
+        ax.set(xlabel=r'$\tau _{11}$'+' $(m^2/s^2)$', 
                 ylabel=r'$z$ $(m)$', title= r'Height profile of $\tau _{11}$')                
     elif var_name == 'e':
-        ax.set(xlabel=r'$e$'+'$(m^2/s^2)$', 
+        ax.set(xlabel=r'$e$'+' $(m^2/s^2)$', 
                 ylabel=r'$z$ $(m)$', title= r'Height profile of $e$')                
+    elif var_name == 'fluxes':     
+        ax.set(xlabel=r'$\tau_{ges}$' + ' $(m^2/s^2)$', 
+                ylabel=r'$z$  (m)'.format(z_unit), title= r'Height profile of ${}$'.format(var_name))
+        ax.set_yscale('log', nonposy='clip')
+        plt.ylim(min(z),80.)
     else:     
         ax.set(xlabel=r'${}$ $({})$'.format(var_name,var_unit), 
                 ylabel=r'$z$ $({})$'.format(z_unit), title= r'Height profile of ${}$'.format(var_name))
-     
+        ax.set_yscale('log', nonposy='clip')
+        plt.ylim(min(z),80.)
+
     ax.legend(loc='best')
-    plt.ylim(min(z),max(z[:-1]))
     fig.savefig('../palm_results/{}/run_{}/profiles/{}_{}_verpr.png'.format(papy.globals.run_name,papy.globals.run_number[-3:],
                 papy.globals.run_name,var_name), bbox_inches='tight')
     # plt.show()
-
 
 def plot_spectra(f_comp1_sm, S_comp1_sm,
                  comp1_aliasing, u_mean, height, var_name, mask_name):
@@ -381,7 +389,6 @@ def plot_spectra(f_comp1_sm, S_comp1_sm,
     else:
         plt.savefig('../palm_results/{}/run_{}/spectra/{}_{}_spectra{}.png'.format(papy.globals.run_name, papy.globals.run_number[-3:],
                     papy.globals.run_name, var_name, mask_name), bbox_inches='tight')
-
 
 def plot_contour_crosssection(x, y, var, var_name, o_grid, o_level, vert_gridname, x_grid_name, crosssection):
     """
