@@ -44,7 +44,7 @@ def prepare_plotfolder(run_name,run_number):
     path_spectra = '{}/spectra'.format(path)
     path_lux = '{}/lux'.format(path)
     path_turbint = '{}/turbint'.format(path)    
-    path_palminput = '../current_version/JOBS/{}/INPUT'.format(run_name) 
+    path_palminput = '../palm/current_version/JOBS/{}/INPUT'.format(run_name) 
 
     # initial 
     if os.path.exists('../palm_results/'):
