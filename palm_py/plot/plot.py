@@ -49,26 +49,30 @@ def plot_lux_profile(lux, height_list, var_name):
         papy.globals.run_number = '.000'
 
     h1 = ax.errorbar(lux, height_list, xerr=err, fmt='o', markersize=3,
-                label=r'PALM - $u$')
-    ref1 = ax.plot(Lux_10[1,:],Lux_10[0,:],'k-',linewidth=1,label=r'$z_0=10\ m$ (theory)')
-    ref2 = ax.plot(Lux_1[1,:],Lux_1[0,:],'k--',linewidth=1,label=r'$z_0=1\ m$ (theory)')
-    ref3 = ax.plot(Lux_01[1,:],Lux_01[0,:],'k-.',linewidth=1,label=r'$z_0=0.1\ m$ (theory)')
-    ref4 = ax.plot(Lux_001[1,:],Lux_001[0,:],'k:',linewidth=1,label=r'$z_0=0.01\ m$ (theory)')
-    ref5 = ax.plot(Lux_obs_smooth[1,:],Lux_obs_smooth[0,:],'k+',
-                    linewidth=1,label='observations smooth surface')
-    ref6 = ax.plot(Lux_obs_rough[1,:],Lux_obs_rough[0,:],'kx',linewidth=1,label='observations rough surface')
+                label=r'PALM - $u$', color='darkviolet')
+    ref1 = ax.plot(Lux_10[1,:], Lux_10[0,:], 'k-', 
+            linewidth=1, label=r'$z_0=10\ m$ (theory)')
+    ref2 = ax.plot(Lux_1[1,:], Lux_1[0,:], 'k--', 
+            linewidth=1, label=r'$z_0=1\ m$ (theory)')
+    ref3 = ax.plot(Lux_01[1,:], Lux_01[0,:], 'k-.', 
+            linewidth=1, label=r'$z_0=0.1\ m$ (theory)')
+    ref4 = ax.plot(Lux_001[1,:], Lux_001[0,:], 'k:', 
+            linewidth=1, label=r'$z_0=0.01\ m$ (theory)')
+    ref5 = ax.plot(Lux_obs_smooth[1,:], Lux_obs_smooth[0,:], 'k+',
+            linewidth=1, label='observations smooth surface')
+    ref6 = ax.plot(Lux_obs_rough[1,:], Lux_obs_rough[0,:], 'kx',
+            linewidth=1, label='observations rough surface')
     
     set_limits = True
     if set_limits:
         ax.set_xlim(10,1000)
-        ax.set_ylim(10,1000)
-
+        ax.set_ylim([min(height_list),1000])
 
     ax.set_yscale('log')
     ax.set_xscale('log')
     ax.set_xlabel(r"$L _{ux}$ (m)")
     ax.set_ylabel(r"$z$ (m)" )
-    ax.legend(loc='upper left', fontsize=11)
+    ax.legend(loc='upper left', fontsize=11, numpoints=1)
     ax.grid(True,'both','both')
 
     if papy.globals.testing:
@@ -87,7 +91,7 @@ def plot_timeseries(var, var_unit, var_name, time, time_unit):
 
     plt.style.use('classic')
     fig, ax = plt.subplots()
-    ax.plot(time, var, color='green')
+    ax.plot(time, var, color='darkviolet')
     
 
     ax.set(xlabel=r'$t$ $({})$'.format(time_unit), ylabel=r'{} $({})$'.format(var_name,var_unit), 
@@ -136,7 +140,7 @@ def plot_turbint_profile(turbint, height_list, var_name):
 
     ax.set_xlabel(r"$I _{}$ (-)".format(var_name))
     ax.set_ylabel(r"$z$ (m)" )
-    ax.legend(loc='upper left', fontsize=11)
+    ax.legend(loc='upper left', fontsize=11, numpoints=1)
     ax.grid()
 
     if papy.globals.testing:
@@ -166,8 +170,8 @@ def plot_semilog_u(var, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_ref, ti
         try:
             ax2.plot(var[i,1:-1], z[1:-1], label='PALM', color=next(colors))
             # ax2.plot(u_pw[1:-1], z[1:-1], label='power law', color='red',linestyle='--')
-            ax2.plot(u_pr[1:-1], z[1:-1], label='prandtls law', color='blue',linestyle='--')
-            ax2.errorbar(wt_pr[:],wt_z[:],xerr=xerror[:],label='wind tunnel',fmt='x',color='grey')
+            ax2.plot(u_pr[1:-1], z[1:-1], label='prandtls law', color='darkorange',linestyle='--')
+            ax2.errorbar(wt_pr[:],wt_z[:],xerr=xerror[:],label='wind tunnel',fmt='x',color='cornflowerblue')
         except:
             print('Exception has occurred: StopIteration - plot_semilog-plot_u')
 
@@ -175,7 +179,7 @@ def plot_semilog_u(var, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_ref, ti
 
     plt.style.use('classic')
 
-    ax2.legend(loc='best')
+    ax2.legend(loc='best', numpoints=1)
     ax2.set(xlabel=r'$u/u_{ref}$ $(-)$', ylabel=r'$z$ $({})$'.format(z_unit), 
             title= r'Logarithmic profile of $u/u_{ref}$')
     ax2.grid()
@@ -214,8 +218,8 @@ def plot_ver_profile(var_plt, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_r
     if var_name == 'u':
         try:
             # ax.plot(u_pw[:-1], z[:-1], label='power law', color='red',linestyle='--')
-            ax.plot(u_pr[:-1], z[:-1], label='prandtls law', color='blue',linestyle='--')
-            ax.errorbar(wt_pr[:-1],wt_z[:-1],xerr=xerror[:-1],label='wind tunnel',fmt='x',c='gray')
+            ax.plot(u_pr[:-1], z[:-1], label='prandtls law', color='darkorange',linestyle='--')
+            ax.errorbar(wt_pr[:-1],wt_z[:-1],xerr=xerror[:-1],label='wind tunnel',fmt='x',c='cornflowerblue')
         except:
             print('Exception has occurred: Stop wt-plotting - plot_ver_profile')
 
@@ -250,7 +254,7 @@ def plot_ver_profile(var_plt, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_r
         ax.set_yscale('log', nonposy='clip')
         plt.ylim(min(z),80.)
 
-    ax.legend(loc='best')
+    ax.legend(loc='best', numpoints=1)
     fig.savefig('../palm_results/{}/run_{}/profiles/{}_{}_verpr.png'.format(papy.globals.run_name,papy.globals.run_number[-3:],
                 papy.globals.run_name,var_name), bbox_inches='tight')
     # plt.show()
@@ -381,7 +385,7 @@ def plot_spectra(f_comp1_sm, S_comp1_sm,
 
     ax.set_xlabel(r"$f\cdot z\cdot U^{-1}$")
     ax.set_ylabel(r"$f\cdot S_{ij}\cdot (\sigma_i\sigma_j)^{-1}$")
-    ax.legend(loc='lower left', fontsize=11)
+    ax.legend(loc='lower left', fontsize=11, numpoints=1)
     ax.grid()
 
     if papy.globals.testing:
