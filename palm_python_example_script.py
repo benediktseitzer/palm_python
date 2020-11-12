@@ -131,25 +131,15 @@ papy.prepare_plotfolder(papy.globals.run_name,papy.globals.run_number)
 # Intergral length scale Lux
 if compute_lux:
     nc_file = '{}_masked_M02{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
-
     lux = np.zeros(len(height_list))
-
-    grid_name = 'zu'
-    z, z_unit = papy.read_nc_grid(nc_file_path,nc_file_grid,grid_name)
     var_name = 'u'
-    i = 0 
 
-    for mask_name in mask_name_list: 
+    for i,mask_name in enumerate(mask_name_list): 
         nc_file = '{}_masked_{}{}.nc'.format(papy.globals.run_name,mask_name,papy.globals.run_number)
         height = height_list[i]
-            
-
         time, time_unit = papy.read_nc_var_ms(nc_file_path,nc_file,'time')        
-        var, var_unit = papy.read_nc_var_ms(nc_file_path,nc_file,var_name)
-        
+        var, var_unit = papy.read_nc_var_ms(nc_file_path,nc_file,var_name)        
         lux[i] = papy.calc_lux(np.abs(time[1]-time[0]),var)
-        
-        i = i + 1
         print('\n calculated integral length scale for {}'.format(str(height)))
 
     papy.plot_lux_profile(lux, height_list, var_name)
@@ -245,7 +235,6 @@ if compute_vertprof:
     papy.plot_ver_profile(var, var_unit1, 'fluxes', z, z_unit, wt_pr, wt_z, wt_u_ref, time, time_unit)
     print('plotted total fluxes')
     
-
 ################
 # Copmute spectra
 if compute_spectra:
