@@ -69,7 +69,7 @@ def plot_lux_profile(lux, height_list, var_name):
     ax.set_xlabel(r"$L _{ux}$ (m)")
     ax.set_ylabel(r"$z$ (m)" )
     ax.legend(loc='upper left', fontsize=11)
-    ax.grid()
+    ax.grid(True,'both','both')
 
     if papy.globals.testing:
         fig.savefig('../palm_results/testing/lux/testing_{}_lux.png'.format(var_name), bbox_inches='tight')
