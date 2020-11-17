@@ -65,8 +65,8 @@ def plot_lux_profile(lux, height_list, var_name):
     
     set_limits = True
     if set_limits:
-        ax.set_xlim(10,1000)
-        ax.set_ylim([min(height_list),1000])
+        ax.set_xlim(10.,1000.)
+        ax.set_ylim([4.,1000.])
 
     ax.set_yscale('log')
     ax.set_xscale('log')
@@ -226,11 +226,11 @@ def plot_ver_profile(var_plt, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_r
     if var_name == 'w"u"':
         ax.set(xlabel=r'$\tau _{31}$' + ' $(m^2/s^2)$', 
                 ylabel=r'$z$ $(m)$', title= r'Height profile of $\tau _{31}$')
-        ax.set_yscale('log', nonposy='clip')
+        # ax.set_yscale('log', nonposy='clip')
     elif var_name == 'w*u*':
         ax.set(xlabel=r'$\tau^* _{31}$'+ ' $(m^2/s^2)$', 
                 ylabel=r'$z$ $(m)$', title= r'Height profile of $\tau^* _{31}$')
-        ax.set_yscale('log', nonposy='clip')                
+        # ax.set_yscale('log', nonposy='clip')                
     elif var_name == 'u':
         ax.set(xlabel=r'$u/u_{ref}$'+' $(-)$', 
                 ylabel=r'$z$ $(m)$', title= r'Height profile of $u/u_{ref}$')
@@ -251,7 +251,7 @@ def plot_ver_profile(var_plt, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_r
     else:     
         ax.set(xlabel=r'${}$ $({})$'.format(var_name,var_unit), 
                 ylabel=r'$z$ $({})$'.format(z_unit), title= r'Height profile of ${}$'.format(var_name))
-        ax.set_yscale('log', nonposy='clip')
+        # ax.set_yscale('log', nonposy='clip')
         plt.ylim(min(z),80.)
 
     ax.legend(loc='best', numpoints=1)
