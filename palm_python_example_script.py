@@ -81,7 +81,7 @@ GLOBAL VARIABLES
 ################
 # PALM input files
 papy.globals.run_name = 'BA_BL_UW_001'
-papy.globals.run_number = '.001'
+papy.globals.run_number = '.002'
 nc_file_grid = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
 nc_file_path = '../palm/current_version/JOBS/{}/OUTPUT/'.format(papy.globals.run_name)
 mask_name_list = ['M01', 'M02', 'M03', 'M04', 'M05', 'M06', 'M07', 'M08', 'M09', 
@@ -171,9 +171,8 @@ if compute_turbint:
 
     grid_name = 'zu'
     z, z_unit = papy.read_nc_grid(nc_file_path, nc_file_grid, grid_name)
-    i = 0 
 
-    for mask_name in mask_name_list: 
+    for i,mask_name in enumerate(mask_name_list): 
         nc_file = '{}_masked_{}{}.nc'.format(papy.globals.run_name, mask_name, papy.globals.run_number)
         height = height_list[i]
         
@@ -186,7 +185,6 @@ if compute_turbint:
         Iu[i] = turbint_dat[0]
         Iv[i] = turbint_dat[1]
         Iw[i] = turbint_dat[2]
-        i = i + 1
         print('\n calculated turbulence intensities scale for {}'.format(str(height)))
 
     papy.plot_turbint_profile(Iu, height_list, 'u')
