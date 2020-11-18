@@ -25,11 +25,32 @@ FUNCTIONS
 """
 ################
 
+__all__ = [
+    'calc_spectra',
+    'calc_autocorr',
+    'calc_lux',
+    'calc_turbint',
+    'calc_fluxes'
+]
+
 def calc_spectra(phi,t_eq,height,u_mean):
     """
-    calculate spectra
-    E_uu = discrete energy spectrum (discrete variance spectrum)
-    S_uu = spectral energy density
+    Calculate spectra
+
+    ----------
+    Parameters
+
+    phi: array-like
+    t_eq: array-like
+    height: array-like
+    u_mean: float
+
+    ----------
+    Returns
+
+    freq_sm_sort: array-like
+    S_uu_sort: array-like
+    phi_aliasing: array-like
     """
     # sample frequency 
     freq = np.fft.fftfreq(np.size(phi),t_eq[1]-t_eq[0])
@@ -90,9 +111,20 @@ def calc_spectra(phi,t_eq,height,u_mean):
     return freq_sm_sort, S_uu_sort, phi_aliasing
 
 def calc_autocorr(timeseries, maxlags):
-    """ Full autocorrelation of time series for lags up to maxlags.
-    @parameter timeseries: np.array or list
-    @parameter maxlags: int"""
+    """ 
+    Full autocorrelation of time series for lags up to maxlags.
+    
+    ----------
+    Parameters
+
+    timeseries: array_like
+    maxlags: int
+
+    ----------
+    Returns
+
+    acorr: numpy-array
+    """
 
     timeseries = timeseries[~np.isnan(timeseries)]
     acorr = np.asarray([1. if x == 0 else np.corrcoef(timeseries[x:], 
@@ -100,10 +132,21 @@ def calc_autocorr(timeseries, maxlags):
     return acorr
 
 def calc_lux(dt, u_comp):
-    """ Calculates the integral length scale according to R. Fischer (2011) 
+    """ 
+    Calculates the integral length scale according to R. Fischer (2011) 
     from an equidistant time series of the u component using time step dt.
-    @parameter: t_eq, type = int or float
-    @parameter: u_comp, type = np.array or list """
+    
+    ----------
+    Parameters
+
+    dt: float
+    u_comp: array-like
+
+    ----------
+    Returns
+
+    Lux: float
+    """
 
     if np.size(u_comp) < 5:
         raise Exception('Too few value to estimate Lux!')
@@ -157,7 +200,20 @@ def calc_lux(dt, u_comp):
 
 def calc_turbint(u_comp, v_comp, w_comp):
     """
-    calculate turbulence intensities for u and v-component
+    Calculate turbulence intensities for u and v-component
+
+    ----------
+    Parameters
+
+    u_comp: array-like
+    v_comp: array-like
+    w_comp: array-like
+
+    ----------
+    Returns
+
+    data: numpy-array
+
     """
     
     M = np.mean(np.sqrt(u_comp**2 +v_comp**2))
@@ -174,4 +230,44 @@ def calc_turbint(u_comp, v_comp, w_comp):
     
     return data
 
+def calc_fluxes(u_comp, v_comp, w_comp):
+    """
+    Calculate turbulent fluxes/reynolds stress tensor components
+    using timeseries of all three velocity components
+    
+    ----------
+    Parameters
+    
+    u_comp: array-like
+    v_comp: array-like
+    w_comp: array-like
 
+    ----------
+    Returns
+
+    flux11: float
+    flux22: float
+    flux33: float
+    flux12: float
+    flux13: float
+    flux23: float
+    """
+
+    u_mean = np.mean(u_comp)
+    v_mean = np.mean(v_comp)
+    w_mean = np.mean(w_comp)
+
+    u_prime = u_comp - u_mean
+    v_prime = v_comp - v_mean    
+    w_prime = w_comp - w_mean
+
+    flux11 = np.mean(u_prime * u_prime)
+    u_std = np.std(u_comp)
+
+    flux22 = np.std(v_comp)
+    flux33 = np.std(w_comp)
+    flux12 = np.mean(u_prime * v_prime)
+    flux13 = np.mean(u_prime * w_prime)
+    flux23 = np.mean(v_prime * w_prime)
+    
+    return flux11, flux22, flux33, flux12, flux13, flux23
