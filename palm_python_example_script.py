@@ -81,13 +81,13 @@ GLOBAL VARIABLES
 ################
 # PALM input files
 papy.globals.run_name = 'BA_BL_UW_001'
-papy.globals.run_number = '.002'
+papy.globals.run_number = '.000'
 nc_file_grid = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
 nc_file_path = '../palm/current_version/JOBS/{}/OUTPUT/'.format(papy.globals.run_name)
 mask_name_list = ['M01', 'M02', 'M03', 'M04', 'M05', 'M06', 'M07', 'M08', 'M09', 
                     'M10','M11', 'M12', 'M13', 'M14', 'M15', 'M16', 'M17', 'M18', 'M19', 'M20']
-height_list = [5., 10., 12.5, 15., 17.5, 20., 25., 30., 35., 40., 45., 50., 60.,
-                     70., 80., 90., 100., 110., 120., 130.]
+height_list = [2., 4., 5., 7.5, 10., 15.,  20., 25., 30., 35., 40., 45., 50., 60.,
+                     70., 80., 90., 100., 125., 150.]
 
 # wind tunnel input files
 wt_filename = 'BA_BL_UW_001'
@@ -161,7 +161,7 @@ if compute_timeseries:
         print('\n plotted {} \n'.format(var_name))
 
 ################
-# Copmute turbulence intensities
+# Compute turbulence intensities
 if compute_turbint:
     nc_file = '{}_masked_M02{}.nc'.format(papy.globals.run_name, papy.globals.run_number)
 
@@ -500,4 +500,49 @@ if compute_modelinput:
     plt.xlabel(r'$u$ (m/s)')
     plt.ylabel(r'$z$ (m)')
     plt.legend()
-    plt.show()
+    # plt.show()
+
+
+
+################
+# compute fluxes based on timeseries
+nc_file = '{}_masked_M02{}.nc'.format(papy.globals.run_name, papy.globals.run_number)
+
+flux13 = np.zeros(len(height_list))
+grid_name = 'zu'
+z, z_unit = papy.read_nc_grid(nc_file_path, nc_file_grid, grid_name)
+
+for i,mask_name in enumerate(mask_name_list): 
+    nc_file = '{}_masked_{}{}.nc'.format(papy.globals.run_name, mask_name, papy.globals.run_number)
+    height = height_list[i]
+    
+    var_u, var_unit_u = papy.read_nc_var_ms(nc_file_path, nc_file, 'u')
+    var_v, var_unit_v = papy.read_nc_var_ms(nc_file_path, nc_file, 'v')
+    var_w, var_unit_w = papy.read_nc_var_ms(nc_file_path, nc_file, 'w')
+
+    flux11, flux22, flux33, flux12, flux13[i], flux23 = papy.calc_fluxes(var_u, var_v, var_w)
+
+# read variables for plot
+time, time_unit = papy.read_nc_time(nc_file_path,nc_file)
+
+nc_file = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
+grid_name = 'zw*u*'
+var1, var_max1, var_unit1 = papy.read_nc_var_ver_pr(nc_file_path, nc_file, 'w*u*')
+var2, var_max2, var_unit2 = papy.read_nc_var_ver_pr(nc_file_path, nc_file, 'w"u"')
+var = var1 + var2
+z, z_unit = papy.read_nc_grid(nc_file_path,nc_file,grid_name)
+
+# plot
+fig, ax = plt.subplots()
+plt.style.use('classic')
+ax.plot(var[5,:-1], z[:-1], label='PALM', color='darkviolet')
+
+ax.errorbar(flux13, height_list, xerr=0.05*flux13, fmt='o', label= 'self')
+ax.set(xlabel=r'$\tau_{ges}$' + ' $(m^2/s^2)$', 
+        ylabel=r'$z$  (m)'.format(z_unit))
+ax.set_yscale('log', nonposy='clip')
+plt.ylim(min(z),300.)
+plt.legend()
+plt.grid()
+# plt.show()
+print('plotted total fluxes')
