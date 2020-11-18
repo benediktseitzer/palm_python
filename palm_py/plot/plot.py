@@ -420,7 +420,7 @@ def plot_contour_crosssection(x, y, var, var_name, o_grid, o_level, vert_gridnam
                     vmin=-v_bound, vmax=v_bound, origin='lower')
 
     # labeling 
-    fig.colorbar(im, label=r'${}$ [m/s]'.format(var_name),orientation="horizontal")
+    fig.colorbar(im, label=r'${}$ (m/s)'.format(var_name),orientation="horizontal")
     ax.set(xlabel=r'${}$ (m)'.format(x_grid_name), 
             ylabel=r'${}$ (m)'.format(vert_gridname))
 
