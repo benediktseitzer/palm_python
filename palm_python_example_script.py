@@ -81,7 +81,7 @@ GLOBAL VARIABLES
 ################
 # PALM input files
 papy.globals.run_name = 'BA_BL_UW_001'
-papy.globals.run_number = '.000'
+papy.globals.run_number = '.003'
 nc_file_grid = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
 nc_file_path = '../palm/current_version/JOBS/{}/OUTPUT/'.format(papy.globals.run_name)
 mask_name_list = ['M01', 'M02', 'M03', 'M04', 'M05', 'M06', 'M07', 'M08', 'M09', 
@@ -110,12 +110,12 @@ mode_list = ['testing', 'heights', 'compare', 'filtercheck']
 mode = mode_list[1]
 
 # Steeringflags
-compute_lux = True
+compute_lux = False
 compute_timeseries = True
-compute_turbint = True
+compute_turbint = False
 compute_vertprof = True
-compute_spectra = True
-compute_crosssections = True
+compute_spectra = False
+compute_crosssections = False
 compute_modelinput = False
 
 ################
@@ -208,21 +208,27 @@ if compute_vertprof:
 
     # call plot-functions
     var_name_list = ['w*u*', 'w"u"', 'e', 'e*', 'u*2', 'u']
-    for var_name in var_name_list:
+    for i,var_name in enumerate(var_name_list):
         if var_name == 'u':
             grid_name = 'z{}'.format(var_name)
             var, var_max, var_unit = papy.read_nc_var_ver_pr(nc_file_path,nc_file,var_name)
             print('\n       u_max = {} \n'.format(var_max))
             z, z_unit = papy.read_nc_grid(nc_file_path,nc_file,grid_name)
             print('\n       wt_u_ref = {} \n'.format(wt_u_ref))
+            plt.figure(i)
             papy.plot_ver_profile(var, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_ref, time, time_unit)
+            plt.close(i)
+            plt.figure(i+3)
             papy.plot_semilog_u(var, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_ref, time, time_unit)
+            plt.close(i+3)
             print('\n --> plottet {} \n'.format(var_name))
         else:
             grid_name = 'z{}'.format(var_name)
             var, var_max, var_unit = papy.read_nc_var_ver_pr(nc_file_path,nc_file,var_name)
             z, z_unit = papy.read_nc_grid(nc_file_path,nc_file,grid_name)
+            plt.figure(i)
             papy.plot_ver_profile(var, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_ref, time, time_unit)
+            plt.close(i)
             print('\n --> plottet {} \n'.format(var_name))
 
     grid_name = 'zw*u*'
@@ -230,7 +236,9 @@ if compute_vertprof:
     var2, var_max2, var_unit2 = papy.read_nc_var_ver_pr(nc_file_path, nc_file, 'w"u"')
     var = var1 + var2
     z, z_unit = papy.read_nc_grid(nc_file_path,nc_file,grid_name)
+    plt.figure(7)
     papy.plot_ver_profile(var, var_unit1, 'fluxes', z, z_unit, wt_pr, wt_z, wt_u_ref, time, time_unit)
+    plt.close(7)
     print('plotted total fluxes')
     
 ################
@@ -469,8 +477,9 @@ if compute_crosssections:
         vert_gridname = 'z'
         cut_gridname = y_grid_name
         var, var_unit = papy.read_nc_var_ver_3d(nc_file_path,nc_file,var_name, y_level, time_show)
+        plt.figure(8)
         papy.plot_contour_crosssection(x_grid, z_grid, var, var_name, y_grid, y_level, vert_gridname, cut_gridname, crosssection)
-        
+        plt.close(8)
         # elif crosssection == 'xy':
         crosssection = 'xy'
         z_level = int(len(z_grid)/6)
@@ -478,8 +487,9 @@ if compute_crosssections:
         cut_gridname = 'z'
         print('     z={}    level={}'.format(round(z_grid[z_level],2), z_level))
         var, var_unit = papy.read_nc_var_hor_3d(nc_file_path,nc_file,var_name, z_level, time_show)
+        plt.figure(9)
         papy.plot_contour_crosssection(x_grid, y_grid, var, var_name, z_grid, z_level, vert_gridname, cut_gridname, crosssection)
-
+        plt.close(9)
 ################
 # compute model input data
 if compute_modelinput:
@@ -508,6 +518,7 @@ if compute_modelinput:
 # compute fluxes based on timeseries
 nc_file = '{}_masked_M02{}.nc'.format(papy.globals.run_name, papy.globals.run_number)
 
+palm_wtref = 5.51057969
 flux13 = np.zeros(len(height_list))
 grid_name = 'zu'
 z, z_unit = papy.read_nc_grid(nc_file_path, nc_file_grid, grid_name)
@@ -532,17 +543,24 @@ var2, var_max2, var_unit2 = papy.read_nc_var_ver_pr(nc_file_path, nc_file, 'w"u"
 var = var1 + var2
 z, z_unit = papy.read_nc_grid(nc_file_path,nc_file,grid_name)
 
+flux13 = flux13/palm_wtref**2.
+var = var/palm_wtref**2.
+var1 = var1/palm_wtref**2.
+var2 = var2/palm_wtref**2.
 # plot
+plt.figure(12)
 fig, ax = plt.subplots()
 plt.style.use('classic')
-ax.plot(var[5,:-1], z[:-1], label='PALM', color='darkviolet')
-
-ax.errorbar(flux13, height_list, xerr=0.05*flux13, fmt='o', label= 'self')
+ax.plot(var[5,:-1], z[:-1], label='PALM - total', color='darkviolet')
+ax.plot(var1[5,:-1], z[:-1], label='PALM - $>\Delta$', color='plum')
+ax.plot(var2[5,:-1], z[:-1], label='PALM - $<\Delta$', color='magenta')
+ax.errorbar(flux13, height_list, xerr=0.05*flux13, fmt='o', color='darkviolet', label= 'PALM single')
 ax.set(xlabel=r'$\tau_{ges}$' + ' $(m^2/s^2)$', 
         ylabel=r'$z$  (m)'.format(z_unit))
 ax.set_yscale('log', nonposy='clip')
-plt.ylim(min(z),300.)
-plt.legend()
-plt.grid()
-# plt.show()
+plt.ylim(1.,300.)
+plt.legend(loc='best', numpoints=1)
+plt.grid(True, 'both', 'both')
+plt.show()
+plt.close(12)
 print('plotted total fluxes')
