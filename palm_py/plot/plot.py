@@ -30,6 +30,16 @@ FUNCTIONS
 """
 ################
 
+__all__ = [
+    'plot_lux_profile',
+    'plot_timeseries',
+    'plot_turbint_profile',
+    'plot_semilog_u',
+    'plot_ver_profile',
+    'plot_spectra',
+    'plot_contour_crosssection'
+]
+
 
 def plot_lux_profile(lux, height_list, var_name):
     """
@@ -103,7 +113,6 @@ def plot_timeseries(var, var_unit, var_name, time, time_unit):
     plt.xlim(min(time),max(time))
     fig.savefig('../palm_results/{}/run_{}/timeseries/{}_{}_ts.png'.format(papy.globals.run_name,papy.globals.run_number[-3:],
                 papy.globals.run_name,var_name), bbox_inches='tight')
-    # plt.show()
 
 def plot_turbint_profile(turbint, height_list, var_name):
     """
@@ -427,5 +436,3 @@ def plot_contour_crosssection(x, y, var, var_name, o_grid, o_level, vert_gridnam
     # file output
     fig.savefig('../palm_results/{}/run_{}/crosssections/{}_{}_cs_{}_{}.png'.format(papy.globals.run_name,papy.globals.run_number[-3:],
                 papy.globals.run_name,var_name,str(round(o_grid[o_level],2)),crosssection), bbox_inches='tight')
-    # plt.show()
-    plt.close()
