@@ -2,4 +2,3 @@
 *.pyc
 # ignore own scripts
 own*
-example*
