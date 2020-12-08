@@ -15,9 +15,6 @@ IMPORTS
 
 import os
 import numpy as np
-import math as m
-import netCDF4
-import pandas as pd
 
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FormatStrFormatter
@@ -227,8 +224,10 @@ def plot_ver_profile(var_plt, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_r
     if var_name == 'u':
         try:
             # ax.plot(u_pw[:-1], z[:-1], label='power law', color='red',linestyle='--')
-            ax.plot(u_pr[:-1], z[:-1], label='prandtls law', color='darkorange',linestyle='--')
-            ax.errorbar(wt_pr[:-1],wt_z[:-1],xerr=xerror[:-1],label='wind tunnel',fmt='x',c='cornflowerblue')
+            ax.plot(u_pr[:-1], z[:-1], label='prandtls law', 
+                    color='darkorange', linestyle='--')
+            ax.errorbar(wt_pr[:-1], wt_z[:-1], xerr=xerror[:-1], 
+                    label='wind tunnel', fmt='x', c='cornflowerblue')
         except:
             print('Exception has occurred: Stop wt-plotting - plot_ver_profile')
 
@@ -415,7 +414,7 @@ def plot_contour_crosssection(x, y, var, var_name, o_grid, o_level, vert_gridnam
     fig, ax = plt.subplots()
 
     # estimate bounds of colorbar
-    if abs(np.min(var)) > abs(np.max(var)):
+    if abs(np.min(var)) >= abs(np.max(var)):
         v_bound = np.min(var)
     elif abs(np.min(var)) < abs(np.max(var)):
         v_bound = np.max(var)
