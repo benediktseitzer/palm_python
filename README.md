@@ -1,5 +1,5 @@
 # palm_python
-Read and process model output of the PALM model (https://palm.muk.uni-hannover.de/trac)
+Read and process model output of the PALM model
 
 ## scripts
 Located in the palm_python/ root directory, there is an example-script which calls functions located in the palm_py-module and do some useful tasks as:
