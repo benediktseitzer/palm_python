@@ -11,10 +11,8 @@ purpose: read netCDF-files
 IMPORTS
 """
 ################
-import os
 
 import numpy as np
-import pandas as pd
 import netCDF4
 
 ################
@@ -23,16 +21,35 @@ FUNCTIONS
 """
 ################
 
+__all__ = [
+    'read_nc_var_hor_3d',
+    'read_nc_var_ver_3d',
+    'read_nc_var_hor_pr',
+    'read_nc_var_ver_pr',
+    'read_nc_var_ts',
+    'read_nc_var_av_3d',
+    'read_nc_grid',
+    'read_nc_time',
+    'read_nc_var_ms'
+]
+
 # netCDF-readers
-def read_nc_var_hor_3d(nc_file_path,nc_file,var_name,z_level,time_val):
+def read_nc_var_hor_3d(nc_file_path, nc_file, var_name, z_level, time_val):
     """
     read xy-plane of predefined variable 
-    var_name = variable identifier
-    z_level = height of crosssection
-    time_val = timestamp of read data
 
-    var = crosssection of var_name
-    var_unit = units of var
+    ----------
+    Parameters:
+    nc_file_path: str
+    nc_file: str
+    var_name: str
+    z_level : int
+    time_val: float
+
+    ----------
+    Returns:
+    var: array-like
+    var_unit: str
     """
     fh = netCDF4.Dataset('{}{}'.format(nc_file_path,nc_file), mode='r')
 
@@ -42,16 +59,22 @@ def read_nc_var_hor_3d(nc_file_path,nc_file,var_name,z_level,time_val):
 
     return var, var_unit
 
-
-def read_nc_var_ver_3d(nc_file_path,nc_file,var_name,y_level,time_val):
+def read_nc_var_ver_3d(nc_file_path, nc_file, var_name, y_level, time_val):
     """
     read xz-plane of predefined variable 
-    var_name = variable identifier
-    z_level = height of crosssection
-    time_val = timestamp of read data
 
-    var = crosssection of var_name
-    var_unit = units of var    
+    ----------
+    Parameters:
+    nc_file_path: str
+    nc_file: str
+    var_name: str
+    y_level : int
+    time_val: float
+
+    ----------
+    Returns:
+    var: array-like
+    var_unit: str
     """
     fh = netCDF4.Dataset('{}{}'.format(nc_file_path,nc_file), mode='r')
 
@@ -61,18 +84,24 @@ def read_nc_var_ver_3d(nc_file_path,nc_file,var_name,y_level,time_val):
 
     return var, var_unit
 
-
-def read_nc_var_hor_pr(nc_file_path,nc_file,var_name,z_level,x_level,time_val):
+def read_nc_var_hor_pr(nc_file_path, nc_file, var_name, z_level, x_level, time_val):
     """
     read xy-plane of predefined variable 
-    var_name = variable identifier
-    z_level = height of profile
-    x_level = x-position of profile
-    time_val = timestamp of read data    
-    
-    var = horizontally averaged values
-    var_max = maximum value
-    var_unit = units of var
+
+    ----------
+    Parameters:
+    nc_file_path: str
+    nc_file: str
+    var_name: str
+    z_level : int
+    x_level : int
+    time_val: float
+
+    ----------
+    Returns:
+    var: array-like
+    var_max: float
+    var_unit: str
     """
     fh = netCDF4.Dataset('{}{}'.format(nc_file_path,nc_file), mode='r')
 
@@ -83,14 +112,21 @@ def read_nc_var_hor_pr(nc_file_path,nc_file,var_name,z_level,x_level,time_val):
 
     return var, var_max, var_unit
 
-
-def read_nc_var_ver_pr(nc_file_path,nc_file,var_name):
+def read_nc_var_ver_pr(nc_file_path, nc_file, var_name):
     """
-    read palm horizontally averaged vertical profiles
-    var_name = variable identifier
-    var = horizontally averaged values
-    var_max = maximum value
-    var_unit = units of var
+    Read palm horizontally averaged vertical profiles.
+
+    ----------
+    Parameters:
+    nc_file_path: str
+    nc_file: str
+    var_name: str
+
+    ----------
+    Returns:
+    var: array-like
+    var_max: float
+    var_unit: str
     """
 
     fh = netCDF4.Dataset('{}{}'.format(nc_file_path,nc_file), mode='r')
@@ -102,13 +138,20 @@ def read_nc_var_ver_pr(nc_file_path,nc_file,var_name):
 
     return var, var_max, var_unit
 
-
-def read_nc_var_ts(nc_file_path,nc_file,var_name):
+def read_nc_var_ts(nc_file_path, nc_file, var_name):
     """
-    read palm timeseries 
-    var_name = variable identifier
-    var = timeseries of var_name
-    var_unit = units of var
+    Read palm timeseries.
+
+    ----------
+    Parameters:
+    nc_file_path: str
+    nc_file: str
+    var_name: str
+
+    ----------
+    Returns:
+    var: array-like
+    var_unit: str
     """
 
     try:
@@ -125,13 +168,19 @@ def read_nc_var_ts(nc_file_path,nc_file,var_name):
     except:
         print('\n Exception occured: no variable called {} in {} \n'.format(var_name,nc_file))
         
-
-def read_nc_var_av_3d(var_name,z_level):
+def read_nc_var_av_3d(var_name, z_level):
     """
     read horizontal slice of variable at certain height
 
-    var_name = predefined variable 
-    z_level = index of height-gridpoint.
+    ----------
+    Parameters:
+    var_name: str
+    z_level : int
+
+    ----------
+    Returns:
+    var: array-like
+    var_unit: str
     """
     try:
         fh = netCDF4.Dataset('{}{}'.format(nc_file_path,nc_file), mode='r')
@@ -147,15 +196,20 @@ def read_nc_var_av_3d(var_name,z_level):
     except: 
         print('\n Exception occured: no variable called {} in {} \n'.format(var_name,nc_file))
         
-
-
-def read_nc_grid(nc_file_path,nc_file,grid_name):
+def read_nc_grid(nc_file_path, nc_file, grid_name):
     """
-    read grid belonging to variable
-    grid_name = coordinate-name
-
-    grid = grid-values
-    grid_unit = unit of the grid
+    read grid belonging to variable.
+    
+    ----------
+    Parameters:
+    nc_file_path: str
+    nc_file: str
+    grid_name: str
+    
+    ----------
+    Returns:
+    grid: array-like
+    grid_unit: str
     """    
     try:
         fh = netCDF4.Dataset('{}{}'.format(nc_file_path,nc_file), mode='r')
@@ -170,13 +224,19 @@ def read_nc_grid(nc_file_path,nc_file,grid_name):
     except:
         print('\n Exception occured: no variable called {} in {} \n'.format(grid_name,nc_file))
 
-
-def read_nc_time(nc_file_path,nc_file):
+def read_nc_time(nc_file_path, nc_file):
     """
-    read times vector
+    Read times vector.
 
-    time = time-value
-    time_unit = unit of time 
+    ----------
+    Parameters:
+    nc_file_path: str
+    nc_file: str
+    
+    ----------
+    Returns:
+    time: array-like
+    time_unit: str
     """
     try:
         fh = netCDF4.Dataset('{}{}'.format(nc_file_path,nc_file), mode='r')
@@ -190,13 +250,20 @@ def read_nc_time(nc_file_path,nc_file):
 
     return time, time_unit
 
-
 def read_nc_var_ms(nc_file_path,nc_file,var_name):
     """
-    read palm timeseries  from masked data
-    var_name = variable identifier
-    var = timeseries of var_name
-    var_unit = units of var
+    Read palm timeseries from masked data.
+
+    ----------
+    Parameters:
+    nc_file_path: str
+    nc_file: str
+    var_name: str
+    
+    ----------
+    Returns:
+    var: array-like
+    var_unit: str
     """
 
     try:

@@ -13,7 +13,6 @@ IMPORTS
 """
 ################
 
-import os
 import numpy as np
 
 import matplotlib.pyplot as plt
@@ -36,7 +35,6 @@ __all__ = [
     'plot_spectra',
     'plot_contour_crosssection'
 ]
-
 
 def plot_lux_profile(lux, height_list):
     """

@@ -11,10 +11,8 @@ purpose: read netCDF-files
 IMPORTS
 """
 ################
-import os
 
 import numpy as np
-import pandas as pd
 
 import palm_py as papy
 
@@ -23,6 +21,10 @@ import palm_py as papy
 FUNCTIONS
 """
 ################
+
+__all__ = [
+    'calc_input_profile'
+]
 
 def calc_input_profile(m_u, m_z, z):
     """

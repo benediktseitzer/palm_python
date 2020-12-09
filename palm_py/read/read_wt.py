@@ -11,7 +11,6 @@ purpose: read windtunnel data
 IMPORTS
 """
 ################
-import os
 
 import numpy as np
 import pandas as pd
@@ -21,6 +20,11 @@ import pandas as pd
 FUNCTIONS
 """
 ################
+
+__all__ = [
+    'read_wt_ts',
+    'read_wt_ver_pr'
+]
 
 def read_wt_ts(wt_file):
     """
@@ -41,10 +45,25 @@ def read_wt_ts(wt_file):
 
     return u, v, t
 
-
-
 def read_wt_ver_pr(wt_file, wt_ref_file, scale):
-    """ Create Timeseries object from file."""
+    """ 
+    Create Timeseries object from file.
+    
+    ----------
+    Parameters:
+    
+    wt_file: str
+    wt_ref_file: str
+    scale: float
+
+    ----------
+    Returns:
+
+    u: array-like
+    u_ref: array-like
+    z: array-like
+
+    """
 
     z, u = np.genfromtxt(wt_file, usecols=(3, 8),
                         skip_header=6, unpack=True)

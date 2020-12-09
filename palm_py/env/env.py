@@ -19,10 +19,20 @@ FUNCTIONS
 """
 ################
 
+__all__ = [
+    'prepare_plotfolder'
+]
+
 # os-file-system operations
 def prepare_plotfolder(run_name,run_number):
     """
     check if outputfolder for plots is there. If not, create and prepare it 
+
+    -----------
+    Parameters
+    run_name: str
+    run_number: str
+
     """
 
     if run_number == '':

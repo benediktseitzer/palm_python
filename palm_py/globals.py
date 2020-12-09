@@ -7,9 +7,6 @@ purpose: set global variables and defaults
 """
 ################
 
-import numpy as np
-import pandas as pd
-
 import palm_py as papy
 
 class globals():
