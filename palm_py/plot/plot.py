@@ -38,10 +38,16 @@ __all__ = [
 ]
 
 
-def plot_lux_profile(lux, height_list, var_name):
+def plot_lux_profile(lux, height_list):
     """
     Plot Lux-profiles.
-    @parameter ax: axis passed to function
+
+    ----------
+    Parameters:
+
+    lux: array-like
+    height_list: array-like
+
     """
 
     ref_path = None
@@ -83,14 +89,24 @@ def plot_lux_profile(lux, height_list, var_name):
     ax.grid(True,'both','both')
 
     if papy.globals.testing:
-        fig.savefig('../palm_results/testing/lux/testing_{}_lux.png'.format(var_name), bbox_inches='tight')
+        fig.savefig('../palm_results/testing/lux/testing_lux.png', bbox_inches='tight')
     else:
-        plt.savefig('../palm_results/{}/run_{}/lux/{}_{}_lux.png'.format(papy.globals.run_name,papy.globals.run_number[-3:],
-                    papy.globals.run_name,var_name), bbox_inches='tight')
+        plt.savefig('../palm_results/{}/run_{}/lux/{}_lux.png'.format(papy.globals.run_name,papy.globals.run_number[-3:],
+                    papy.globals.run_name), bbox_inches='tight')
 
 def plot_timeseries(var, var_unit, var_name, time, time_unit):
     """
-    plot height profile for all available times
+    Plot the height profile for all available times.
+
+    ----------
+    Parameters:
+
+    var: array-like
+    var_unit: str
+    var_name: str
+    time: array-like
+    time_unit: str
+    
     """    
 
     if papy.globals.run_number == '':
@@ -114,7 +130,14 @@ def plot_timeseries(var, var_unit, var_name, time, time_unit):
 def plot_turbint_profile(turbint, height_list, var_name):
     """
     Plot turbulence intensities Iu or Iv.
-    @parameter ax: axis passed to function
+
+    ----------
+    Parameters:
+
+    turbint: array-like
+    height_list: array-like 
+    var_name: str
+    
     """
 
     ref_path = None
@@ -156,9 +179,21 @@ def plot_turbint_profile(turbint, height_list, var_name):
         plt.savefig('../palm_results/{}/run_{}/turbint/{}_{}_turbint.png'.format(papy.globals.run_name,
                     papy.globals.run_number[-3:], papy.globals.run_name, var_name), bbox_inches='tight')
 
-def plot_semilog_u(var, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_ref, time, time_unit):
+def plot_semilog_u(var, var_name, z, z_unit, wt_pr, wt_z, wt_u_ref, time):
     """
-    semilog-plot u-profile for all available times
+    Semilog-plot u-profile for all available times.
+
+    ----------
+    Parameters:
+
+    var: array-like
+    var_name: str
+    z: array-like
+    z_unit: str
+    wt_pr: array-like
+    wt_z: array-like
+    wt_u_ref: float
+    time: array-like
     """    
 
     # calculate theoretical wind profile
@@ -195,9 +230,23 @@ def plot_semilog_u(var, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_ref, ti
                     papy.globals.run_name,var_name), bbox_inches='tight')
     # plt.show()
 
-def plot_ver_profile(var_plt, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_ref, time, time_unit):
+def plot_ver_profile(var_plt, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_ref, time):
     """
     plot height profile for all available times
+
+    ----------
+    Parameters:
+
+    var_plt: array-like
+    var_unit: str
+    var_name: str
+    z: array-like
+    z_unit: str
+    wt_pr: array-like
+    wt_z: array-like
+    wt_u_ref: float
+    time: array-like
+
     """    
 
     # calculate theoretical wind profile
@@ -271,6 +320,18 @@ def plot_spectra(f_comp1_sm, S_comp1_sm,
                  comp1_aliasing, u_mean, height, var_name, mask_name):
     """
     Plots spectra using INPUT with reference data.
+
+    -----------
+    Parameters:
+
+    f_comp1_sm: array-like
+    S_comp1_sm: array-like
+    comp1_aliasing: array-like
+    u_mean: float
+    height: float
+    var_name: str
+    mask_name: str
+
     """
 
     # reference spectra
@@ -404,7 +465,20 @@ def plot_spectra(f_comp1_sm, S_comp1_sm,
 
 def plot_contour_crosssection(x, y, var, var_name, o_grid, o_level, vert_gridname, x_grid_name, crosssection):
     """
-    plot cross sections
+    Plot cross sections of all three velocity components.
+
+    -----------
+    Parameters:
+    
+    x: array-like 
+    y: array-like 
+    var: array-like 
+    var_name: str 
+    o_grid: array-like
+    o_level: integer
+    vert_gridname: str
+    x_grid_name: str
+    crosssection: str
     """    
 
     if papy.globals.run_number == '':
