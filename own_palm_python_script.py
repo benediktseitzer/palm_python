@@ -155,7 +155,7 @@ if compute_lux:
         lux[i] = papy.calc_lux(np.abs(time[1]-time[0]),var)
         print('\n calculated integral length scale for {}'.format(str(height)))
 
-    papy.plot_lux_profile(lux, height_list, var_name)
+    papy.plot_lux_profile(lux, height_list)
     print('\n plotted integral length scale profiles')
 
 ################
@@ -229,10 +229,10 @@ if compute_vertprof:
             z, z_unit = papy.read_nc_grid(nc_file_path,nc_file,grid_name)
             print('\n       wt_u_ref = {} \n'.format(wt_u_ref))
             plt.figure(i)
-            papy.plot_ver_profile(var, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_ref, time, time_unit)
+            papy.plot_ver_profile(var, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_ref, time)
             plt.close(i)
             plt.figure(i+3)
-            papy.plot_semilog_u(var, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_ref, time, time_unit)
+            papy.plot_semilog_u(var, var_name, z, z_unit, wt_pr, wt_z, wt_u_ref, time)
             plt.close(i+3)
             print('\n --> plottet {} \n'.format(var_name))
         else:
@@ -240,7 +240,7 @@ if compute_vertprof:
             var, var_max, var_unit = papy.read_nc_var_ver_pr(nc_file_path,nc_file,var_name)
             z, z_unit = papy.read_nc_grid(nc_file_path,nc_file,grid_name)
             plt.figure(i)
-            papy.plot_ver_profile(var, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_ref, time, time_unit)
+            papy.plot_ver_profile(var, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_ref, time)
             plt.close(i)
             print('\n --> plottet {} \n'.format(var_name))
 
@@ -250,7 +250,7 @@ if compute_vertprof:
     var = var1 + var2
     z, z_unit = papy.read_nc_grid(nc_file_path,nc_file,grid_name)
     plt.figure(7)
-    papy.plot_ver_profile(var, var_unit1, 'fluxes', z, z_unit, wt_pr, wt_z, wt_u_ref, time, time_unit)
+    papy.plot_ver_profile(var, var_unit1, 'fluxes', z, z_unit, wt_pr, wt_z, wt_u_ref, time)
     plt.close(7)
     print('plotted total fluxes')
     
