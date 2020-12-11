@@ -48,7 +48,7 @@ def calc_input_profile(m_u, m_z, z):
     u_prandtl = u_fric/papy.globals.ka * np.log((z[1:]-papy.globals.d0)/papy.globals.z0)
     # no-slip bc:
     u_prandtl = np.insert(u_prandtl,0,0.)
-    print('     z0 = {}'.format(papy.globals.z0))
-    print('     u* = {}'.format(u_fric))
+    print('     z0 = {} m'.format(papy.globals.z0))
+    print('     u* = {} with reference height at {} m \n'.format(u_fric,m_z[ident]))
 
     return u_prandtl, u_fric
