@@ -80,7 +80,7 @@ GLOBAL VARIABLES
 ################
 # PALM input files
 papy.globals.run_name = 'BA_BL_UW_001'
-papy.globals.run_number = '.017'
+papy.globals.run_number = '.019'
 nc_file_grid = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
 nc_file_path = '../palm/current_version/JOBS/{}/OUTPUT/'.format(papy.globals.run_name)
 mask_name_list = ['M01', 'M02', 'M03', 'M04', 'M05', 'M06', 'M07', 'M08', 'M09', 
@@ -97,7 +97,7 @@ wt_file_ref = '{}/wtref/{}_wtref.txt'.format(wt_path, wt_filename)
 wt_scale = 100.
 
 # PHYSICS
-papy.globals.z0 = 0.04
+papy.globals.z0 = 0.02
 # papy.globals.z0 = 0.021
 papy.globals.alpha = 0.17
 papy.globals.ka = 0.41
