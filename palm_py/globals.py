@@ -31,3 +31,4 @@ class globals():
         # environmental parameters
         self.run_name = None
         self.run_number = None
+        self.run_numbers = None
