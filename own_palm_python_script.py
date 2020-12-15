@@ -622,7 +622,7 @@ if compute_simrange:
                 palm_data[run][var_name] = var                
         print('     End processing palm-run #{}'.format(run[-3:]))
 
-    print(' Start plotting of palm-runs')
+    print(' Start plotting of palm-runs of {}'.format(papy.globals.run_name))
     for i,var_name in enumerate(var_name_list):
         plt.style.use('classic')
         fig, ax = plt.subplots()
@@ -642,4 +642,4 @@ if compute_simrange:
                     palm_data[papy.globals.run_numbers[1]][var_name][i,:-1], color ='thistle')
         plt.legend(numpoints=1)
         plt.show()
-    print(' End plotting of palm-runs')
+    print(' End plotting of palm-runs of {}'.format(papy.globals.run_name))
