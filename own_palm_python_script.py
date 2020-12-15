@@ -72,7 +72,6 @@ def testing_spec():
         print('\n plotted timeseries for {} \n'.format(var_name))
         print('\n test-case: {} done \n'.format(test_case))   
 
-
 ################
 """
 GLOBAL VARIABLES
@@ -81,6 +80,7 @@ GLOBAL VARIABLES
 # PALM input files
 papy.globals.run_name = 'BA_BL_UW_001'
 papy.globals.run_number = '.019'
+papy.globals.run_numbers = ['.014', '.019']
 nc_file_grid = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
 nc_file_path = '../palm/current_version/JOBS/{}/OUTPUT/'.format(papy.globals.run_name)
 mask_name_list = ['M01', 'M02', 'M03', 'M04', 'M05', 'M06', 'M07', 'M08', 'M09', 
@@ -110,14 +110,16 @@ mode_list = ['testing', 'heights', 'compare', 'filtercheck']
 mode = mode_list[1]
 
 # Steeringflags
-compute_lux = True
-compute_timeseries = True
-compute_turbint = True
-compute_vertprof = True
-compute_spectra = True
-compute_crosssections = True
+compute_lux = False
+compute_timeseries = False
+compute_turbint = False
+compute_vertprof = False
+compute_spectra = False
+compute_crosssections = False
 compute_pure_fluxes = False
 compute_modelinput = False
+
+compute_simrange = True
 
 # compute_lux = False
 # compute_timeseries = False
@@ -501,6 +503,7 @@ if compute_crosssections:
         plt.figure(9)
         papy.plot_contour_crosssection(x_grid, y_grid, var, var_name, z_grid, z_level, vert_gridname, cut_gridname, crosssection)
         plt.close(9)
+
 ################
 # compute model input data
 if compute_modelinput:
@@ -578,3 +581,68 @@ if compute_pure_fluxes:
     plt.show()
     plt.close(12)
     print('plotted total fluxes')
+
+
+################
+# compare simulations
+if compute_simrange:
+
+    palm_data = {}
+    palm_data.fromkeys(papy.globals.run_numbers)
+    var_name_list = ['flux', 'u']
+    #read palm-data and init 
+    for run in papy.globals.run_numbers:
+        print('     Start processing palm-run #{}'.format(run[-3:]))
+        papy.globals.run_number = run
+        palm_data[papy.globals.run_number] = {}
+        palm_data[papy.globals.run_number].fromkeys(var_name_list)
+        nc_file = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)        
+        
+        # read variables for plot
+        time, time_unit = papy.read_nc_time(nc_file_path,nc_file)
+        # read wind tunnel profile
+        wt_pr, wt_u_ref, wt_z = papy.read_wt_ver_pr(wt_file_pr, wt_file_ref ,wt_scale)        
+        
+        for i,var_name in enumerate(var_name_list):
+            if var_name == 'u':
+                grid_name = 'z{}'.format(var_name)        
+                var, var_max, var_unit = papy.read_nc_var_ver_pr(nc_file_path,nc_file,var_name)
+                z, z_unit = papy.read_nc_grid(nc_file_path,nc_file,grid_name)
+                palm_data[run][var_name] = var
+            elif var_name == 'flux':
+                grid_name = 'zw*u*'
+                var1, var_max1, var_unit1 = papy.read_nc_var_ver_pr(nc_file_path, nc_file, 'w*u*')
+                var2, var_max2, var_unit2 = papy.read_nc_var_ver_pr(nc_file_path, nc_file, 'w"u"')
+                var = var1 + var2
+                palm_data[run][var_name] = var
+            else:
+                grid_name = 'z{}'.format(var_name)        
+                var, var_max, var_unit = papy.read_nc_var_ver_pr(nc_file_path,nc_file,var_name)
+                z, z_unit = papy.read_nc_grid(nc_file_path,nc_file,grid_name)
+                palm_data[run][var_name] = var                
+        print('     End processing palm-run #{}'.format(run[-3:]))
+
+
+    print(' Start plotting of palm-runs')
+    for i,var_name in enumerate(var_name_list):
+        plt.figure(i)
+        plt.style.use('classic')
+        fig, ax = plt.subplots()
+        ax.grid(True, 'both', 'both')
+        plt.ylim(1.,max(z[:-1]))
+        ax.set_yscale('log', nonposy='clip')
+        ax.set(xlabel= var_name, 
+                ylabel=r'$z$ (m)'.format(z_unit), title= r'Height profile of ${}$'.format(var_name))
+        for i in range(len(time)-1,len(time)):
+            try:
+                for run in papy.globals.run_numbers:
+                    ax.plot(palm_data[run][var_name][i,:-1], z[:-1], 
+                            label='PALM - {}'.format(run[-3:]))
+            except:
+                print('Exception has occurred: StopIteration - plot_ver_profile')
+            ax.fill_betweenx(z[:-1], palm_data[papy.globals.run_numbers[0]][var_name][i,:-1], 
+                    palm_data[papy.globals.run_numbers[1]][var_name][i,:-1], color ='thistle')
+        plt.legend(numpoints=1)
+        plt.show()
+        plt.close(i)
+    print(' End plotting of palm-runs')
