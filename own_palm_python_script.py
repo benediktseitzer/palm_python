@@ -90,7 +90,7 @@ height_list = [2., 4., 5., 7.5, 10., 15.,  20., 25., 30., 35., 40., 45., 50., 60
 
 # wind tunnel input files
 wt_filename = 'BA_BL_UW_001'
-wt_path = '../../Documents/phd/experiments/balcony/{}'.format(wt_filename[3:5], wt_filename)
+wt_path = '../../Documents/phd/experiments/balcony/{}'.format(wt_filename[3:5])
 wt_file = '{}/coincidence/timeseries/{}.txt'.format(wt_path, wt_filename)
 wt_file_pr = '{}/coincidence/mean/{}.000001.txt'.format(wt_path, wt_filename)
 wt_file_ref = '{}/wtref/{}_wtref.txt'.format(wt_path, wt_filename)
