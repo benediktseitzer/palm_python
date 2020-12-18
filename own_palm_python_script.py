@@ -110,17 +110,6 @@ mode_list = ['testing', 'heights', 'compare', 'filtercheck']
 mode = mode_list[1]
 
 # Steeringflags
-compute_lux = False
-compute_timeseries = False
-compute_turbint = False
-compute_vertprof = False
-compute_spectra = False
-compute_crosssections = False
-compute_pure_fluxes = False
-compute_modelinput = False
-
-compute_simrange = True
-
 # compute_lux = False
 # compute_timeseries = False
 # compute_turbint = False
@@ -128,7 +117,20 @@ compute_simrange = True
 # compute_spectra = False
 # compute_crosssections = False
 # compute_pure_fluxes = False
-# compute_modelinput = True
+# compute_simrange = True
+# compute_modelinput = False
+
+
+
+compute_lux = False
+compute_timeseries = False
+compute_turbint = False
+compute_vertprof = False
+compute_spectra = False
+compute_crosssections = False
+compute_pure_fluxes = False
+compute_simrange = False
+compute_modelinput = True
 
 ################
 """
