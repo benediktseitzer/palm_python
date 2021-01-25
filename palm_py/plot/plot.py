@@ -360,7 +360,7 @@ def plot_spectra(f_comp1_sm, S_comp1_sm,
 
     if var_name == 'u':
         h1 = ax.loglog(f_sm[:comp1_aliasing], S_comp1_sm[:comp1_aliasing], 'ro', markersize=3,
-                    label=r'PALM - $u$ at ${}$ m with ${}$ m/s'.format(height, str(u_mean)[:4]))
+                    label=r'PALM - $u$ at ${}$ $m$ with ${}$ $m/s$'.format(height, str(u_mean)[:4]))
         h2 = ax.loglog(f_sm[comp1_aliasing:], S_comp1_sm[comp1_aliasing:], 'bo', markersize=3,
                     fillstyle='none')
         try:
@@ -375,7 +375,7 @@ def plot_spectra(f_comp1_sm, S_comp1_sm,
             print('\n There are no reference-spectra available for this flow \n')
     elif var_name == 'v':
         h1 = ax.loglog(f_sm[:comp1_aliasing], S_comp1_sm[:comp1_aliasing], 'ro', markersize=3,
-                    label=r'PALM - $v$ at ${}$ m with ${}$ m/s'.format(height, str(u_mean)[:4]))
+                    label=r'PALM - $v$ at ${}$ $m$ with ${}$ $m/s$'.format(height, str(u_mean)[:4]))
         h2 = ax.loglog(f_sm[comp1_aliasing:], S_comp1_sm[comp1_aliasing:], 'bo', markersize=3,
                     fillstyle='none')
         try:
@@ -390,7 +390,7 @@ def plot_spectra(f_comp1_sm, S_comp1_sm,
             print('\n There are no reference-spectra available for this flow \n')            
     elif var_name == 'w':
         h1 = ax.loglog(f_sm[:comp1_aliasing], S_comp1_sm[:comp1_aliasing], 'ro', markersize=3,
-                    label=r'PALM - $w$ at ${}$ m with ${}$ m/s'.format(height, str(u_mean)[:4]))
+                    label=r'PALM - $w$ at ${}$ $m$ with ${}$ $m/s$'.format(height, str(u_mean)[:4]))
         h2 = ax.loglog(f_sm[comp1_aliasing:], S_comp1_sm[comp1_aliasing:], 'bo', markersize=3,
                     fillstyle='none')
         try:
@@ -465,7 +465,7 @@ def plot_spectra(f_comp1_sm, S_comp1_sm,
         ysmax = np.nanmax(S_comp1_sm)
         ax.set_ylim(ysmin,ysmax)
 
-    ax.set_xlabel(r"$f\cdot z\cdot U^{-1}$")
+    ax.set_xlabel(r"$f\cdot z\cdot u_{ref}^{-1}$")
     ax.set_ylabel(r"$f\cdot S_{ij}\cdot (\sigma_i\sigma_j)^{-1}$")
     ax.legend(loc='lower left', fontsize=11, numpoints=1)
     ax.grid()
