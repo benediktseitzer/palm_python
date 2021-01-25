@@ -78,8 +78,8 @@ GLOBAL VARIABLES
 """
 ################
 # PALM input files
-papy.globals.run_name = 'BA_BL_UW_001_cyclic'
-papy.globals.run_number = '.002'
+papy.globals.run_name = 'BA_BL_UW_001'
+papy.globals.run_number = '.005'
 papy.globals.run_numbers = ['.014', '.019']
 nc_file_grid = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
 nc_file_path = '../palm/current_version/JOBS/{}/OUTPUT/'.format(papy.globals.run_name)
@@ -97,8 +97,7 @@ wt_file_ref = '{}/wtref/{}_wtref.txt'.format(wt_path, wt_filename)
 wt_scale = 100.
 
 # PHYSICS
-papy.globals.z0 = 0.06
-# papy.globals.z0 = 0.021
+papy.globals.z0 = 0.021
 papy.globals.alpha = 0.17
 papy.globals.ka = 0.41
 papy.globals.d0 = 0.
@@ -110,27 +109,15 @@ mode_list = ['testing', 'heights', 'compare', 'filtercheck']
 mode = mode_list[1]
 
 # Steeringflags
-compute_lux = True
-compute_timeseries = True
-compute_turbint = True
-compute_vertprof = True
-compute_spectra = True
+compute_lux = False
+compute_timeseries = False
+compute_turbint = False
+compute_vertprof = False
+compute_spectra = False
 compute_crosssections = True
 compute_pure_fluxes = False
 compute_simrange = False
 compute_modelinput = False
-
-
-
-# compute_lux = False
-# compute_timeseries = False
-# compute_turbint = False
-# compute_vertprof = False
-# compute_spectra = False
-# compute_crosssections = False
-# compute_pure_fluxes = False
-# compute_simrange = False
-# compute_modelinput = True
 
 ################
 """
@@ -490,7 +477,7 @@ if compute_crosssections:
         y_level = int(len(y_grid)/2)
         print('     y={}    level={}'.format(round(y_grid[y_level],2), y_level))
         vert_gridname = 'z'
-        cut_gridname = y_grid_name
+        cut_gridname = x_grid_name
         var, var_unit = papy.read_nc_var_ver_3d(nc_file_path,nc_file,var_name, y_level, time_show)
         plt.figure(8)
         papy.plot_contour_crosssection(x_grid, z_grid, var, var_name, y_grid, y_level, vert_gridname, cut_gridname, crosssection)
@@ -499,7 +486,7 @@ if compute_crosssections:
         crosssection = 'xy'
         z_level = int(len(z_grid)/6)
         vert_gridname = y_grid_name
-        cut_gridname = 'z'
+        cut_gridname = x_grid_name
         print('     z={}    level={}'.format(round(z_grid[z_level],2), z_level))
         var, var_unit = papy.read_nc_var_hor_3d(nc_file_path,nc_file,var_name, z_level, time_show)
         plt.figure(9)
