@@ -114,9 +114,24 @@ def plot_timeseries(var, var_unit, var_name, time, time_unit):
     fig, ax = plt.subplots()
     ax.plot(time, var, color='darkviolet')
     
-
-    ax.set(xlabel=r'$t$ $({})$'.format(time_unit), ylabel=r'{} $({})$'.format(var_name,var_unit), 
-            title= 'Timeseries {}'.format(var_name))
+    if var_name == 'dt':
+        ax.set(xlabel=r'$t$ $({})$'.format('s'), ylabel=r'$\Delta t$  $(s)$')
+    elif var_name == 'E':
+        ax.set(xlabel=r'$t$ $({})$'.format('s'), ylabel=r'$E$  $(m^2/s^2)$')
+    elif var_name == 'E*':
+        ax.set(xlabel=r'$t$ $({})$'.format('s'), ylabel=r'$E^*$  $(m^2/s^2)$')        
+    elif var_name == 'umax':
+        ax.set(xlabel=r'$t$ $({})$'.format('s'), ylabel=r'$u_{max}$  $(m/s)$')
+    elif var_name == 'div_new':
+        ax.set(xlabel=r'$t$ $({})$'.format('s'), ylabel=r'$(\nabla \cdot \vec u)_{new}$  $(1/s)$')            
+    elif var_name == 'div_old':
+        ax.set(xlabel=r'$t$ $({})$'.format('s'), ylabel=r'$(\nabla \cdot \vec u)_{old}$  $(1/s)$') 
+    elif var_name == 'us*':
+        ax.set(xlabel=r'$t$ $({})$'.format('s'), ylabel=r'$u_s^*$  $(m/s)$') 
+    elif var_name == 'w"u"0':
+        ax.set(xlabel=r'$t$ $({})$'.format('s'), ylabel=r'$w^\prime u^\prime_0$  $(m^2/s^2)$') 
+    else:
+        ax.set(xlabel=r'$t$ $({})$'.format('s'), ylabel=r'{} $({})$'.format(var_name,var_unit))
 
     ax.grid()
     ax.yaxis.set_major_formatter(FormatStrFormatter('%.2e'))
@@ -500,9 +515,9 @@ def plot_contour_crosssection(x, y, var, var_name, o_grid, o_level, vert_gridnam
                     vmin=-v_bound, vmax=v_bound, origin='lower')
 
     # labeling 
-    fig.colorbar(im, label=r'${}$ (m/s)'.format(var_name),orientation="horizontal")
-    ax.set(xlabel=r'${}$ (m)'.format(x_grid_name), 
-            ylabel=r'${}$ (m)'.format(vert_gridname))
+    fig.colorbar(im, label=r'${}$  $(m/s)$'.format(var_name),orientation="horizontal")
+    ax.set(xlabel=r'${}$  $(m)$'.format(x_grid_name), 
+            ylabel=r'${}$  $(m)$'.format(vert_gridname))
 
     # file output
     fig.savefig('../palm_results/{}/run_{}/crosssections/{}_{}_cs_{}_{}.png'.format(papy.globals.run_name,papy.globals.run_number[-3:],
