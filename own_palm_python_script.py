@@ -112,9 +112,9 @@ mode = mode_list[1]
 compute_lux = False
 compute_timeseries = False
 compute_turbint = False
-compute_vertprof = True
+compute_vertprof = False
 compute_spectra = False
-compute_crosssections = False
+compute_crosssections = True
 compute_pure_fluxes = False
 compute_simrange = False
 compute_modelinput = False
@@ -478,9 +478,11 @@ if compute_crosssections:
         print('     y={}    level={}'.format(round(y_grid[y_level],2), y_level))
         vert_gridname = 'z'
         cut_gridname = x_grid_name
-        var, var_unit = papy.read_nc_var_ver_3d(nc_file_path,nc_file,var_name, y_level, time_show)
+        var, var_unit = papy.read_nc_var_ver_3d(nc_file_path, nc_file, 
+                        var_name, y_level, time_show)
         plt.figure(8)
-        papy.plot_contour_crosssection(x_grid, z_grid, var, var_name, y_grid, y_level, vert_gridname, cut_gridname, crosssection)
+        papy.plot_contour_crosssection(x_grid, z_grid, var, var_name, y_grid, 
+                        y_level, vert_gridname, cut_gridname, crosssection)
         plt.close(8)
         # elif crosssection == 'xy':
         crosssection = 'xy'
@@ -488,9 +490,11 @@ if compute_crosssections:
         vert_gridname = y_grid_name
         cut_gridname = x_grid_name
         print('     z={}    level={}'.format(round(z_grid[z_level],2), z_level))
-        var, var_unit = papy.read_nc_var_hor_3d(nc_file_path,nc_file,var_name, z_level, time_show)
+        var, var_unit = papy.read_nc_var_hor_3d(nc_file_path, nc_file, 
+                        var_name, z_level, time_show)
         plt.figure(9)
-        papy.plot_contour_crosssection(x_grid, y_grid, var, var_name, z_grid, z_level, vert_gridname, cut_gridname, crosssection)
+        papy.plot_contour_crosssection(x_grid, y_grid, var, var_name, z_grid, 
+                        z_level, vert_gridname, cut_gridname, crosssection)
         plt.close(9)
 
 ################
