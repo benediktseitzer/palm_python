@@ -112,8 +112,8 @@ mode = mode_list[1]
 compute_lux = False
 compute_timeseries = False
 compute_turbint = False
-compute_vertprof = False
-compute_spectra = True
+compute_vertprof = True
+compute_spectra = False
 compute_crosssections = False
 compute_pure_fluxes = False
 compute_simrange = False
@@ -567,7 +567,7 @@ if compute_pure_fluxes:
     plt.ylim(1.,300.)
     plt.legend(loc='best', numpoints=1)
     plt.grid(True, 'both', 'both')
-    plt.show()
+    # plt.show()
     plt.close(12)
     print('plotted total fluxes')
 
