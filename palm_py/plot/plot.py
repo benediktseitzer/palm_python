@@ -286,7 +286,7 @@ def plot_ver_profile(var_plt, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_r
     if var_name == 'u':
         try:
             # ax.plot(u_pw[:-1], z[:-1], label='power law', color='red',linestyle='--')
-            ax.plot(u_pr[:-1], z[:-1], label='prandtls law', 
+            ax.plot(u_pr[:-1], z[:-1], label='Prandtls law', 
                     color='darkorange', linestyle='--')
             ax.errorbar(wt_pr[:-1], wt_z[:-1], xerr=xerror[:-1], 
                     label='wind tunnel', fmt='x', c='cornflowerblue')
@@ -294,30 +294,30 @@ def plot_ver_profile(var_plt, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_r
             print('Exception has occurred: Stop wt-plotting - plot_ver_profile')
 
     if var_name == 'w"u"':
-        ax.set(xlabel=r'$\tau _{31}$' + ' $(m^2/s^2)$', 
-                ylabel=r'$z$ $(m)$', title= r'Height profile of $\tau _{31}$')
+        ax.set(xlabel=r'$u^\prime w^\prime_{SGS}$' + ' $(m^2/s^2)$', 
+                ylabel=r'$z$ $(m)$')
         # ax.set_yscale('log', nonposy='clip')
     elif var_name == 'w*u*':
-        ax.set(xlabel=r'$\tau^* _{31}$'+ ' $(m^2/s^2)$', 
-                ylabel=r'$z$ $(m)$', title= r'Height profile of $\tau^* _{31}$')
+        ax.set(xlabel=r'$u^\prime w^\prime_{RES}$'+ ' $(m^2/s^2)$', 
+                ylabel=r'$z$ $(m)$')
         # ax.set_yscale('log', nonposy='clip')                
     elif var_name == 'u':
-        ax.set(xlabel=r'$u/u_{ref}$'+' $(-)$', 
-                ylabel=r'$z$ $(m)$', title= r'Height profile of $u/u_{ref}$')
+        ax.set(xlabel=r'$u/u_{ref}$' + ' $(-)$', 
+                ylabel=r'$z$ $(m)$')
     elif var_name == 'e*':
-        ax.set(xlabel=r'$e^*$'+' $(m^2/s^2)$', 
-                ylabel=r'$z$ $(m)$', title= r'Height profile of $e^*$')
+        ax.set(xlabel=r'$e_{RES}$' + ' $(m^2/s^2)$', 
+                ylabel=r'$z$ $(m)$')
     elif var_name == 'u*2':
-        ax.set(xlabel=r'$\tau _{11}$'+' $(m^2/s^2)$', 
-                ylabel=r'$z$ $(m)$', title= r'Height profile of $\tau _{11}$')                
+        ax.set(xlabel=r'$u^\prime u^\prime_{RES}$' + ' $(m^2/s^2)$', 
+                ylabel=r'$z$ $(m)$')                
     elif var_name == 'e':
-        ax.set(xlabel=r'$e$'+' $(m^2/s^2)$', 
-                ylabel=r'$z$ $(m)$', title= r'Height profile of $e$')                
+        ax.set(xlabel=r'$e_{SGS}$' + ' $(m^2/s^2)$', 
+                ylabel=r'$z$ $(m)$')
     elif var_name == 'fluxes':     
-        ax.set(xlabel=r'$\tau_{ges}$' + ' $(m^2/s^2)$', 
-                ylabel=r'$z$  (m)'.format(z_unit), title= r'Height profile of ${}$'.format(var_name))
+        ax.set(xlabel=r'$u^\prime w^\prime$' + ' $(m^2/s^2)$', 
+                ylabel=r'$z$  $(m)$')
         ax.set_yscale('log', nonposy='clip')
-        plt.ylim(min(z),80.)
+        plt.ylim(min(z),256.)
     else:     
         ax.set(xlabel=r'${}$ $({})$'.format(var_name,var_unit), 
                 ylabel=r'$z$ $({})$'.format(z_unit), title= r'Height profile of ${}$'.format(var_name))
