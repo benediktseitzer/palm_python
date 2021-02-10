@@ -114,8 +114,8 @@ compute_timeseries = False
 compute_turbint = False
 compute_vertprof = False
 compute_spectra = False
-compute_crosssections = True
-compute_pure_fluxes = False
+compute_crosssections = False
+compute_pure_fluxes = True
 compute_simrange = False
 compute_modelinput = False
 
@@ -561,20 +561,21 @@ if compute_pure_fluxes:
     plt.figure(12)
     fig, ax = plt.subplots()
     plt.style.use('classic')
-    ax.plot(var[5,:-1], z[:-1], label='PALM - total', color='darkviolet')
-    ax.plot(var1[5,:-1], z[:-1], label='PALM - $>\Delta$', color='plum')
-    ax.plot(var2[5,:-1], z[:-1], label='PALM - $<\Delta$', color='magenta')
-    ax.errorbar(flux13, height_list, xerr=0.05*flux13, fmt='o', color='darkviolet', label= 'PALM single')
-    ax.set(xlabel=r'$\tau_{ges}$' + ' $(m^2/s^2)$', 
-            ylabel=r'$z$  (m)'.format(z_unit))
+    ax.plot(var[5,:-1], z[:-1], label=r'$u^\prime w^\prime$', color='darkviolet')
+    ax.plot(var1[5,:-1], z[:-1], label=r'$u^\prime w^\prime_{RES}$', color='plum')
+    ax.plot(var2[5,:-1], z[:-1], label=r'$u^\prime w^\prime_{SGS}$', color='magenta')
+    # ax.errorbar(flux13, height_list, xerr=0.05*flux13, fmt='o', color='darkviolet', label= 'PALM single')
+    ax.set(xlabel=r'$u^\prime w^\prime_{ges}$' + ' $(m^2/s^2)$', 
+            ylabel=r'$z$ $(m)$'.format(z_unit))
     ax.set_yscale('log', nonposy='clip')
     plt.ylim(1.,300.)
     plt.legend(loc='best', numpoints=1)
     plt.grid(True, 'both', 'both')
     # plt.show()
+    fig.savefig('../palm_results/{}/run_{}/{}_{}.png'.format(papy.globals.run_name, papy.globals.run_number[-3:],
+                papy.globals.run_name, 'fluxes'), bbox_inches='tight')
     plt.close(12)
     print('plotted total fluxes')
-
 
 ################
 # compare simulations
