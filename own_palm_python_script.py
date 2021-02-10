@@ -266,7 +266,6 @@ if compute_spectra:
             except: 
                 print('\n Mask {} not in dataset. \n Check {} and the corresponding heights in the *_p3d-file'.format(mask_name, nc_file_path))
 
-
             print('\n HEIGHT = {} m'.format(height))
             for var_name in var_name_list:
                 var, var_unit = papy.read_nc_var_ms(nc_file_path,nc_file,var_name)
