@@ -256,8 +256,8 @@ if compute_spectra:
         print('\n Compute at different heights: \n')
         grid_name = 'zu'
         z, z_unit = papy.read_nc_grid(nc_file_path,nc_file_grid,grid_name)
-        i = 0
-        for mask_name in mask_name_list:
+
+        for i,mask_name in enumerate(mask_name_list):
 
             nc_file = '{}_masked_{}{}.nc'.format(papy.globals.run_name, mask_name, papy.globals.run_number)
             try:
@@ -265,7 +265,7 @@ if compute_spectra:
                 height = height_list[i]
             except: 
                 print('\n Mask {} not in dataset. \n Check {} and the corresponding heights in the *_p3d-file'.format(mask_name, nc_file_path))
-            i = i + 1
+
 
             print('\n HEIGHT = {} m'.format(height))
             for var_name in var_name_list:
