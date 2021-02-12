@@ -564,7 +564,7 @@ if compute_pure_fluxes:
     ax.plot(var1[5,:-1], z[:-1], label=r'$u^\prime w^\prime_{RES}$', color='plum')
     ax.plot(var2[5,:-1], z[:-1], label=r'$u^\prime w^\prime_{SGS}$', color='magenta')
     # ax.errorbar(flux13, height_list, xerr=0.05*flux13, fmt='o', color='darkviolet', label= 'PALM single')
-    ax.set(xlabel=r'$u^\prime w^\prime_{ges}$' + ' $(m^2/s^2)$', 
+    ax.set(xlabel=r'$u^\prime w^\prime$' + ' $(m^2/s^2)$', 
             ylabel=r'$z$ $(m)$'.format(z_unit))
     ax.set_yscale('log', nonposy='clip')
     plt.ylim(1.,300.)
