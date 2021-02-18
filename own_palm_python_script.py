@@ -527,44 +527,34 @@ if compute_modelinput:
 if compute_pure_fluxes:
     nc_file = '{}_masked_M02{}.nc'.format(papy.globals.run_name, papy.globals.run_number)
 
-    palm_wtref = 5.51057969
+    # palm_wtref = 5.51057969
+    # palm_wtref = 0.
     flux13 = np.zeros(len(height_list))
     grid_name = 'zu'
     z, z_unit = papy.read_nc_grid(nc_file_path, nc_file_grid, grid_name)
-
-    for i,mask_name in enumerate(mask_name_list): 
-        nc_file = '{}_masked_{}{}.nc'.format(papy.globals.run_name, mask_name, papy.globals.run_number)
-        height = height_list[i]
-        
-        var_u, var_unit_u = papy.read_nc_var_ms(nc_file_path, nc_file, 'u')
-        var_v, var_unit_v = papy.read_nc_var_ms(nc_file_path, nc_file, 'v')
-        var_w, var_unit_w = papy.read_nc_var_ms(nc_file_path, nc_file, 'w')
-
-        flux11, flux22, flux33, flux12, flux13[i], flux23 = papy.calc_fluxes(var_u, var_v, var_w)
-
-    # read variables for plot
     time, time_unit = papy.read_nc_time(nc_file_path,nc_file)
-
     nc_file = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
     grid_name = 'zw*u*'
     var1, var_max1, var_unit1 = papy.read_nc_var_ver_pr(nc_file_path, nc_file, 'w*u*')
     var2, var_max2, var_unit2 = papy.read_nc_var_ver_pr(nc_file_path, nc_file, 'w"u"')
     var = var1 + var2
     z, z_unit = papy.read_nc_grid(nc_file_path,nc_file,grid_name)
+    var_u, var_umax, var_u_unit = papy.read_nc_var_ver_pr(nc_file_path, nc_file, 'u')
+    palm_wtref = var_umax
+    print(palm_wtref)
 
-    flux13 = flux13/palm_wtref**2.
     var = var/palm_wtref**2.
     var1 = var1/palm_wtref**2.
     var2 = var2/palm_wtref**2.
+
     # plot
     plt.figure(12)
     fig, ax = plt.subplots()
     plt.style.use('classic')
     ax.plot(var[5,:-1], z[:-1], label=r'$u^\prime w^\prime$', color='darkviolet')
-    ax.plot(var1[5,:-1], z[:-1], label=r'$u^\prime w^\prime_{RES}$', color='plum')
-    ax.plot(var2[5,:-1], z[:-1], label=r'$u^\prime w^\prime_{SGS}$', color='magenta')
-    # ax.errorbar(flux13, height_list, xerr=0.05*flux13, fmt='o', color='darkviolet', label= 'PALM single')
-    ax.set(xlabel=r'$u^\prime w^\prime$' + ' $(m^2/s^2)$', 
+    ax.plot(var1[5,:-1], z[:-1], label=r'$\widetilde{u^\prime w^\prime}$', color='plum')
+    ax.plot(var2[5,:-1], z[:-1], label=r'$(u^\prime w^\prime)^s$', color='magenta')
+    ax.set(xlabel=r'$u^\prime w^\prime \cdot u_{ref}^2$' + ' $(-)$', 
             ylabel=r'$z$ $(m)$'.format(z_unit))
     ax.set_yscale('log', nonposy='clip')
     plt.ylim(1.,300.)
