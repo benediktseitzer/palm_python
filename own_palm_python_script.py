@@ -115,9 +115,9 @@ compute_turbint = False
 compute_vertprof = False
 compute_spectra = False
 compute_crosssections = False
-compute_pure_fluxes = True
+compute_pure_fluxes = False
 compute_simrange = False
-compute_modelinput = False
+compute_modelinput = True
 
 ################
 """
@@ -504,7 +504,7 @@ if compute_modelinput:
     wt_u_pr, wt_u_ref, wt_z = papy.read_wt_ver_pr(wt_file_pr, wt_file_ref, wt_scale)
     print('\n wind tunnel profile loaded \n')
     # calculate z
-    z = np.linspace(0.,256.,65)
+    z = np.linspace(0.,320.,65)
 
     # calculate theoretical profile
     u_pr, u_fric = papy.calc_input_profile(wt_u_pr, wt_z, z)
