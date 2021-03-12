@@ -26,7 +26,7 @@ __all__ = [
     'calc_input_profile'
 ]
 
-def calc_input_profile(m_u, m_z, z):
+def calc_input_profile(m_u, m_z, z, ref_height):
     """
     calculate u- and v-profile using measurement data
 
@@ -35,6 +35,7 @@ def calc_input_profile(m_u, m_z, z):
     m_u: array-like
     m_z: array-like
     z: array-like
+    ref_height: float
 
     ---------
     Returns
@@ -42,7 +43,9 @@ def calc_input_profile(m_u, m_z, z):
     u_fric: float
     """
     # calculate friction velocity
-    ident = 17
+    ident = np.where(m_z == ref_height)
+    print('\n Here comes the sun:')
+    print(ident, m_z[ident], ref_height)
     u_fric = (papy.globals.ka * m_u[ident]) / (np.log(m_z[ident]/papy.globals.z0))
     # calculate theoretical profiles
     u_prandtl = u_fric/papy.globals.ka * np.log((z[1:]-papy.globals.d0)/papy.globals.z0)
