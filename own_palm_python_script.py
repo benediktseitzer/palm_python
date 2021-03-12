@@ -109,15 +109,15 @@ mode_list = ['testing', 'heights', 'compare', 'filtercheck']
 mode = mode_list[1]
 
 # Steeringflags
-compute_lux = True
-compute_timeseries = True
-compute_turbint = True
-compute_vertprof = True
-compute_spectra = True
-compute_crosssections = True
+compute_lux = False
+compute_timeseries = False
+compute_turbint = False
+compute_vertprof = False
+compute_spectra = False
+compute_crosssections = False
 compute_pure_fluxes = False
 compute_simrange = False
-compute_modelinput = False
+compute_modelinput = True
 
 ################
 """
@@ -504,15 +504,16 @@ if compute_modelinput:
     wt_u_pr, wt_u_ref, wt_z = papy.read_wt_ver_pr(wt_file_pr, wt_file_ref, wt_scale)
     print('\n wind tunnel profile loaded \n')
     # calculate z
-    z = np.linspace(0.,320.,65)
+    z = np.linspace(0.,256.,65)
+    reference_height = 30. 
 
     # calculate theoretical profile
-    u_pr, u_fric = papy.calc_input_profile(wt_u_pr, wt_z, z)
+    u_pr, u_fric = papy.calc_input_profile(wt_u_pr, wt_z, z, reference_height)
 
     print(u_pr)
     print(z)
 
-    plt.plot(u_pr, z, color='darkorange', linestyle='--', 
+    plt.semilogy(u_pr, z, color='darkorange', linestyle='--', 
             label=r'$z_0 = {}$'.format(papy.globals.z0))
     plt.errorbar(wt_u_pr, wt_z,xerr=0.03*wt_u_pr, fmt='x', 
             c='cornflowerblue', label='wind tunnel')
@@ -520,6 +521,7 @@ if compute_modelinput:
     plt.ylabel(r'$z$ (m)')
     plt.legend(loc='best', numpoints=1)
     plt.grid(True,'both')
+
     plt.show()
 
 ################
