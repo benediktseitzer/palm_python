@@ -79,7 +79,7 @@ GLOBAL VARIABLES
 ################
 # PALM input files
 papy.globals.run_name = 'BA_BL_UW_001'
-papy.globals.run_number = '.020'
+papy.globals.run_number = '.023'
 papy.globals.run_numbers = ['.014', '.019']
 nc_file_grid = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
 nc_file_path = '../palm/current_version/JOBS/{}/OUTPUT/'.format(papy.globals.run_name)
@@ -97,7 +97,7 @@ wt_file_ref = '{}/wtref/{}_wtref.txt'.format(wt_path, wt_filename)
 wt_scale = 100.
 
 # PHYSICS
-papy.globals.z0 = 0.021
+papy.globals.z0 = 0.06
 papy.globals.alpha = 0.17
 papy.globals.ka = 0.41
 papy.globals.d0 = 0.
@@ -109,15 +109,15 @@ mode_list = ['testing', 'heights', 'compare', 'filtercheck']
 mode = mode_list[1]
 
 # Steeringflags
-compute_lux = False
-compute_timeseries = False
-compute_turbint = False
-compute_vertprof = False
-compute_spectra = False
-compute_crosssections = False
-compute_pure_fluxes = False
+compute_lux = True
+compute_timeseries = True
+compute_turbint = True
+compute_vertprof = True
+compute_spectra = True
+compute_crosssections = True
+compute_pure_fluxes = True
 compute_simrange = False
-compute_modelinput = True
+compute_modelinput = False
 
 ################
 """
@@ -505,7 +505,7 @@ if compute_modelinput:
     print('\n wind tunnel profile loaded \n')
     # calculate z
     z = np.linspace(0.,256.,65)
-    reference_height = 30. 
+    reference_height = [7., 70.] 
 
     # calculate theoretical profile
     u_pr, u_fric = papy.calc_input_profile(wt_u_pr, wt_z, z, reference_height)
