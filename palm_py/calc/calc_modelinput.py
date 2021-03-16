@@ -43,15 +43,13 @@ def calc_input_profile(m_u, m_z, z, ref_height):
     u_fric: float
     """
     # calculate friction velocity
-    ident = np.where(m_z == ref_height)
-    print('\n Here comes the sun:')
-    print(ident, m_z[ident], ref_height)
-    u_fric = (papy.globals.ka * m_u[ident]) / (np.log(m_z[ident]/papy.globals.z0))
+    i_upper = np.where(m_z == ref_height[1])
+    u_fric = (papy.globals.ka * m_u[i_upper]) / (np.log(m_z[i_upper]/papy.globals.z0))
     # calculate theoretical profiles
     u_prandtl = u_fric/papy.globals.ka * np.log((z[1:]-papy.globals.d0)/papy.globals.z0)
     # no-slip bc:
     u_prandtl = np.insert(u_prandtl,0,0.)
     print('     z0 = {} m'.format(papy.globals.z0))
-    print('     u* = {} with reference height at {} m \n'.format(u_fric,m_z[ident]))
+    print('     u* = {} with reference height at {} m \n'.format(u_fric,m_z[i_upper]))
 
     return u_prandtl, u_fric
