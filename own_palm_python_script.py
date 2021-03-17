@@ -79,7 +79,7 @@ GLOBAL VARIABLES
 ################
 # PALM input files
 papy.globals.run_name = 'BA_BL_UW_001'
-papy.globals.run_number = '.024'
+papy.globals.run_number = '.025'
 papy.globals.run_numbers = ['.014', '.019']
 nc_file_grid = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
 nc_file_path = '../palm/current_version/JOBS/{}/OUTPUT/'.format(papy.globals.run_name)
@@ -97,7 +97,7 @@ wt_file_ref = '{}/wtref/{}_wtref.txt'.format(wt_path, wt_filename)
 wt_scale = 100.
 
 # PHYSICS
-papy.globals.z0 = 0.021
+papy.globals.z0 = 0.02
 papy.globals.alpha = 0.17
 papy.globals.ka = 0.41
 papy.globals.d0 = 0.
@@ -109,12 +109,12 @@ mode_list = ['testing', 'heights', 'compare', 'filtercheck']
 mode = mode_list[1]
 
 # Steeringflags
-compute_lux = True
-compute_timeseries = True
-compute_turbint = True
-compute_vertprof = True
-compute_spectra = True
-compute_crosssections = True
+compute_lux = False
+compute_timeseries = False
+compute_turbint = False
+compute_vertprof = False
+compute_spectra = False
+compute_crosssections = False
 compute_pure_fluxes = True
 compute_simrange = False
 compute_modelinput = False
@@ -553,9 +553,9 @@ if compute_pure_fluxes:
     plt.figure(12)
     fig, ax = plt.subplots()
     plt.style.use('classic')
-    ax.plot(var[5,:-1], z[:-1], label=r'$u^\prime w^\prime$', color='darkviolet')
-    ax.plot(var1[5,:-1], z[:-1], label=r'$\widetilde{u^\prime w^\prime}$', color='plum')
-    ax.plot(var2[5,:-1], z[:-1], label=r'$(u^\prime w^\prime)^s$', color='magenta')
+    ax.plot(var[4,:-1], z[:-1], label=r'$u^\prime w^\prime$', color='darkviolet')
+    ax.plot(var1[4,:-1], z[:-1], label=r'$\widetilde{u^\prime w^\prime}$', color='plum')
+    ax.plot(var2[4,:-1], z[:-1], label=r'$(u^\prime w^\prime)^s$', color='magenta')
     ax.set(xlabel=r'$u^\prime w^\prime \cdot u_{ref}^2$' + ' $(-)$', 
             ylabel=r'$z$ $(m)$'.format(z_unit))
     ax.set_yscale('log', nonposy='clip')
