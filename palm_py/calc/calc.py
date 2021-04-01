@@ -70,8 +70,8 @@ def calc_spectra(phi,t_eq,height,u_mean):
     S_uu = np.abs(freq[0:freq_nyquist+1])*S_uu/(np.nanstd(phi)**2.)
     # reduced frequency
     freq_red = freq*height/u_mean 
-    smooth_spectra = True
     # spectral smoothing 
+    smooth_spectra = True
     if smooth_spectra:
         # use exponents for equi-distant bins in log plot
         freq_sm = np.hstack((np.array([0]),
