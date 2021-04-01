@@ -49,11 +49,11 @@ def calc_spectra(phi,t_eq,height,u_mean):
 
     freq_sm_sort: array-like
     S_uu_sort: array-like
-    phi_aliasing: array-like
+    u_aliasing: array-like
     """
     # sample frequency 
     freq = np.fft.fftfreq(np.size(phi),t_eq[1]-t_eq[0])
-    dt = np.diff(t_eq)
+
     # Fourier coefficients (normalized)
     fft_coeff = np.fft.fft(phi)/np.size(phi) 
 
@@ -74,11 +74,9 @@ def calc_spectra(phi,t_eq,height,u_mean):
 
     # reduced frequency
     freq_red = freq*height/u_mean 
-    # freq_red = freq[0:freq_nyquist+1]
 
     smooth_spectra = True
     # spectral smoothing 
-        # Maybe add other spectral smoothing-methods 
     if smooth_spectra:
         # use exponents for equi-distant bins in log plot
         freq_sm = np.hstack((np.array([0]),
@@ -104,10 +102,10 @@ def calc_spectra(phi,t_eq,height,u_mean):
     S_uu_sort = S_uu_sm[index_sort]
 
     # aliasing
-    phi_aliasing = freq_sm_sort.size-9+np.hstack((np.where
+    u_aliasing = freq_sm_sort.size-9+np.hstack((np.where
                                                 (np.diff(S_uu_sort[-10:])>=0.)[0],[9]))[0]
 
-    return freq_sm_sort, S_uu_sort, phi_aliasing
+    return freq_sm_sort, S_uu_sort, u_aliasing
 
 def calc_autocorr(timeseries, maxlags):
     """ 
