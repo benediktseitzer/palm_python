@@ -270,7 +270,7 @@ if compute_spectra:
             for var_name in var_name_list:
                 var, var_unit = papy.read_nc_var_ms(nc_file_path,nc_file,var_name)
                 if var_name == 'u':
-                    u_mean  = np.mean(var)            
+                    u_mean  = np.mean(var)      
                 f_sm, S_uu_sm, u_aliasing = papy.calc_spectra(var,time,height,u_mean)
                 print('    calculated spectra for {}'.format(var_name))
                 papy.plot_spectra(f_sm, S_uu_sm, u_aliasing, u_mean, height, var_name, mask_name)
