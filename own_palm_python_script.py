@@ -78,8 +78,8 @@ GLOBAL VARIABLES
 """
 ################
 # PALM input files
-papy.globals.run_name = 'BA_BL_UW_001_cyclic'
-papy.globals.run_number = '.005'
+papy.globals.run_name = 'BA_BL_UW_001'
+papy.globals.run_number = '.028'
 papy.globals.run_numbers = ['.025', '.026']
 nc_file_grid = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
 nc_file_path = '../palm/current_version/JOBS/{}/OUTPUT/'.format(papy.globals.run_name)
@@ -87,6 +87,11 @@ mask_name_list = ['M01', 'M02', 'M03', 'M04', 'M05', 'M06', 'M07', 'M08', 'M09',
                     'M10','M11', 'M12', 'M13', 'M14', 'M15', 'M16', 'M17', 'M18', 'M19', 'M20']
 height_list = [2., 4., 5., 7.5, 10., 15.,  20., 25., 30., 35., 40., 45., 50., 60.,
                      70., 80., 90., 100., 125., 150.]
+mask_name_list = ['M01', 'M02', 'M03', 'M04', 'M05', 'M06', 'M07', 'M08', 'M09', 
+                    'M10','M11', 'M12', 'M13', 'M14', 'M15', 'M16', 'M17', 'M18', 'M19']
+height_list = [2., 4., 5., 7.5, 10., 15.,  20., 25., 30., 35., 40., 45., 50., 60.,
+                     70., 80., 90., 100., 125.]
+
 
 # wind tunnel input files
 wt_filename = 'BA_BL_UW_001'
@@ -97,7 +102,7 @@ wt_file_ref = '{}/wtref/{}_wtref.txt'.format(wt_path, wt_filename)
 wt_scale = 100.
 
 # PHYSICS
-papy.globals.z0 = 0.021
+papy.globals.z0 = 0.02
 papy.globals.alpha = 0.17
 papy.globals.ka = 0.41
 papy.globals.d0 = 0.
@@ -499,13 +504,12 @@ if compute_crosssections:
 ################
 # compute model input data
 if compute_modelinput:
-    wt_scale = 100.
     # read wind tunnel profile
     wt_u_pr, wt_u_ref, wt_z = papy.read_wt_ver_pr(wt_file_pr, wt_file_ref, wt_scale)
     print('\n wind tunnel profile loaded \n')
     # calculate z
-    z = np.linspace(0.,256.,65)
-    reference_height = [7., 70.] 
+    z = np.linspace(0.,128.,65)
+    reference_height = [8., 70.] 
 
     # calculate theoretical profile
     u_pr, u_fric = papy.calc_input_profile(wt_u_pr, wt_z, z, reference_height)
