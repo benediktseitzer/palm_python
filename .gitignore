@@ -2,3 +2,5 @@
 *.pyc
 # ignore own scripts
 own*
+# ignore topo-files
+*_topo
