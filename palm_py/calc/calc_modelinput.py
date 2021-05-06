@@ -56,7 +56,7 @@ def calc_input_profile(m_u, m_z, z, ref_height):
     return u_prandtl, u_fric
 
 
-def calc_topofile(nx, ny, dx, building_height, building_x_length, building_y_length):
+def calc_topofile(building_height, building_x_length, building_y_length):
     """
     Construct simple topography ascii-file for single building 
 
@@ -72,6 +72,9 @@ def calc_topofile(nx, ny, dx, building_height, building_x_length, building_y_len
     Returns
 
     """
+    nx = papy.globals.nx 
+    ny = papy.globals.ny 
+    dx = papy.globals.dx
     topo_matrix = np.zeros((nx,ny))
     for i in range(nx):
         if dx*i>((dx*nx/2.)-building_x_length/2.) and i<((dx*nx/2.)+building_x_length/2.):
@@ -79,4 +82,5 @@ def calc_topofile(nx, ny, dx, building_height, building_x_length, building_y_len
                 if j>((dx*ny/2.)-building_y_length/2.) and j<((dx*ny/2.)+building_y_length/2.):
                     topo_matrix[i,j] = building_height
                     print(i, j, topo_matrix[i,j])
+    np.savetxt('{}_topo'.format(papy.globals.run_name), topo_matrix, delimiter=' ')
 
