@@ -106,6 +106,9 @@ papy.globals.z0 = 0.06
 papy.globals.alpha = 0.17
 papy.globals.ka = 0.41
 papy.globals.d0 = 0.
+papy.globals.nx = 511
+papy.globals.ny = 511
+papy.globals.dx = 1
 
 # test-cases for spectral analysis testing
 test_case_list = ['frequency_peak']
@@ -119,10 +122,11 @@ compute_timeseries = False
 compute_turbint = False
 compute_vertprof = False
 compute_spectra = False
-compute_crosssections = True
+compute_crosssections = False
 compute_pure_fluxes = False
 compute_simrange = False
-compute_modelinput = False
+compute_modelinput = True
+
 
 ################
 """
@@ -504,29 +508,40 @@ if compute_crosssections:
 ################
 # compute model input data
 if compute_modelinput:
-    # read wind tunnel profile
-    wt_u_pr, wt_u_ref, wt_z = papy.read_wt_ver_pr(wt_file_pr, wt_file_ref, wt_scale)
-    print('\n wind tunnel profile loaded \n')
-    # calculate z
-    z = np.linspace(0.,128.,65)
-    reference_height = [8., 70.] 
+    wind_profile = False
+    topo_file = True
+    if wind_profile:
+        # read wind tunnel profile
+        wt_u_pr, wt_u_ref, wt_z = papy.read_wt_ver_pr(wt_file_pr, wt_file_ref, wt_scale)
+        print('\n wind tunnel profile loaded \n')
+        # calculate z
+        z = np.linspace(0.,128.,65)
+        reference_height = [8., 70.] 
 
-    # calculate theoretical profile
-    u_pr, u_fric = papy.calc_input_profile(wt_u_pr, wt_z, z, reference_height)
+        # calculate theoretical profile
+        u_pr, u_fric = papy.calc_input_profile(wt_u_pr, wt_z, z, reference_height)
 
-    print(u_pr)
-    print(z)
+        print(u_pr)
+        print(z)
 
-    plt.semilogy(u_pr, z, color='darkorange', linestyle='--', 
-            label=r'$z_0 = {}$'.format(papy.globals.z0))
-    plt.errorbar(wt_u_pr, wt_z,xerr=0.03*wt_u_pr, fmt='x', 
-            c='cornflowerblue', label='wind tunnel')
-    plt.xlabel(r'$u$ (m/s)')
-    plt.ylabel(r'$z$ (m)')
-    plt.legend(loc='best', numpoints=1)
-    plt.grid(True,'both')
+        plt.semilogy(u_pr, z, color='darkorange', linestyle='--', 
+                label=r'$z_0 = {}$'.format(papy.globals.z0))
+        plt.errorbar(wt_u_pr, wt_z,xerr=0.03*wt_u_pr, fmt='x', 
+                c='cornflowerblue', label='wind tunnel')
+        plt.xlabel(r'$u$ (m/s)')
+        plt.ylabel(r'$z$ (m)')
+        plt.legend(loc='best', numpoints=1)
+        plt.grid(True,'both')
 
-    plt.show()
+        plt.show()
+    if topo_file:
+        print('     Start constructing Topo-file')
+        building_height = 50.
+        building_x_length = 76.
+        building_y_length = 36.
+        papy.calc_topofile(papy.globals.nx, papy.globals.ny, papy.globals.dx, 
+                            building_height, building_x_length, building_y_length)
+        print('     Finished constructing Topo-file')
 
 ################
 # compute fluxes based on timeseries

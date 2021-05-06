@@ -23,7 +23,8 @@ FUNCTIONS
 ################
 
 __all__ = [
-    'calc_input_profile'
+    'calc_input_profile',
+    'calc_topofile'
 ]
 
 def calc_input_profile(m_u, m_z, z, ref_height):
@@ -53,3 +54,29 @@ def calc_input_profile(m_u, m_z, z, ref_height):
     print('     u* = {} with reference height at {} m \n'.format(u_fric,m_z[i_upper]))
 
     return u_prandtl, u_fric
+
+
+def calc_topofile(nx, ny, dx, building_height, building_x_length, building_y_length):
+    """
+    Construct simple topography ascii-file for single building 
+
+    -----------
+    Parameters
+    nx: nx
+    ny: ny
+    building_height: float
+    building_x_edge: integer
+    building_y_edge: integer
+
+    ---------
+    Returns
+
+    """
+    topo_matrix = np.zeros((nx,ny))
+    for i in range(nx):
+        if dx*i>((dx*nx/2.)-building_x_length/2.) and i<((dx*nx/2.)+building_x_length/2.):
+            for j in range(ny):
+                if j>((dx*ny/2.)-building_y_length/2.) and j<((dx*ny/2.)+building_y_length/2.):
+                    topo_matrix[i,j] = building_height
+                    print(i, j, topo_matrix[i,j])
+
