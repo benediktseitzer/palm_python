@@ -99,11 +99,11 @@ wt_path = '../../Documents/phd/experiments/balcony/{}'.format(wt_filename[3:5])
 wt_file = '{}/coincidence/timeseries/{}.txt'.format(wt_path, wt_filename)
 wt_file_pr = '{}/coincidence/mean/{}.000001.txt'.format(wt_path, wt_filename)
 wt_file_ref = '{}/wtref/{}_wtref.txt'.format(wt_path, wt_filename)
-wt_scale = 100.
+wt_scale = 150.
 
 # PHYSICS
-papy.globals.z0 = 0.06
-papy.globals.alpha = 0.17
+papy.globals.z0 = 0.0319
+papy.globals.alpha = 0.168
 papy.globals.ka = 0.41
 papy.globals.d0 = 0.
 papy.globals.nx = 511
@@ -508,15 +508,15 @@ if compute_crosssections:
 ################
 # compute model input data
 if compute_modelinput:
-    wind_profile = False
-    topo_file = True
+    wind_profile = True
+    topo_file = False
     if wind_profile:
         # read wind tunnel profile
         wt_u_pr, wt_u_ref, wt_z = papy.read_wt_ver_pr(wt_file_pr, wt_file_ref, wt_scale)
         print('\n wind tunnel profile loaded \n')
         # calculate z
-        z = np.linspace(0.,128.,65)
-        reference_height = [8., 70.] 
+        z = np.linspace(0.,128.,129)
+        reference_height = [10., 52.5]
 
         # calculate theoretical profile
         u_pr, u_fric = papy.calc_input_profile(wt_u_pr, wt_z, z, reference_height)
