@@ -539,8 +539,7 @@ if compute_modelinput:
         building_height = 50.
         building_x_length = 76.
         building_y_length = 36.
-        papy.calc_topofile(papy.globals.nx, papy.globals.ny, papy.globals.dx, 
-                            building_height, building_x_length, building_y_length)
+        papy.calc_topofile(building_height, building_x_length, building_y_length)
         print('     Finished constructing Topo-file')
 
 ################
