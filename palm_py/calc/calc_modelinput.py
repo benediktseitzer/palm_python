@@ -82,5 +82,4 @@ def calc_topofile(building_height, building_x_length, building_y_length):
                 if j>((dx*ny/2.)-building_y_length/2.) and j<((dx*ny/2.)+building_y_length/2.):
                     topo_matrix[i,j] = building_height
                     print(i, j, topo_matrix[i,j])
-    np.savetxt('{}_topo'.format(papy.globals.run_name), topo_matrix, fmt='%1.2f', delimiter=' ')
-
+    np.savetxt('{}_topo'.format(papy.globals.run_name), topo_matrix, fmt='%1.0f', delimiter=' ')
