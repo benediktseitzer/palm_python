@@ -508,8 +508,8 @@ if compute_crosssections:
 ################
 # compute model input data
 if compute_modelinput:
-    wind_profile = True
-    topo_file = False
+    wind_profile = False
+    topo_file = True
     if wind_profile:
         # read wind tunnel profile
         wt_u_pr, wt_u_ref, wt_z = papy.read_wt_ver_pr(wt_file_pr, wt_file_ref, wt_scale)
@@ -532,7 +532,6 @@ if compute_modelinput:
         plt.ylabel(r'$z$ (m)')
         plt.legend(loc='best', numpoints=1)
         plt.grid(True,'both')
-
         plt.show()
     if topo_file:
         print('     Start constructing Topo-file')
