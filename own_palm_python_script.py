@@ -118,7 +118,7 @@ mode = mode_list[1]
 
 # Steeringflags
 compute_lux = False
-compute_timeseries = False
+compute_timeseries = True
 compute_turbint = False
 compute_vertprof = True
 compute_spectra = False
