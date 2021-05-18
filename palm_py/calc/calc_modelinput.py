@@ -72,8 +72,8 @@ def calc_topofile(building_height, building_x_length, building_y_length):
     Returns
 
     """
-    nx = papy.globals.nx 
-    ny = papy.globals.ny 
+    nx = papy.globals.nx + 1
+    ny = papy.globals.ny + 1
     dx = papy.globals.dx
     topo_matrix = np.zeros((nx,ny))
     for i in range(nx):
