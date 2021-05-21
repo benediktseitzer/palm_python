@@ -79,14 +79,14 @@ GLOBAL VARIABLES
 ################
 # PALM input files
 papy.globals.run_name = 'BA_BL_UW_001'
-papy.globals.run_number = '.031'
+papy.globals.run_number = '.027'
 papy.globals.run_numbers = ['.025', '.026']
 nc_file_grid = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
 nc_file_path = '../palm/current_version/JOBS/{}/OUTPUT/'.format(papy.globals.run_name)
-mask_name_list = ['M01', 'M02', 'M03', 'M04', 'M05', 'M06', 'M07', 'M08', 'M09', 
-                    'M10','M11', 'M12', 'M13', 'M14', 'M15', 'M16', 'M17', 'M18', 'M19', 'M20']
-height_list = [2., 4., 5., 7.5, 10., 15.,  20., 25., 30., 35., 40., 45., 50., 60.,
-                     70., 80., 90., 100., 125., 150.]
+# mask_name_list = ['M01', 'M02', 'M03', 'M04', 'M05', 'M06', 'M07', 'M08', 'M09', 
+#                     'M10','M11', 'M12', 'M13', 'M14', 'M15', 'M16', 'M17', 'M18', 'M19', 'M20']
+# height_list = [2., 4., 5., 7.5, 10., 15.,  20., 25., 30., 35., 40., 45., 50., 60.,
+#                      70., 80., 90., 100., 125., 150.]
 mask_name_list = ['M01', 'M02', 'M03', 'M04', 'M05', 'M06', 'M07', 'M08', 'M09', 
                     'M10','M11', 'M12', 'M13', 'M14', 'M15', 'M16', 'M17', 'M18', 'M19']
 height_list = [2., 4., 5., 7.5, 10., 15.,  20., 25., 30., 35., 40., 45., 50., 60.,
@@ -99,7 +99,7 @@ wt_path = '../../Documents/phd/experiments/balcony/{}'.format(wt_filename[3:5])
 wt_file = '{}/coincidence/timeseries/{}.txt'.format(wt_path, wt_filename)
 wt_file_pr = '{}/coincidence/mean/{}.000001.txt'.format(wt_path, wt_filename)
 wt_file_ref = '{}/wtref/{}_wtref.txt'.format(wt_path, wt_filename)
-wt_scale = 150.
+wt_scale = 100.
 
 # PHYSICS
 papy.globals.z0 = 0.021
@@ -117,12 +117,12 @@ mode_list = ['testing', 'heights', 'compare', 'filtercheck']
 mode = mode_list[1]
 
 # Steeringflags
-compute_lux = True
-compute_timeseries = True
-compute_turbint = True
+compute_lux = False
+compute_timeseries = False
+compute_turbint = False
 compute_vertprof = True
-compute_spectra = True
-compute_crosssections = True
+compute_spectra = False
+compute_crosssections = False
 compute_pure_fluxes = False
 compute_simrange = False
 compute_modelinput = False
