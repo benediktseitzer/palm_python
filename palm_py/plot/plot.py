@@ -209,6 +209,8 @@ def plot_semilog_u(var, var_name, z, z_unit, wt_pr, wt_z, wt_u_ref, time):
     time: array-like
     """    
 
+    plt.style.use('classic')
+
     # calculate theoretical wind profile
     u_pr, u_pw, u_fric = papy.calc_theoretical_profile(wt_pr, wt_u_ref, wt_z,z)
 
@@ -222,7 +224,7 @@ def plot_semilog_u(var, var_name, z, z_unit, wt_pr, wt_z, wt_u_ref, time):
     colors = iter(jet(np.linspace(0,1,10)))
     for i in range(len(time)-1,len(time)):
         try:
-            ax2.plot(var[i,1:-1], z[1:-1], label='PALM', color=next(colors))
+            ax2.plot(var[i,1:-1], z[1:-1], label=r'PALM: $z={}$m'.format(papy.globals.z0), color=next(colors))
             # ax2.plot(u_pw[1:-1], z[1:-1], label='power law', color='red',linestyle='--')
             ax2.plot(u_pr[1:-1], z[1:-1], label='prandtls law', color='darkorange',linestyle='--')
             ax2.errorbar(wt_pr[:],wt_z[:],xerr=xerror[:],label='wind tunnel',fmt='x',color='cornflowerblue')
@@ -230,17 +232,20 @@ def plot_semilog_u(var, var_name, z, z_unit, wt_pr, wt_z, wt_u_ref, time):
             print('Exception has occurred: StopIteration - plot_semilog-plot_u')
 
     ax2.xaxis.set_major_locator(plt.MaxNLocator(7))
-
-    plt.style.use('classic')
-
+    ax2.set_ylim(1., max(z))
     ax2.legend(loc='best', numpoints=1)
     ax2.set(xlabel=r'$u/u_{ref}$ $(-)$', ylabel=r'$z$ $({})$'.format(z_unit), 
             title= r'Logarithmic profile of $u/u_{ref}$')
     ax2.grid()
     ax2.grid(which='minor', alpha=0.2)
     ax2.grid(which='major', alpha=0.2)
-    fig2.savefig('../palm_results/{}/run_{}/profiles/{}_{}_pr_verpr_log.png'.format(papy.globals.run_name,papy.globals.run_number[-3:],
-                    papy.globals.run_name,var_name), bbox_inches='tight')
+    fig2.savefig('../palm_results/{}/run_{}/profiles/{}_{}_{}_pr_verpr_log.png'.format(
+                                            papy.globals.run_name,
+                                            papy.globals.run_number[-3:],
+                                            papy.globals.run_name,
+                                            papy.globals.run_number[-3:],
+                                            var_name), 
+                                            bbox_inches='tight')
     # plt.show()
 
 def plot_ver_profile(var_plt, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_ref, time):
@@ -325,8 +330,13 @@ def plot_ver_profile(var_plt, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_r
         plt.ylim(min(z),80.)
 
     ax.legend(loc='best', numpoints=1)
-    fig.savefig('../palm_results/{}/run_{}/profiles/{}_{}_verpr.png'.format(papy.globals.run_name,papy.globals.run_number[-3:],
-                papy.globals.run_name,var_name), bbox_inches='tight')
+    fig.savefig('../palm_results/{}/run_{}/profiles/{}_{}_{}_verpr.png'.format(
+                                            papy.globals.run_name,
+                                            papy.globals.run_number[-3:],
+                                            papy.globals.run_name,
+                                            papy.globals.run_number[-3:],
+                                            var_name), 
+                                            bbox_inches='tight')
     # plt.show()
 
 def plot_spectra(f_comp1_sm, S_comp1_sm,
