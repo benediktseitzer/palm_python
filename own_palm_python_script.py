@@ -79,7 +79,7 @@ GLOBAL VARIABLES
 ################
 # PALM input files
 papy.globals.run_name = 'BA_BL_UW_001'
-papy.globals.run_number = '.030'
+papy.globals.run_number = '.031'
 papy.globals.run_numbers = ['.025', '.026']
 nc_file_grid = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
 nc_file_path = '../palm/current_version/JOBS/{}/OUTPUT/'.format(papy.globals.run_name)
@@ -102,13 +102,13 @@ wt_file_ref = '{}/wtref/{}_wtref.txt'.format(wt_path, wt_filename)
 wt_scale = 150.
 
 # PHYSICS
-papy.globals.z0 = 0.0319
+papy.globals.z0 = 0.021
 papy.globals.alpha = 0.168
 papy.globals.ka = 0.41
 papy.globals.d0 = 0.
 papy.globals.nx = 511
 papy.globals.ny = 511
-papy.globals.dx = 1
+papy.globals.dx = 2
 
 # test-cases for spectral analysis testing
 test_case_list = ['frequency_peak']
