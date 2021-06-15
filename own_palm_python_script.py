@@ -79,7 +79,7 @@ GLOBAL VARIABLES
 ################
 # PALM input files
 papy.globals.run_name = 'BA_BL_UW_001'
-papy.globals.run_number = '.037'
+papy.globals.run_number = '.040'
 papy.globals.run_numbers = ['.025', '.026']
 nc_file_grid = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
 nc_file_path = '../palm/current_version/JOBS/{}/OUTPUT/'.format(papy.globals.run_name)
@@ -131,10 +131,10 @@ mode = mode_list[1]
 # compute_modelinput = True
 
 compute_lux = False
-compute_timeseries = True
-compute_turbint = False
-compute_vertprof = True
-compute_spectra = False
+compute_timeseries = False
+compute_turbint = True
+compute_vertprof = False
+compute_spectra = True
 compute_crosssections = True
 compute_pure_fluxes = False
 compute_simrange = False
