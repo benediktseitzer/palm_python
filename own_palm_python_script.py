@@ -79,7 +79,7 @@ GLOBAL VARIABLES
 ################
 # PALM input files
 papy.globals.run_name = 'BA_BL_UW_001'
-papy.globals.run_number = '.040'
+papy.globals.run_number = '.041'
 papy.globals.run_numbers = ['.025', '.026']
 nc_file_grid = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
 nc_file_path = '../palm/current_version/JOBS/{}/OUTPUT/'.format(papy.globals.run_name)
