@@ -79,7 +79,7 @@ GLOBAL VARIABLES
 ################
 # PALM input files
 papy.globals.run_name = 'BA_BL_UW_001'
-papy.globals.run_number = '.041'
+papy.globals.run_number = '.042'
 papy.globals.run_numbers = ['.025', '.026']
 nc_file_grid = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
 nc_file_path = '../palm/current_version/JOBS/{}/OUTPUT/'.format(papy.globals.run_name)
@@ -109,9 +109,9 @@ papy.globals.z0 = 0.0361
 papy.globals.alpha = 0.168
 papy.globals.ka = 0.41
 papy.globals.d0 = 0.
-papy.globals.nx = 255
-papy.globals.ny = 255
-papy.globals.dx = 4
+papy.globals.nx = 1023
+papy.globals.ny = 1023
+papy.globals.dx = 1
 
 # test-cases for spectral analysis testing
 test_case_list = ['frequency_peak']
@@ -130,11 +130,11 @@ mode = mode_list[1]
 # compute_simrange = False
 # compute_modelinput = True
 
-compute_lux = False
-compute_timeseries = False
+compute_lux = True
+compute_timeseries = True
 compute_turbint = True
-compute_vertprof = False
-compute_spectra = True
+compute_vertprof = True
+compute_spectra = False
 compute_crosssections = True
 compute_pure_fluxes = False
 compute_simrange = False
