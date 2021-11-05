@@ -78,8 +78,8 @@ GLOBAL VARIABLES
 """
 ################
 # PALM input files
-papy.globals.run_name = 'BA_BL_UW_001'
-papy.globals.run_number = '.042'
+papy.globals.run_name = 'single_building'
+papy.globals.run_number = '.000'
 papy.globals.run_numbers = ['.025', '.026']
 nc_file_grid = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
 nc_file_path = '../palm/current_version/JOBS/{}/OUTPUT/'.format(papy.globals.run_name)
@@ -97,21 +97,21 @@ height_list = [2., 4., 5., 7.5, 10., 15.,  20., 25., 30., 35., 40., 45., 50., 60
 
 
 # wind tunnel input files
-wt_filename = 'BA_BL_UW_001'
-wt_path = '../../Documents/phd/experiments/balcony/{}'.format(wt_filename[3:5])
+wt_filename = 'SB_BL_UV_001'
+wt_path = '../../Documents/phd/experiments/single_building/{}'.format(wt_filename[3:5])
 wt_file = '{}/coincidence/timeseries/{}.txt'.format(wt_path, wt_filename)
 wt_file_pr = '{}/coincidence/mean/{}.000001.txt'.format(wt_path, wt_filename)
 wt_file_ref = '{}/wtref/{}_wtref.txt'.format(wt_path, wt_filename)
 wt_scale = 100.
 
 # PHYSICS
-papy.globals.z0 = 0.0361
-papy.globals.alpha = 0.168
+papy.globals.z0 = 0.075
+papy.globals.alpha = 0.18
 papy.globals.ka = 0.41
 papy.globals.d0 = 0.
-papy.globals.nx = 1023
-papy.globals.ny = 1023
-papy.globals.dx = 1
+papy.globals.nx = 127
+papy.globals.ny = 127
+papy.globals.dx = 2
 
 # test-cases for spectral analysis testing
 test_case_list = ['frequency_peak']
@@ -130,12 +130,12 @@ mode = mode_list[1]
 # compute_simrange = False
 # compute_modelinput = True
 
-compute_lux = True
+compute_lux = False
 compute_timeseries = True
-compute_turbint = True
+compute_turbint = False
 compute_vertprof = True
 compute_spectra = False
-compute_crosssections = True
+compute_crosssections = False
 compute_pure_fluxes = False
 compute_simrange = False
 compute_modelinput = False
@@ -234,6 +234,7 @@ if compute_vertprof:
     var_name_list = ['w*u*', 'w"u"', 'e', 'e*', 'u*2', 'u']
     for i,var_name in enumerate(var_name_list):
         if var_name == 'u':
+            # velocity profile
             grid_name = 'z{}'.format(var_name)
             var, var_max, var_unit = papy.read_nc_var_ver_pr(nc_file_path,nc_file,var_name)
             print('\n       u_max = {} \n'.format(var_max))
@@ -247,6 +248,7 @@ if compute_vertprof:
             plt.close(i+3)
             print('\n --> plottet {} \n'.format(var_name))
         else:
+            #other profiles
             grid_name = 'z{}'.format(var_name)
             var, var_max, var_unit = papy.read_nc_var_ver_pr(nc_file_path,nc_file,var_name)
             z, z_unit = papy.read_nc_grid(nc_file_path,nc_file,grid_name)
@@ -255,6 +257,7 @@ if compute_vertprof:
             plt.close(i)
             print('\n --> plottet {} \n'.format(var_name))
 
+    # SGS+resolved flux profile
     grid_name = 'zw*u*'
     var1, var_max1, var_unit1 = papy.read_nc_var_ver_pr(nc_file_path, nc_file, 'w*u*')
     var2, var_max2, var_unit2 = papy.read_nc_var_ver_pr(nc_file_path, nc_file, 'w"u"')
