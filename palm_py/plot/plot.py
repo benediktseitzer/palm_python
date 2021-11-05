@@ -226,7 +226,7 @@ def plot_semilog_u(var, var_name, z, z_unit, wt_pr, wt_z, wt_u_ref, time):
         try:
             ax2.plot(var[i,1:-1], z[1:-1], label=r'PALM: $z={}$m'.format(papy.globals.z0), color=next(colors))
             # ax2.plot(u_pw[1:-1], z[1:-1], label='power law', color='red',linestyle='--')
-            ax2.plot(u_pr[1:-1], z[1:-1], label='prandtls law', color='darkorange',linestyle='--')
+            ax2.plot(u_pr[1:-1], z[1:-1], label=r'Prandtls law: $z_0={}$ m'.format(papy.globals.z0), color='darkorange',linestyle='--')
             ax2.errorbar(wt_pr[:],wt_z[:],xerr=xerror[:],label='wind tunnel',fmt='x',color='cornflowerblue')
         except:
             print('Exception has occurred: StopIteration - plot_semilog-plot_u')
@@ -291,7 +291,7 @@ def plot_ver_profile(var_plt, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_r
     if var_name == 'u':
         try:
             # ax.plot(u_pw[:-1], z[:-1], label='power law', color='red',linestyle='--')
-            ax.plot(u_pr[:-1], z[:-1], label='Prandtls law', 
+            ax.plot(u_pr[:-1], z[:-1], label='Prandtls law: $z_0={}$ m'.format(papy.globals.z0), 
                     color='darkorange', linestyle='--')
             ax.errorbar(wt_pr[:-1], wt_z[:-1], xerr=xerror[:-1], 
                     label='wind tunnel', fmt='x', c='cornflowerblue')
