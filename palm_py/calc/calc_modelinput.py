@@ -83,3 +83,4 @@ def calc_topofile(building_height, building_x_length, building_y_length):
                     topo_matrix[i,j] = building_height
                     # print(i, j, topo_matrix[i,j])
     np.savetxt('{}_topo'.format(papy.globals.run_name), topo_matrix, fmt='%1.0f', delimiter=' ')
+    print('     Saved topo-file to {}_topo'.format(papy.globals.run_name))
