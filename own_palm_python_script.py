@@ -79,7 +79,7 @@ GLOBAL VARIABLES
 ################
 # PALM input files
 papy.globals.run_name = 'single_building'
-papy.globals.run_number = '.003'
+papy.globals.run_number = '.002'
 papy.globals.run_numbers = ['.025', '.026']
 nc_file_grid = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
 nc_file_path = '../palm/current_version/JOBS/{}/OUTPUT/'.format(papy.globals.run_name)
@@ -109,9 +109,9 @@ papy.globals.z0 = 0.075
 papy.globals.alpha = 0.18
 papy.globals.ka = 0.41
 papy.globals.d0 = 0.
-papy.globals.nx = 127
-papy.globals.ny = 127
-papy.globals.dx = 2
+papy.globals.nx = 255
+papy.globals.ny = 511
+papy.globals.dx = 1
 
 # test-cases for spectral analysis testing
 test_case_list = ['frequency_peak']
@@ -131,14 +131,14 @@ mode = mode_list[1]
 # compute_modelinput = True
 
 compute_lux = False
-compute_timeseries = True
+compute_timeseries = False
 compute_turbint = False
-compute_vertprof = True
+compute_vertprof = False
 compute_spectra = False
-compute_crosssections = True
+compute_crosssections = False
 compute_pure_fluxes = False
 compute_simrange = False
-compute_modelinput = False
+compute_modelinput = True
 
 
 ################
@@ -524,8 +524,8 @@ if compute_crosssections:
 ################
 # compute model input data
 if compute_modelinput:
-    wind_profile = True
-    topo_file = False
+    wind_profile = False
+    topo_file = True
     if wind_profile:
         # read wind tunnel profile
         wt_u_pr, wt_u_ref, wt_z = papy.read_wt_ver_pr(wt_file_pr, wt_file_ref, wt_scale)
@@ -553,8 +553,8 @@ if compute_modelinput:
     if topo_file:
         print('     Start constructing Topo-file')
         building_height = 50.
-        building_x_length = 76.
-        building_y_length = 36.
+        building_x_length = 36.
+        building_y_length = 76.
         papy.calc_topofile(building_height, building_x_length, building_y_length)
         print('     Finished constructing Topo-file')
 
