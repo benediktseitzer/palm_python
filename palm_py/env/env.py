@@ -73,6 +73,10 @@ def prepare_plotfolder(run_name,run_number):
             os.mkdir(path_turbint)
             # copies INPUT-file of PALM-run to path
             os.system('cp {}/{}_p3d {}'.format(path_palminput,run_name,path))
+            try:
+                os.system('cp {}/{}_topo {}'.format(path_palminput,run_name,path))            
+            except:
+                print('no topo file')
         except OSError:
             print ('\n Creation of the directories {} failed \n'.format(path))
         else:
