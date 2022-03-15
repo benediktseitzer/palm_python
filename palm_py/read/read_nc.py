@@ -241,7 +241,7 @@ def read_nc_time(nc_file_path, nc_file):
     try:
         fh = netCDF4.Dataset('{}{}'.format(nc_file_path,nc_file), mode='r')
     except:
-        print('\n Exception occured: {} not found \n'.format(nc_file))
+        print('\n Exception occured: /{}{} not found \n'.format(nc_file_path, nc_file))
         
 
     time = fh.variables['time'][:]

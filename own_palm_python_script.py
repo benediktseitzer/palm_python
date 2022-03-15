@@ -78,11 +78,11 @@ GLOBAL VARIABLES
 """
 ################
 # PALM input files
-papy.globals.run_name = 'single_building'
-papy.globals.run_number = '.002'
-papy.globals.run_numbers = ['.025', '.026']
+papy.globals.run_name = 'BA_BL_UW_001'
+papy.globals.run_number = '.027'
+papy.globals.run_numbers = ['.029', '.028']
 nc_file_grid = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
-nc_file_path = '../palm/current_version/JOBS/{}/OUTPUT/'.format(papy.globals.run_name)
+nc_file_path = '../palm_old/current_version/JOBS/{}/OUTPUT/'.format(papy.globals.run_name)
 # mask_name_list = ['M01', 'M02', 'M03', 'M04', 'M05', 'M06', 'M07', 'M08', 'M09', 
 #                     'M10','M11', 'M12', 'M13', 'M14', 'M15', 'M16', 'M17', 'M18', 'M19', 'M20']
 # height_list = [2., 4., 5., 7.5, 10., 15.,  20., 25., 30., 35., 40., 45., 50., 60.,
@@ -97,20 +97,21 @@ height_list = [2., 4., 5., 7.5, 10., 15.,  20., 25., 30., 35., 40., 45., 50., 60
 
 
 # wind tunnel input files
-wt_filename = 'SB_BL_UV_001'
-wt_path = '../../Documents/phd/experiments/single_building/{}'.format(wt_filename[3:5])
+experiment = 'balcony'
+wt_filename = 'BA_BL_UW_001'
+wt_path = '../../Documents/phd/experiments/{}/{}'.format(experiment, wt_filename[3:5])
 wt_file = '{}/coincidence/timeseries/{}.txt'.format(wt_path, wt_filename)
 wt_file_pr = '{}/coincidence/mean/{}.000001.txt'.format(wt_path, wt_filename)
 wt_file_ref = '{}/wtref/{}_wtref.txt'.format(wt_path, wt_filename)
-wt_scale = 100.
+wt_scale = 150.
 
 # PHYSICS
-papy.globals.z0 = 0.075
+papy.globals.z0 = 0.01
 papy.globals.alpha = 0.18
 papy.globals.ka = 0.41
 papy.globals.d0 = 0.
-papy.globals.nx = 255
-papy.globals.ny = 511
+papy.globals.nx = 1023
+papy.globals.ny = 1023
 papy.globals.dx = 1
 
 # test-cases for spectral analysis testing
@@ -133,12 +134,12 @@ mode = mode_list[1]
 compute_lux = False
 compute_timeseries = False
 compute_turbint = False
-compute_vertprof = False
+compute_vertprof = True
 compute_spectra = False
 compute_crosssections = False
 compute_pure_fluxes = False
 compute_simrange = False
-compute_modelinput = True
+compute_modelinput = False
 
 
 ################
@@ -225,7 +226,7 @@ if compute_turbint:
 if compute_vertprof:
     nc_file = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
     # read variables for plot
-    time, time_unit = papy.read_nc_time(nc_file_path,nc_file)
+    time, time_unit = papy.read_nc_time(nc_file_path, nc_file)
     # read wind tunnel profile
     wt_pr, wt_u_ref, wt_z = papy.read_wt_ver_pr(wt_file_pr, wt_file_ref ,wt_scale)
     print('\n wind tunnel profile loaded \n') 
@@ -246,6 +247,39 @@ if compute_vertprof:
             plt.figure(i+3)
             papy.plot_semilog_u(var, var_name, z, z_unit, wt_pr, wt_z, wt_u_ref, time)
             plt.close(i+3)
+            print('\n --> plottet {} \n'.format(var_name))
+        elif var_name == 'e': 
+            # velocity profile
+            grid_name = 'z{}'.format(var_name)
+            var, var_max, var_unit = papy.read_nc_var_ver_pr(nc_file_path,nc_file,
+                                                            var_name)
+            var_e, var_e_max, var_e_unit = papy.read_nc_var_ver_pr(nc_file_path,nc_file,
+                                                            'e*')
+            print('\n       u_max = {} \n'.format(var_max))
+            z, z_unit = papy.read_nc_grid(nc_file_path,nc_file,grid_name)
+            print('\n       wt_u_ref = {} \n'.format(wt_u_ref))
+            plt.figure(i)
+            plt.style.use('classic')
+            fig, ax = plt.subplots()
+            jet= plt.get_cmap('viridis')
+            colors = iter(jet(np.linspace(0,1,10)))
+            ax.plot(var_e[i,:-1], z[:-1], label='Resolved TKE',
+                    linestyle='--')
+            ax.plot(var[i,:-1], z[:-1], label='SGS-TKE')
+            ax.grid()
+            ax.set(xlabel=r'$e_{SGS}$ and $e_{RES}$' + ' (m^2/s^2)',
+                ylabel=r'$z$ (m)')
+            ax.xaxis.set_major_locator(plt.MaxNLocator(7))
+            ax.set_ylim(0., 124)
+            ax.legend(loc='best', numpoints=1)
+            fig.savefig('../palm_results/{}/run_{}/profiles/{}_{}_{}_verpr.png'.format(
+                                                    papy.globals.run_name,
+                                                    papy.globals.run_number[-3:],
+                                                    papy.globals.run_name,
+                                                    papy.globals.run_number[-3:],
+                                                    var_name), 
+                                                    bbox_inches='tight')
+            plt.close(i)
             print('\n --> plottet {} \n'.format(var_name))
         else:
             #other profiles
