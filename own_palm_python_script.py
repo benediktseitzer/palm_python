@@ -79,10 +79,10 @@ GLOBAL VARIABLES
 ################
 # PALM input files
 papy.globals.run_name = 'BA_BL_UW_001'
-papy.globals.run_number = '.027'
+papy.globals.run_number = '.043'
 papy.globals.run_numbers = ['.029', '.028']
 nc_file_grid = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
-nc_file_path = '../palm_old/current_version/JOBS/{}/OUTPUT/'.format(papy.globals.run_name)
+nc_file_path = '../palm/current_version/JOBS/{}/OUTPUT/'.format(papy.globals.run_name)
 # mask_name_list = ['M01', 'M02', 'M03', 'M04', 'M05', 'M06', 'M07', 'M08', 'M09', 
 #                     'M10','M11', 'M12', 'M13', 'M14', 'M15', 'M16', 'M17', 'M18', 'M19', 'M20']
 # height_list = [2., 4., 5., 7.5, 10., 15.,  20., 25., 30., 35., 40., 45., 50., 60.,
@@ -103,16 +103,16 @@ wt_path = '../../Documents/phd/experiments/{}/{}'.format(experiment, wt_filename
 wt_file = '{}/coincidence/timeseries/{}.txt'.format(wt_path, wt_filename)
 wt_file_pr = '{}/coincidence/mean/{}.000001.txt'.format(wt_path, wt_filename)
 wt_file_ref = '{}/wtref/{}_wtref.txt'.format(wt_path, wt_filename)
-wt_scale = 150.
+wt_scale = 100.
 
 # PHYSICS
-papy.globals.z0 = 0.01
-papy.globals.alpha = 0.18
+papy.globals.z0 = 0.021
+papy.globals.alpha = 0.17
 papy.globals.ka = 0.41
 papy.globals.d0 = 0.
-papy.globals.nx = 1023
-papy.globals.ny = 1023
-papy.globals.dx = 1
+papy.globals.nx = 64
+papy.globals.ny = 64
+papy.globals.dx = 5
 
 # test-cases for spectral analysis testing
 test_case_list = ['frequency_peak']
@@ -132,7 +132,7 @@ mode = mode_list[1]
 # compute_modelinput = True
 
 compute_lux = False
-compute_timeseries = False
+compute_timeseries = True
 compute_turbint = False
 compute_vertprof = True
 compute_spectra = False
@@ -558,16 +558,16 @@ if compute_crosssections:
 ################
 # compute model input data
 if compute_modelinput:
-    wind_profile = False
-    topo_file = True
+    wind_profile = True
+    topo_file = False
     if wind_profile:
         # read wind tunnel profile
         wt_u_pr, wt_u_ref, wt_z = papy.read_wt_ver_pr(wt_file_pr, wt_file_ref, wt_scale)
         print('\n wind tunnel profile loaded \n')
         # calculate z
-        domain_upper = 128.
-        z = np.linspace(0., domain_upper, 33)
-        reference_height = [7., 50.]
+        domain_upper = 80.
+        z = np.linspace(0., domain_upper, 17)
+        reference_height = [7., 30.]
 
         # calculate theoretical profile
         u_pr, u_fric = papy.calc_input_profile(wt_u_pr, wt_z, z, reference_height)
