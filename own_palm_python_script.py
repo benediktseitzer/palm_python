@@ -21,6 +21,8 @@ from matplotlib.ticker import FormatStrFormatter
 
 import palm_py as papy
 
+
+
 import warnings
 warnings.simplefilter("ignore")
 
@@ -78,8 +80,8 @@ GLOBAL VARIABLES
 """
 ################
 # PALM input files
-papy.globals.run_name = 'BA_BL_UW_001'
-papy.globals.run_number = '.043'
+papy.globals.run_name = 'single_building_ABL_2m'
+papy.globals.run_number = '.001'
 papy.globals.run_numbers = ['.029', '.028']
 nc_file_grid = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
 nc_file_path = '../palm/current_version/JOBS/{}/OUTPUT/'.format(papy.globals.run_name)
@@ -94,25 +96,23 @@ height_list = [2., 4., 5., 7.5, 10., 15.,  20., 25., 30., 35., 40., 45., 50., 60
 # mask_name_list = ['M01', 'M02', 'M03', 'M04', 'M05', 'M06', 'M07', 'M08', 'M09']
 # height_list = [2., 4., 5., 7.5, 10., 15.,  20., 25., 30.]
 
-
-
 # wind tunnel input files
-experiment = 'balcony'
-wt_filename = 'BA_BL_UW_001'
+experiment = 'single_building'
+wt_filename = 'SB_BL_UV_001'
 wt_path = '../../Documents/phd/experiments/{}/{}'.format(experiment, wt_filename[3:5])
 wt_file = '{}/coincidence/timeseries/{}.txt'.format(wt_path, wt_filename)
 wt_file_pr = '{}/coincidence/mean/{}.000001.txt'.format(wt_path, wt_filename)
 wt_file_ref = '{}/wtref/{}_wtref.txt'.format(wt_path, wt_filename)
-wt_scale = 100.
+wt_scale = 150.
 
 # PHYSICS
-papy.globals.z0 = 0.021
+papy.globals.z0 = 0.04
 papy.globals.alpha = 0.17
 papy.globals.ka = 0.41
 papy.globals.d0 = 0.
-papy.globals.nx = 64
-papy.globals.ny = 64
-papy.globals.dx = 5
+papy.globals.nx = 512
+papy.globals.ny = 512
+papy.globals.dx = 2.
 
 # test-cases for spectral analysis testing
 test_case_list = ['frequency_peak']
@@ -696,3 +696,6 @@ if compute_simrange:
         plt.legend(numpoints=1)
         plt.show()
     print(' End plotting of palm-runs of {}'.format(papy.globals.run_name))
+
+
+
