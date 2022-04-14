@@ -45,10 +45,10 @@ def calc_theoretical_profile(m_u, m_u_ref, m_z, z):
 
     # calculate friction velocity
     ident = 17
-    u_fric = (papy.globals.ka * m_u[ident]) / (np.log(m_z[ident]/papy.globals.z0))
+    u_fric = (papy.globals.ka * m_u[ident]) / (np.log(m_z[ident]/papy.globals.z0_wt))
 
     # calculate theoretical profiles
-    u_prandtl = u_fric/papy.globals.ka * np.log((z[1:]-papy.globals.d0)/papy.globals.z0)
+    u_prandtl = u_fric/papy.globals.ka * np.log((z[1:]-papy.globals.d0)/papy.globals.z0_wt)
     u_powerlaw = 1.* (z[1:]/200.)**papy.globals.alpha
 
     # no-slip bc:

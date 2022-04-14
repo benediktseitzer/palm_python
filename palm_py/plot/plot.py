@@ -113,25 +113,25 @@ def plot_timeseries(var, var_unit, var_name, time, time_unit):
     plt.style.use('classic')
     fig, ax = plt.subplots()
     ax.plot(time, var, color='darkviolet')
-    
+    ax.set_xlabel(r'$t$ $({})$'.format('s'), fontsize = 18)
     if var_name == 'dt':
-        ax.set(xlabel=r'$t$ $({})$'.format('s'), ylabel=r'$\Delta t$  $(s)$')
+        ax.set_ylabel(r'$\Delta t$  $(s)$', fontsize = 18)
     elif var_name == 'E':
-        ax.set(xlabel=r'$t$ $({})$'.format('s'), ylabel=r'$E$  $(m^2/s^2)$')
+        ax.set_ylabel(r'$E$  $(m^2/s^2)$', fontsize = 18)
     elif var_name == 'E*':
-        ax.set(xlabel=r'$t$ $({})$'.format('s'), ylabel=r'$E^*$  $(m^2/s^2)$')        
+        ax.set_ylabel(r'$E^*$  $(m^2/s^2)$', fontsize = 18)
     elif var_name == 'umax':
-        ax.set(xlabel=r'$t$ $({})$'.format('s'), ylabel=r'$u_{max}$  $(m/s)$')
+        ax.set_ylabel(r'$u_{max}$  $(m/s)$')
     elif var_name == 'div_new':
-        ax.set(xlabel=r'$t$ $({})$'.format('s'), ylabel=r'$(\nabla \cdot \vec u)_{new}$  $(1/s)$')            
+        ax.set_ylabel(r'$(\nabla \cdot \vec u)_{new}$  $(1/s)$', fontsize = 18)
     elif var_name == 'div_old':
-        ax.set(xlabel=r'$t$ $({})$'.format('s'), ylabel=r'$(\nabla \cdot \vec u)_{old}$  $(1/s)$') 
+        ax.set_ylabel(r'$(\nabla \cdot \vec u)_{old}$  $(1/s)$', fontsize = 18) 
     elif var_name == 'us*':
-        ax.set(xlabel=r'$t$ $({})$'.format('s'), ylabel=r'$u_s^*$  $(m/s)$') 
+        ax.set_ylabel(r'$u_s^*$  $(m/s)$', fontsize = 18) 
     elif var_name == 'w"u"0':
-        ax.set(xlabel=r'$t$ $({})$'.format('s'), ylabel=r'$w^\prime u^\prime_0$  $(m^2/s^2)$') 
+        ax.set_ylabel(r'$w^\prime u^\prime_0$  $(m^2/s^2)$', fontsize = 18) 
     else:
-        ax.set(xlabel=r'$t$ $({})$'.format('s'), ylabel=r'{} $({})$'.format(var_name,var_unit))
+        ax.set_ylabel(r'{} $({})$'.format(var_name,var_unit), fontsize = 18)
 
     ax.grid()
     ax.yaxis.set_major_formatter(FormatStrFormatter('%.2e'))
@@ -180,8 +180,8 @@ def plot_turbint_profile(turbint, height_list, var_name):
         ax.set_xlim(0,0.3)
         ax.set_ylim(0,300)
 
-    ax.set_xlabel(r"$I _{}$ (-)".format(var_name))
-    ax.set_ylabel(r"$z$ (m)" )
+    ax.set_xlabel(r"$I _{}$ (-)".format(var_name), fontsize = 18)
+    ax.set_ylabel(r"$z$ (m)", fontsize = 18)
     ax.legend(loc='upper left', fontsize=11, numpoints=1)
     ax.grid()
 
@@ -224,18 +224,26 @@ def plot_semilog_u(var, var_name, z, z_unit, wt_pr, wt_z, wt_u_ref, time):
     colors = iter(jet(np.linspace(0,1,10)))
     for i in range(len(time)-1,len(time)):
         try:
-            ax2.plot(var[i,1:-1], z[1:-1], label=r'PALM: $z={}$m'.format(papy.globals.z0), color=next(colors))
+            ax2.plot(var[i,1:-1], z[1:-1], 
+                    label=r'PALM: $z={}$m'.format(papy.globals.z0), 
+                    color=next(colors), 
+                    linewidth = 2)
             # ax2.plot(u_pw[1:-1], z[1:-1], label='power law', color='red',linestyle='--')
-            ax2.plot(u_pr[1:-1], z[1:-1], label=r'Prandtls law: $z_0={}$ m'.format(papy.globals.z0), color='darkorange',linestyle='--')
-            ax2.errorbar(wt_pr[:],wt_z[:],xerr=xerror[:],label='wind tunnel',fmt='x',color='cornflowerblue')
+            ax2.plot(u_pr[1:-1], z[1:-1], 
+                    label=r'fit: $z_0=({} \pm 0.003)$m'.format(papy.globals.z0_wt), 
+                    color='darkorange', 
+                    linestyle='--',
+                    linewidth = 2)
+            ax2.errorbar(wt_pr[:],wt_z[:],xerr=xerror[:],
+                        label=r'boundary layer',fmt='^',color='orangered')
         except:
             print('Exception has occurred: StopIteration - plot_semilog-plot_u')
 
     ax2.xaxis.set_major_locator(plt.MaxNLocator(7))
     ax2.set_ylim(1., max(z))
     ax2.legend(loc='best', numpoints=1)
-    ax2.set(xlabel=r'$u/u_{ref}$ $(-)$', ylabel=r'$z$ $({})$'.format(z_unit), 
-            title= r'Logarithmic profile of $u/u_{ref}$')
+    ax2.set_xlabel(r'$u/u_{ref}$ $(-)$', fontsize = 18)
+    ax2.set_ylabel(r'$z$ $(m)$', fontsize = 18)
     ax2.grid()
     ax2.grid(which='minor', alpha=0.2)
     ax2.grid(which='major', alpha=0.2)
@@ -284,48 +292,53 @@ def plot_ver_profile(var_plt, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_r
 
     for i in range(len(time)-1,len(time)):
         try:
-            ax.plot(var_plt[i,:-1], z[:-1], label='PALM', 
-                    color=next(colors))
+            ax.plot(var_plt[i,:-1], z[:-1], 
+                    label = r'PALM', 
+                    color = next(colors),
+                    linewidth = 2)
         except:
             print('Exception has occurred: StopIteration - plot_ver_profile')
     if var_name == 'u':
         try:
             # ax.plot(u_pw[:-1], z[:-1], label='power law', color='red',linestyle='--')
-            ax.plot(u_pr[:-1], z[:-1], label='Prandtls law: $z_0={}$ m'.format(papy.globals.z0), 
-                    color='darkorange', linestyle='--')
+            ax.plot(u_pr[:-1], z[:-1], label=r'fit: $z_0=({} \pm 0.003)$m'.format(papy.globals.z0_wt), 
+                    color='darkorange', linestyle='--', linewidth = 2)
             ax.errorbar(wt_pr[:-1], wt_z[:-1], xerr=xerror[:-1], 
-                    label='wind tunnel', fmt='x', c='cornflowerblue')
+                    label=r'boundary layer', fmt='^', c='orangered')
         except:
             print('Exception has occurred: Stop wt-plotting - plot_ver_profile')
 
+    ax.set_ylabel(r'$z$ (m)', fontsize = 18)
     if var_name == 'w"u"':
-        ax.set(xlabel=r'$u^\prime w^\prime_{SGS}$' + ' $(m^2/s^2)$', 
-                ylabel=r'$z$ $(m)$')
+        ax.set_xlabel(r'$u^\prime w^\prime_{SGS}$' + ' $(m^2/s^2)$',
+                fontsize = 18)
         # ax.set_yscale('log', nonposy='clip')
     elif var_name == 'w*u*':
-        ax.set(xlabel=r'$u^\prime w^\prime_{RES}$'+ ' $(m^2/s^2)$', 
-                ylabel=r'$z$ $(m)$')
-        # ax.set_yscale('log', nonposy='clip')                
+        ax.set_xlabel(r'$u^\prime w^\prime_{RES}$'+ ' $(m^2/s^2)$', 
+                fontsize = 18)
+        # ax.set_yscale('log', nonposy='clip')
     elif var_name == 'u':
-        ax.set(xlabel=r'$u/u_{ref}$' + ' $(-)$', 
-                ylabel=r'$z$ $(m)$')
+        ax.set_xlabel(r'$u/u_{ref}$' + ' $(-)$', 
+                fontsize = 18)
     elif var_name == 'e*':
-        ax.set(xlabel=r'$e_{RES}$' + ' $(m^2/s^2)$', 
-                ylabel=r'$z$ $(m)$')
+        ax.set_xlabel(r'$e_{RES}$' + ' $(m^2/s^2)$', 
+                fontsize = 18)
     elif var_name == 'u*2':
-        ax.set(xlabel=r'$u^\prime u^\prime_{RES}$' + ' $(m^2/s^2)$', 
-                ylabel=r'$z$ $(m)$')                
+        ax.set_xlabel(r'$u^\prime u^\prime_{RES}$' + r' (m^2/s^2)', 
+                fontsize = 18)
     elif var_name == 'e':
-        ax.set(xlabel=r'$e_{SGS}$' + ' $(m^2/s^2)$', 
-                ylabel=r'$z$ $(m)$')
+        ax.set_xlabel(r'$e_{SGS}$' + r' (m^2/s^2)', 
+                fontsize = 18)
     elif var_name == 'fluxes':     
-        ax.set(xlabel=r'$u^\prime w^\prime$' + ' $(m^2/s^2)$', 
-                ylabel=r'$z$  $(m)$')
+        ax.set_xlabel(r'$u^\prime w^\prime$' + r' (m^2/s^2)', 
+                fontsize = 18)
         ax.set_yscale('log', nonposy='clip')
         plt.ylim(min(z),256.)
     else:     
-        ax.set(xlabel=r'${}$ $({})$'.format(var_name,var_unit), 
-                ylabel=r'$z$ $({})$'.format(z_unit), title= r'Height profile of ${}$'.format(var_name))
+        ax.set_xlabel(r'${}$ ({})'.format(var_name,var_unit), 
+                fontsize = 18) 
+        ax.set_ylabel(r'$z$ (m)'.format(z_unit), 
+                fontsize = 18)
         # ax.set_yscale('log', nonposy='clip')
         plt.ylim(min(z),80.)
 
@@ -475,8 +488,8 @@ def plot_spectra(f_comp1_sm, S_comp1_sm,
         ysmax = np.nanmax(S_comp1_sm)
         ax.set_ylim(ysmin,ysmax)
 
-    ax.set_xlabel(r"$f\cdot z\cdot u_{ref}^{-1}$")
-    ax.set_ylabel(r"$f\cdot S_{ij}\cdot (\sigma_i\sigma_j)^{-1}$")
+    ax.set_xlabel(r"$f\cdot z\cdot u_{ref}^{-1}$", fontsize = 18)
+    ax.set_ylabel(r"$f\cdot S_{ij}\cdot (\sigma_i\sigma_j)^{-1}$", fontsize = 18)
     ax.legend(loc='lower left', fontsize=11, numpoints=1)
     ax.grid()
 
@@ -520,15 +533,22 @@ def plot_contour_crosssection(x, y, var, var_name, o_grid, o_level, vert_gridnam
     current_cmap = plt.cm.seismic
     current_cmap.set_bad(color='gray')
     # plot the 2D-array var
-    im = ax.imshow(var, interpolation='bilinear', cmap=current_cmap, 
-                    extent=(np.min(x), np.max(x), np.min(y), np.max(y)), 
+    im = ax.imshow(var, interpolation='bilinear', cmap=current_cmap,
+                    extent=(np.min(x), np.max(x), np.min(y), np.max(y)),
                     vmin=-v_bound, vmax=v_bound, origin='lower')
 
     # labeling 
-    fig.colorbar(im, label=r'${}$  $(m/s)$'.format(var_name),orientation="horizontal")
-    ax.set(xlabel=r'${}$  $(m)$'.format(x_grid_name), 
-            ylabel=r'${}$  $(m)$'.format(vert_gridname))
+    fig.colorbar(im, label=r'${}$  (m/s)'.format(var_name), 
+                    orientation = 'horizontal')
+    ax.set_xlabel(r'${}$  (m)'.format(x_grid_name), 
+                    fontsize = 18)
+    ax.set_ylabel(r'${}$  (m)'.format(vert_gridname), 
+                    fontsize = 18)
 
     # file output
-    fig.savefig('../palm_results/{}/run_{}/crosssections/{}_{}_cs_{}_{}.png'.format(papy.globals.run_name,papy.globals.run_number[-3:],
-                papy.globals.run_name,var_name,str(round(o_grid[o_level],2)),crosssection), bbox_inches='tight')
+    fig.savefig('../palm_results/{}/run_{}/crosssections/{}_{}_cs_{}_{}.png'.format(
+                papy.globals.run_name,papy.globals.run_number[-3:],
+                papy.globals.run_name,var_name,str(round(o_grid[o_level],2)),
+                crosssection), 
+                bbox_inches='tight', 
+                dpi=600)
