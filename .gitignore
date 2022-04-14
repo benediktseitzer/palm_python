@@ -4,3 +4,5 @@
 own*
 # ignore topo-files
 *_topo
+# log-files
+*.log
