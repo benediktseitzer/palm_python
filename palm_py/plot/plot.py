@@ -293,7 +293,7 @@ def plot_ver_profile(var_plt, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_r
     for i in range(len(time)-1,len(time)):
         try:
             ax.plot(var_plt[i,:-1], z[:-1], 
-                    label = r'PALM', 
+                    label=r'PALM: $z={}$m'.format(papy.globals.z0), 
                     color = next(colors),
                     linewidth = 2)
         except:
