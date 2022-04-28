@@ -242,8 +242,8 @@ def plot_semilog_u(var, var_name, z, z_unit, wt_pr, wt_z, wt_u_ref, time):
     ax2.xaxis.set_major_locator(plt.MaxNLocator(7))
     ax2.set_ylim(1., max(z))
     ax2.legend(loc='best', numpoints=1)
-    ax2.set_xlabel(r'$u/u_{ref}$ $(-)$', fontsize = 18)
-    ax2.set_ylabel(r'$z$ $(m)$', fontsize = 18)
+    ax2.set_xlabel(r'$\overline{u}$ (-)', fontsize = 18)
+    ax2.set_ylabel(r'$z$ (m)', fontsize = 18)
     ax2.grid()
     ax2.grid(which='minor', alpha=0.2)
     ax2.grid(which='major', alpha=0.2)
@@ -310,27 +310,27 @@ def plot_ver_profile(var_plt, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_r
 
     ax.set_ylabel(r'$z$ (m)', fontsize = 18)
     if var_name == 'w"u"':
-        ax.set_xlabel(r'$u^\prime w^\prime_{SGS}$' + ' $(m^2/s^2)$',
+        ax.set_xlabel(r'$u^\prime w^\prime_{SGS}$' + r' (m$^2$/s$^2$)',
                 fontsize = 18)
         # ax.set_yscale('log', nonposy='clip')
     elif var_name == 'w*u*':
-        ax.set_xlabel(r'$u^\prime w^\prime_{RES}$'+ ' $(m^2/s^2)$', 
+        ax.set_xlabel(r'$u^\prime w^\prime_{RES}$'+ r' (m$^2$/s$^2$)', 
                 fontsize = 18)
         # ax.set_yscale('log', nonposy='clip')
     elif var_name == 'u':
-        ax.set_xlabel(r'$u/u_{ref}$' + ' $(-)$', 
+        ax.set_xlabel(r'$\overline{u}$' + ' (-)', 
                 fontsize = 18)
     elif var_name == 'e*':
-        ax.set_xlabel(r'$e_{RES}$' + ' $(m^2/s^2)$', 
+        ax.set_xlabel(r'$e_{RES}$' + r' (m$^2$/s$^2$)', 
                 fontsize = 18)
     elif var_name == 'u*2':
-        ax.set_xlabel(r'$u^\prime u^\prime_{RES}$' + r' (m^2/s^2)', 
+        ax.set_xlabel(r'$u^\prime u^\prime_{RES}$' + r' (m$^2$/s$^2$)', 
                 fontsize = 18)
     elif var_name == 'e':
-        ax.set_xlabel(r'$e_{SGS}$' + r' (m^2/s^2)', 
+        ax.set_xlabel(r'$e_{SGS}$' + r' (m$^2$/s$^2$)', 
                 fontsize = 18)
     elif var_name == 'fluxes':     
-        ax.set_xlabel(r'$u^\prime w^\prime$' + r' (m^2/s^2)', 
+        ax.set_xlabel(r'$u^\prime w^\prime$' + r' (m$^2$/s$^2$)', 
                 fontsize = 18)
         ax.set_yscale('log', nonposy='clip')
         plt.ylim(min(z),256.)
