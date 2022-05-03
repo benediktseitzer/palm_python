@@ -24,7 +24,8 @@ class globals():
         """
         super().__init__()
         # physical parameters
-        self.z0 = None # roughness length
+        self.z0 = None # roughness length PALM sim.
+        self.z0_wt = None # roughness length Wind tunnel
         self.d0 = None # displacement height
         self.ka = None # von Karman constant
         self.alpha = None # fitting parameter power law
@@ -32,6 +33,7 @@ class globals():
         self.run_name = None
         self.run_number = None
         self.run_numbers = None
+        self.jobchain_numbers = None
         # numerical parameters
         self.nx = None
         self.ny = None
