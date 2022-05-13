@@ -372,7 +372,7 @@ def plot_spectra(f_comp1_sm, S_comp1_sm,
     # reference spectra
     f_refspecs = np.logspace(-4, 3, num=100, base = 10) 
     ref_specs = papy.get_reference_spectra(height,None)
-    E_min, E_max = papy.calc_ref_spectra(f_refspecs, ref_specs, var_name)
+    E_min, E_max, E_kai, E_sim = papy.calc_ref_spectra(f_refspecs, ref_specs, var_name)
 
     f_sm = [f_comp1_sm][np.argmin([np.nanmax(f_comp1_sm)])]
     f_sm = f_sm[:len(S_comp1_sm)]
