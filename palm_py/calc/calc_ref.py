@@ -60,30 +60,38 @@ def calc_theoretical_profile(m_u, m_u_ref, m_z, z):
 def calc_ref_spectra(freq_red, ref_specs, var_name):
     """ 
     Calculate dimensionless reference spectra.
+    E_min and E_max => VDI
     E_kaimal => Kaimal et al. (1972)
     E_simiu => Simiu and Scanlan (1986)
     @parameter: 
     """
-    modified = True
 
     # modified
     if var_name == 'u':
         a,b,c,d,e = ref_specs[0,:]
         f,g,h,i,j = ref_specs[1,:]
+        E_kaimal = 16.8 * freq_red/((1+33*freq_red)**(5./3.))
+        E_simiu = 32 * freq_red/((1+50*freq_red)**(5./3.))        
     elif var_name == 'v':
         a,b,c,d,e = ref_specs[2,:]
         f,g,h,i,j = ref_specs[3,:]
+        E_kaimal = 4.8 * freq_red/((1+9.5*freq_red)**(5./3.))
+        E_simiu = 4.3 * freq_red/((1+9.5*freq_red)**(5./3.))
     elif var_name == 'w':
         a,b,c,d,e = ref_specs[4,:]
-        f,g,h,i,j = ref_specs[5,:]                        
+        f,g,h,i,j = ref_specs[5,:]
+        E_kaimal = 1.3 * freq_red/((1+5.3*freq_red**(5./3.)))
+        E_simiu = 2.2 * freq_red/((1+10*freq_red**(5./3.)))        
     else: 
         a,b,c,d,e = ref_specs[0,:]
         f,g,h,i,j = ref_specs[1,:]
+        E_kaimal = 16.8 * freq_red/((1+33*freq_red)**(5./3.))
+        E_simiu = 32 * freq_red/((1+50*freq_red)**(5./3.))
 
-    E_simiu = a* freq_red/(np.abs((e+0j) + b * freq_red**c)**d)
-    E_kaimal = f* freq_red/(np.abs((j+0j) + g * freq_red**h)**i) 
+    E_min = a * freq_red/(np.abs((e+0j) + b * freq_red**c)**d)
+    E_max = f * freq_red/(np.abs((j+0j) + g * freq_red**h)**i) 
 
-    return E_simiu, E_kaimal
+    return E_min, E_max, E_kaimal, E_simiu
 
 def get_reference_spectra(height, ref_path=None):
     """ Get referemce spectra from pre-defined location."""
