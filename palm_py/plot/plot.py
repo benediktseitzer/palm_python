@@ -135,10 +135,9 @@ def plot_timeseries(var, var_unit, var_name, time, time_unit):
 
     ax.grid()
     ax.yaxis.set_major_formatter(FormatStrFormatter('%.2e'))
-
     plt.xlim(min(time),max(time))
     fig.savefig('../palm_results/{}/run_{}/timeseries/{}_{}_ts.png'.format(papy.globals.run_name,papy.globals.run_number[-3:],
-                papy.globals.run_name,var_name), bbox_inches='tight')
+                papy.globals.run_name,var_name), bbox_inches='tight', dpi=500)
 
 def plot_turbint_profile(turbint, height_list, var_name):
     """
