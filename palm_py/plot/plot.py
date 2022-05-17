@@ -83,7 +83,9 @@ def plot_lux_profile(lux, height_list):
     ax.set_xscale('log')
     ax.set_xlabel(r"$L _{ux}$ (m)")
     ax.set_ylabel(r"$z$ (m)" )
-    ax.legend(loc='upper left', fontsize=11, numpoints=1)
+    ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
+            borderaxespad = 0., ncol = 3, 
+            numpoints = 1, fontsize = 18)
     ax.grid(True,'both','both')
 
     if papy.globals.testing:
@@ -181,7 +183,9 @@ def plot_turbint_profile(turbint, height_list, var_name):
 
     ax.set_xlabel(r"$I _{}$ (-)".format(var_name), fontsize = 18)
     ax.set_ylabel(r"$z$ (m)", fontsize = 18)
-    ax.legend(loc='upper left', fontsize=11, numpoints=1)
+    ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
+            borderaxespad = 0., ncol = 3, 
+            numpoints = 1, fontsize = 18)
     ax.grid()
 
     if papy.globals.testing:
@@ -240,7 +244,9 @@ def plot_semilog_u(var, var_name, z, z_unit, wt_pr, wt_z, wt_u_ref, time):
 
     ax2.xaxis.set_major_locator(plt.MaxNLocator(7))
     ax2.set_ylim(1., max(z))
-    ax2.legend(loc='best', numpoints=1)
+    ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
+            borderaxespad = 0., ncol = 3, 
+            numpoints = 1, fontsize = 18)
     ax2.set_xlabel(r'$\overline{u}$ (-)', fontsize = 18)
     ax2.set_ylabel(r'$z$ (m)', fontsize = 18)
     ax2.grid()
@@ -341,7 +347,9 @@ def plot_ver_profile(var_plt, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_r
         # ax.set_yscale('log', nonposy='clip')
         plt.ylim(min(z),80.)
 
-    ax.legend(loc='best', numpoints=1)
+    ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
+            borderaxespad = 0., ncol = 3, 
+            numpoints = 1, fontsize = 18)
     fig.savefig('../palm_results/{}/run_{}/profiles/{}_{}_{}_verpr.png'.format(
                                             papy.globals.run_name,
                                             papy.globals.run_number[-3:],
@@ -489,7 +497,9 @@ def plot_spectra(f_comp1_sm, S_comp1_sm,
 
     ax.set_xlabel(r"$f\cdot z\cdot u_{ref}^{-1}$", fontsize = 18)
     ax.set_ylabel(r"$f\cdot S_{ij}\cdot (\sigma_i\sigma_j)^{-1}$", fontsize = 18)
-    ax.legend(loc='lower left', fontsize=11, numpoints=1)
+    ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
+            borderaxespad = 0., ncol = 3, 
+            numpoints = 1, fontsize = 18)
     ax.grid()
 
     if papy.globals.testing:
