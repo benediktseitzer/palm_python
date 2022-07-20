@@ -24,7 +24,8 @@ FUNCTIONS
 
 __all__ = [
     'calc_input_profile',
-    'calc_topofile'
+    'calc_topofile_building',
+    'calc_topofile_roughness'
 ]
 
 def calc_input_profile(m_u, m_z, z, ref_height):
@@ -56,7 +57,7 @@ def calc_input_profile(m_u, m_z, z, ref_height):
     return u_prandtl, u_fric
 
 
-def calc_topofile(building_height, building_x_length, building_y_length):
+def calc_topofile_building(building_height, building_x_length, building_y_length):
     """
     Construct simple topography ascii-file for single building 
 
@@ -82,5 +83,43 @@ def calc_topofile(building_height, building_x_length, building_y_length):
                 if j>((dx*ny/2.)-building_y_length/2.) and j<((dx*ny/2.)+building_y_length/2.):
                     topo_matrix[i,j] = building_height
                     # print(i, j, topo_matrix[i,j])
+    np.savetxt('{}_topo'.format(papy.globals.run_name), topo_matrix, fmt='%1.0f', delimiter=' ')
+    print('     Saved topo-file to {}_topo'.format(papy.globals.run_name))
+
+
+def calc_topofile_roughness(rough_dist_x, rough_dist_y, rough_height):
+    """
+    Construct simple topography ascii-file for wind tunnel roughness
+
+    -----------
+    Parameters
+    nx: nx
+    ny: ny
+    rough_dist_x: float
+    rough_dist_y: float
+    rough_height: float
+
+    ---------
+    Returns
+
+    """
+    nx = papy.globals.nx + 1
+    ny = papy.globals.ny + 1
+    dx = papy.globals.dx
+    topo_matrix = np.zeros((nx,ny))
+
+    for i in range(nx):
+        if dx*i % rough_dist_x == 0:
+            for j in range(ny):
+                if dx*j % rough_dist_y == 0:
+                    topo_matrix[i,j] = rough_height
+        elif (dx*i-15) % rough_dist_x == 0:
+            for j in range(ny):
+                if (dx*j-7) % rough_dist_y == 0:
+                    topo_matrix[i,j] = rough_height
+        elif (dx*i-30) % rough_dist_x == 0:
+            for j in range(ny):
+                if (dx*j-14) % rough_dist_y == 0:
+                    topo_matrix[i,j] = rough_height
     np.savetxt('{}_topo'.format(papy.globals.run_name), topo_matrix, fmt='%1.0f', delimiter=' ')
     print('     Saved topo-file to {}_topo'.format(papy.globals.run_name))

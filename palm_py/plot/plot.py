@@ -244,7 +244,7 @@ def plot_semilog_u(var, var_name, z, z_unit, wt_pr, wt_z, wt_u_ref, time):
 
     ax2.xaxis.set_major_locator(plt.MaxNLocator(7))
     ax2.set_ylim(1., max(z))
-    ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
+    ax2.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
             borderaxespad = 0., ncol = 3, 
             numpoints = 1, fontsize = 18)
     ax2.set_xlabel(r'$\overline{u}$ (-)', fontsize = 18)
