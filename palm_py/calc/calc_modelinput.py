@@ -120,16 +120,22 @@ def calc_topofile_roughness(rough_dist_x, rough_dist_y, rough_height):
             for j in range(ny):
                 if dx*j % rough_dist_y == 0:
                     topo_matrix[j,i] = rough_height
+                    topo_matrix[j+1,i] = rough_height
+                    topo_matrix[j-1,i] = rough_height
         elif (dx*i+15) % rough_dist_x == 0:
             for j in range(ny):
                 if (dx*j-7) % rough_dist_y == 0:
                     topo_matrix[j,i] = rough_height
+                    topo_matrix[j+1,i] = rough_height
+                    topo_matrix[j-1,i] = rough_height
         elif (dx*i+30) % rough_dist_x == 0:
             for j in range(ny):
                 if (dx*j-14) % rough_dist_y == 0:
                     topo_matrix[j,i] = rough_height
+                    topo_matrix[j+1,i] = rough_height
+                    topo_matrix[j-1,i] = rough_height
     plt.figure(11)
-    plt.imshow(topo_matrix)
+    plt.imshow(topo_matrix, cmap='binary', interpolation='none')
     plt.xlabel('x in m')
     plt.xlabel('y in m')    
     plt.show()
@@ -164,14 +170,20 @@ def calc_topofile_roughness_building(rough_dist_x, rough_dist_y, rough_height, b
             for j in range(ny):
                 if dx*j % rough_dist_y == 0:
                     topo_matrix[j,i] = rough_height
+                    topo_matrix[j+1,i] = rough_height
+                    topo_matrix[j-1,i] = rough_height
         elif (dx*i+15) % rough_dist_x == 0:
             for j in range(ny):
                 if (dx*j-7) % rough_dist_y == 0:
                     topo_matrix[j,i] = rough_height
+                    topo_matrix[j+1,i] = rough_height
+                    topo_matrix[j-1,i] = rough_height
         elif (dx*i+30) % rough_dist_x == 0:
             for j in range(ny):
                 if (dx*j-14) % rough_dist_y == 0:
                     topo_matrix[j,i] = rough_height
+                    topo_matrix[j+1,i] = rough_height
+                    topo_matrix[j-1,i] = rough_height
     # building geometry
     for i in range(nx):
         if dx*i>((dx*nx/2.)-building_x_length/2.) and i<((dx*nx/2.)+building_x_length/2.):
@@ -180,7 +192,7 @@ def calc_topofile_roughness_building(rough_dist_x, rough_dist_y, rough_height, b
                     topo_matrix[i,j] = building_height
 
     plt.figure(11)
-    plt.imshow(topo_matrix)
+    plt.imshow(topo_matrix, cmap='binary', interpolation='none')
     plt.xlabel('x in m')
     plt.xlabel('y in m')    
     plt.show()
