@@ -293,7 +293,7 @@ def plot_ver_profile(var_plt, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_r
     colors = iter(jet(np.linspace(0,1,10)))
     ax.grid()
     ax.xaxis.set_major_locator(plt.MaxNLocator(7))
-    plt.ylim(min(z),max(z[:-1]))
+    plt.ylim(0.5, max(z[:-1]))
 
     for i in range(len(time)-1,len(time)):
         try:
@@ -317,11 +317,11 @@ def plot_ver_profile(var_plt, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_r
     if var_name == 'w"u"':
         ax.set_xlabel(r'$u^\prime w^\prime_{SGS}$' + r' (m$^2$/s$^2$)',
                 fontsize = 18)
-        # ax.set_yscale('log', nonposy='clip')
+        ax.set_yscale('log', nonposy='clip')
     elif var_name == 'w*u*':
         ax.set_xlabel(r'$u^\prime w^\prime_{RES}$'+ r' (m$^2$/s$^2$)', 
                 fontsize = 18)
-        # ax.set_yscale('log', nonposy='clip')
+        ax.set_yscale('log', nonposy='clip')
     elif var_name == 'u':
         ax.set_xlabel(r'$\overline{u}$' + ' (-)', 
                 fontsize = 18)
@@ -338,7 +338,8 @@ def plot_ver_profile(var_plt, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_r
         ax.set_xlabel(r'$u^\prime w^\prime$' + r' (m$^2$/s$^2$)', 
                 fontsize = 18)
         ax.set_yscale('log', nonposy='clip')
-        plt.ylim(min(z),256.)
+        plt.ylim(0.5, 256.)
+        plt.xlim(right=0.)
     else:     
         ax.set_xlabel(r'${}$ ({})'.format(var_name,var_unit), 
                 fontsize = 18) 
