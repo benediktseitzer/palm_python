@@ -118,6 +118,7 @@ def plot_timeseries(var, var_unit, var_name, time, time_unit):
     ax.set_xlabel(r'$t$ $({})$'.format('s'), fontsize = 18)
     if var_name == 'dt':
         ax.set_ylabel(r'$\Delta t$  $(s)$', fontsize = 18)
+        ax.set_ylim()
     elif var_name == 'E':
         ax.set_ylabel(r'$E$  $(m^2/s^2)$', fontsize = 18)
     elif var_name == 'E*':
@@ -126,8 +127,12 @@ def plot_timeseries(var, var_unit, var_name, time, time_unit):
         ax.set_ylabel(r'$u_{max}$  $(m/s)$')
     elif var_name == 'div_new':
         ax.set_ylabel(r'$(\nabla \cdot \vec u)_{new}$  $(1/s)$', fontsize = 18)
+        ax.set_ylim(10**-6., 10**-3.)
+        ax.set_yscale('log', nonposy='clip')
     elif var_name == 'div_old':
         ax.set_ylabel(r'$(\nabla \cdot \vec u)_{old}$  $(1/s)$', fontsize = 18) 
+        ax.set_ylim(10**-6., 10**-3.)
+        ax.set_yscale('log', nonposy='clip')
     elif var_name == 'us*':
         ax.set_ylabel(r'$u_s^*$  $(m/s)$', fontsize = 18) 
     elif var_name == 'w"u"0':
@@ -137,7 +142,7 @@ def plot_timeseries(var, var_unit, var_name, time, time_unit):
 
     ax.grid()
     ax.yaxis.set_major_formatter(FormatStrFormatter('%.2e'))
-    plt.xlim(min(time),max(time))
+    plt.xlim(250., max(time))
     fig.savefig('../palm_results/{}/run_{}/timeseries/{}_{}_ts.png'.format(papy.globals.run_name,papy.globals.run_number[-3:],
                 papy.globals.run_name,var_name), bbox_inches='tight', dpi=500)
 
@@ -222,7 +227,7 @@ def plot_semilog_u(var, var_name, z, z_unit, wt_pr, wt_z, wt_u_ref, time):
         papy.globals.run_number = '.000'
 
     fig2, ax2 = plt.subplots()    
-    ax2.set_yscale("log", nonposy='clip')    
+    ax2.set_yscale("log", nonposy='clip')
     jet= plt.get_cmap('viridis')
     colors = iter(jet(np.linspace(0,1,10)))
     for i in range(len(time)-1,len(time)):
