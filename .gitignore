@@ -1,7 +1,7 @@
 # ignore pyc-files
 *.pyc
 # ignore own scripts
-own*
+#own*
 # ignore topo-files
 *_topo
 # log-files
