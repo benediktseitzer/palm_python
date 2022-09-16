@@ -128,11 +128,11 @@ def plot_timeseries(var, var_unit, var_name, time, time_unit):
     elif var_name == 'div_new':
         ax.set_ylabel(r'$(\nabla \cdot \vec u)_{new}$  $(1/s)$', fontsize = 18)
         ax.set_ylim(10**-6., 10**-3.)
-        ax.set_yscale('log', nonposy='clip')
+        # ax.set_yscale('log', nonposy='clip')
     elif var_name == 'div_old':
         ax.set_ylabel(r'$(\nabla \cdot \vec u)_{old}$  $(1/s)$', fontsize = 18) 
         ax.set_ylim(10**-6., 10**-3.)
-        ax.set_yscale('log', nonposy='clip')
+        # ax.set_yscale('log', nonposy='clip')
     elif var_name == 'us*':
         ax.set_ylabel(r'$u_s^*$  $(m/s)$', fontsize = 18) 
     elif var_name == 'w"u"0':
@@ -243,16 +243,17 @@ def plot_semilog_u(var, var_name, z, z_unit, wt_pr, wt_z, wt_u_ref, time):
                     linestyle='--',
                     linewidth = 2)
             ax2.errorbar(wt_pr[:],wt_z[:],xerr=xerror[:],
-                        label=r'boundary layer',fmt='^',color='orangered')
+                        label=r'wind tunnel',fmt='^',color='orangered')
         except:
             print('Exception has occurred: StopIteration - plot_semilog-plot_u')
 
     ax2.xaxis.set_major_locator(plt.MaxNLocator(7))
     ax2.set_ylim(1., max(z))
+    ax2.set_xlim(0.8, 5.6)
     ax2.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
-            borderaxespad = 0., ncol = 3, 
+            borderaxespad = 0., ncol = 2, 
             numpoints = 1, fontsize = 18)
-    ax2.set_xlabel(r'$\overline{u}$ (-)', fontsize = 18)
+    ax2.set_xlabel(r'$\overline{u}$ (m s$^{-1}$)', fontsize = 18)
     ax2.set_ylabel(r'$z$ (m)', fontsize = 18)
     ax2.grid()
     ax2.grid(which='minor', alpha=0.2)
@@ -314,7 +315,7 @@ def plot_ver_profile(var_plt, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_r
             ax.plot(u_pr[:-1], z[:-1], label=r'fit: $z_0=({} \pm 0.003)$m'.format(papy.globals.z0_wt), 
                     color='darkorange', linestyle='--', linewidth = 2)
             ax.errorbar(wt_pr[:-1], wt_z[:-1], xerr=xerror[:-1], 
-                    label=r'boundary layer', fmt='^', c='orangered')
+                    label=r'wind tunnel', fmt='^', c='orangered')
         except:
             print('Exception has occurred: Stop wt-plotting - plot_ver_profile')
 
@@ -328,7 +329,7 @@ def plot_ver_profile(var_plt, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_r
                 fontsize = 18)
         ax.set_yscale('log', nonposy='clip')
     elif var_name == 'u':
-        ax.set_xlabel(r'$\overline{u}$' + ' (-)', 
+        ax.set_xlabel(r'$\overline{u}$' + r' (m s$^{-1}$)', 
                 fontsize = 18)
     elif var_name == 'e*':
         ax.set_xlabel(r'$e_{RES}$' + r' (m$^2$/s$^2$)', 
@@ -354,7 +355,7 @@ def plot_ver_profile(var_plt, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_r
         plt.ylim(min(z),80.)
 
     ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
-            borderaxespad = 0., ncol = 3, 
+            borderaxespad = 0., ncol = 2, 
             numpoints = 1, fontsize = 18)
     fig.savefig('../palm_results/{}/run_{}/profiles/{}_{}_{}_verpr.png'.format(
                                             papy.globals.run_name,
@@ -504,7 +505,7 @@ def plot_spectra(f_comp1_sm, S_comp1_sm,
     ax.set_xlabel(r"$f\cdot z\cdot u_{ref}^{-1}$", fontsize = 18)
     ax.set_ylabel(r"$f\cdot S_{ij}\cdot (\sigma_i\sigma_j)^{-1}$", fontsize = 18)
     ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
-            borderaxespad = 0., ncol = 3, 
+            borderaxespad = 0., ncol = 2, 
             numpoints = 1, fontsize = 18)
     ax.grid()
 
@@ -553,8 +554,13 @@ def plot_contour_crosssection(x, y, var, var_name, o_grid, o_level, vert_gridnam
                     vmin=-v_bound, vmax=v_bound, origin='lower')
 
     # labeling 
-    fig.colorbar(im, label=r'${}$  (m/s)'.format(var_name), 
+    if crosssection=='xz':
+        ax.set_yticks([0,40,70,100,140])
+        fig.colorbar(im, label=r'${}$  (m/s)'.format(var_name), 
                     orientation = 'horizontal')
+    else:
+        fig.colorbar(im, label=r'${}$  (m/s)'.format(var_name), 
+                    orientation = 'vertical')        
     ax.set_xlabel(r'${}$  (m)'.format(x_grid_name), 
                     fontsize = 18)
     ax.set_ylabel(r'${}$  (m)'.format(vert_gridname), 
