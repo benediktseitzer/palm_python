@@ -83,8 +83,8 @@ GLOBAL VARIABLES
 """
 ################
 # PALM input files
-papy.globals.run_name = 'single_building_ABL_1m_RE_z03'
-papy.globals.run_number = '.015'
+papy.globals.run_name = 'SB_SI_BL'
+papy.globals.run_number = '.007'
 papy.globals.run_numbers = ['.029', '.028']
 nc_file_grid = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
 nc_file_path = '../palm/current_version/JOBS/{}/OUTPUT/'.format(papy.globals.run_name)
@@ -134,11 +134,11 @@ mode = mode_list[1]
 compute_lux = False
 compute_timeseries = False
 compute_turbint_masked = False
-compute_turbint = True
-compute_vertprof = True
-compute_vertprof_flux = True
+compute_turbint = False
+compute_vertprof = False
+compute_vertprof_flux = False
 compute_spectra = False
-compute_crosssections = False
+compute_crosssections = True
 compute_pure_fluxes = False
 compute_simrange = False
 compute_modelinput = False

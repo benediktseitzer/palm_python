@@ -250,7 +250,7 @@ def read_nc_time(nc_file_path, nc_file):
 
     return time, time_unit
 
-def read_nc_var_ms(nc_file_path,nc_file,var_name):
+def read_nc_var_ms(nc_file_path, nc_file, var_name):
     """
     Read palm timeseries from masked data.
 
@@ -274,6 +274,8 @@ def read_nc_var_ms(nc_file_path,nc_file,var_name):
 
     try:    
         if var_name == 'time':
+            var = fh.variables[var_name][:]
+        elif var_name == 'y' or var_name == 'x' or var_name == 'zu_3d' or var_name == 'zw_3d':
             var = fh.variables[var_name][:]
         else:    
             var = fh.variables[var_name][:,0,0,0]

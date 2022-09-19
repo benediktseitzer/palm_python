@@ -45,8 +45,9 @@ def prepare_plotfolder(run_name,run_number):
     path_times = '{}/timeseries'.format(path)
     path_spectra = '{}/spectra'.format(path)
     path_lux = '{}/lux'.format(path)
-    path_turbint = '{}/turbint'.format(path)    
-    path_palminput = '../palm/current_version/JOBS/{}/INPUT'.format(run_name) 
+    path_turbint = '{}/turbint'.format(path)
+    path_maskedprofiles = '{}/maskprofiles'.format(path)
+    path_palminput = '../palm/current_version/JOBS/{}/INPUT'.format(run_name)
 
     # initial 
     if os.path.exists('../palm_results/'):
@@ -69,6 +70,7 @@ def prepare_plotfolder(run_name,run_number):
             os.mkdir(path_profile)
             os.mkdir(path_times)
             os.mkdir(path_spectra)
+            os.mkdir(path_maskedprofiles)            
             os.mkdir(path_lux)
             os.mkdir(path_turbint)
             # copies INPUT-file of PALM-run to path

@@ -141,7 +141,7 @@ def plot_timeseries(var, var_unit, var_name, time, time_unit):
         ax.set_ylabel(r'{} $({})$'.format(var_name,var_unit), fontsize = 18)
 
     ax.grid()
-    ax.yaxis.set_major_formatter(FormatStrFormatter('%.2e'))
+    # ax.yaxis.set_major_formatter(FormatStrFormatter('%.2e'))
     plt.xlim(250., max(time))
     fig.savefig('../palm_results/{}/run_{}/timeseries/{}_{}_ts.png'.format(papy.globals.run_name,papy.globals.run_number[-3:],
                 papy.globals.run_name,var_name), bbox_inches='tight', dpi=500)
@@ -541,9 +541,9 @@ def plot_contour_crosssection(x, y, var, var_name, o_grid, o_level, vert_gridnam
 
     # estimate bounds of colorbar
     if abs(np.min(var)) >= abs(np.max(var)):
-        v_bound = np.min(var)
+        v_bound = abs(np.min(var))
     elif abs(np.min(var)) < abs(np.max(var)):
-        v_bound = np.max(var)
+        v_bound = abs(np.max(var))
 
     # set colorbar and mark masked buildings in grey
     current_cmap = plt.cm.seismic
@@ -551,7 +551,7 @@ def plot_contour_crosssection(x, y, var, var_name, o_grid, o_level, vert_gridnam
     # plot the 2D-array var
     im = ax.imshow(var, interpolation='bilinear', cmap=current_cmap,
                     extent=(np.min(x), np.max(x), np.min(y), np.max(y)),
-                    vmin=-v_bound, vmax=v_bound, origin='lower')
+                    vmin = -v_bound, vmax = v_bound, origin='lower')
 
     # labeling 
     if crosssection=='xz':
