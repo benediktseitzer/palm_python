@@ -94,6 +94,7 @@ mode = mode_list[1]
 # Steeringflags
 compute_BL_mean = True
 compute_BL_var = True
+compute_BL_covar = True
 compute_mean = False
 compute_lux = False
 compute_turbint_masked = False
@@ -202,8 +203,6 @@ if compute_BL_mean:
 ################
 # compute BL var in front of building
 if compute_BL_var:
-
-
     namelist = [wt_filename]
     config = namelist[0][3:5]
     path = '{}/coincidence/timeseries/'.format(wt_path) # path to timeseries folder
@@ -316,6 +315,126 @@ if compute_BL_var:
                         papy.globals.run_number[-3:],
                         papy.globals.run_name,var_name), bbox_inches='tight', dpi=500)
             plt.close(12)
+
+
+################
+# compute BL var in front of building
+if compute_BL_covar:
+    namelist = [wt_filename]
+    wt_filename = 'BA_BL_UW_001'
+    config = namelist[0][3:5]
+    path = '{}/coincidence/timeseries/'.format(wt_path) # path to timeseries folder
+    wtref_path = '{}/wtref/'.format(wt_path)
+    if wt_filename == 'SB_BL_UV_001':
+        wtref_factor = 0.738
+    elif wt_filename == 'BA_BL_UW_001':
+        wtref_factor = 1.    
+    scale = wt_scale
+    data_nd = 1
+    time_series = {}
+    time_series.fromkeys(namelist)
+    # Gather all files into Timeseries objects
+    for name in namelist:
+        files = wt.get_files(path,name)
+        time_series[name] = {}
+        time_series[name].fromkeys(files)
+        wt_var = []
+        wt_z = []
+        for i,file in enumerate(files):
+            ts = wt.Timeseries.from_file(path+file)            
+            ts.get_wind_comps(path+file)
+            ts.get_wtref(wtref_path,name,index=i)
+            ts.wtref = ts.wtref*wtref_factor
+            # edit 6/20/19: Assume that input data is dimensional, not non-dimensional
+            if data_nd == 0:
+                print('Warning: Assuming that data is dimensional. If using non-dimensional input data, set variable data_nd to 1')
+                ts.nondimensionalise()
+            else:
+                if data_nd == 1:
+                    []
+                else:
+                    print('Warning: data_nd can only be 1 (for non-dimensional input data) or 0 (for dimensional input data)')        
+            #edit 06/20/19: added seperate functionto  calculate equidistant timesteps             
+            ts.adapt_scale(scale)         
+            ts.mask_outliers()
+            ts.index = ts.t_arr         
+            ts.weighted_component_mean
+            ts.weighted_component_variance
+            time_series[name][file] = ts
+            wt_var.append(time_series[name][file].weighted_component_variance[0])
+            wt_z.append(time_series[name][file].z)
+
+    var_name_list = ['u', 'v', 'w']
+    print('     compute variances')
+    for var_name in var_name_list:
+        var_vars = np.array([])
+        wall_dists = np.array([])
+        for mask in mask_name_list:
+            total_var = np.array([])
+            total_time = np.array([])
+            for run_no in papy.globals.run_numbers:
+                nc_file = '{}_masked_{}{}.nc'.format(papy.globals.run_name, mask, run_no)
+                # var_name = 'u'
+                time, time_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'time')
+                var, var_unit = papy.read_nc_var_ms(nc_file_path, nc_file, var_name)
+                if var_name == 'w':
+                    y, y_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'zw_3d')
+                else: 
+                    y, y_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'zu_3d')
+                total_time = np.concatenate([total_time, time])
+                total_var = np.concatenate([total_var, var])
+            # gather values
+            var_mean = np.asarray([np.std(total_var)**2.])
+            # wall_dist = np.asarray([abs(y[0]-530.)])
+            wall_dist = np.asarray([abs(y[0])])
+            var_vars = np.concatenate([var_vars, var_mean])
+            wall_dists = np.concatenate([wall_dists, wall_dist])
+
+        # ABL_file = 'single_building_ABL_1m_RE_z03_pr.015.nc'.format(papy.globals.run_name,papy.globals.run_number)
+        # ABL_file_path = '../palm/current_version/JOBS/single_building_ABL_1m_RE_z03/OUTPUT/'
+        # var_e, var_e_max, var_e_unit = papy.read_nc_var_ver_pr(ABL_file_path, ABL_file, 'e')
+        # z_e, z_unit_e = papy.read_nc_grid(ABL_file_path, ABL_file, 'ze')
+        # ABL_time, ABL_time_unit = papy.read_nc_time(ABL_file_path,ABL_file)
+        # time_show = time.nonzero()[0][0]
+
+        #plot profiles
+        plot_wn_profiles = True
+        if plot_wn_profiles:
+            err = np.mean(var_vars)*0.05
+            fig, ax = plt.subplots()
+            # plot PALM masked output
+            ax.errorbar(var_vars, wall_dists, xerr=err, 
+                        label= r'PALM', fmt='o', c='darkmagenta', markersize=3)
+            ax.plot(1./3.*var_e[time_show,:-1], z_e[:-1],
+                    label = r'PALM: $1/3$ $e_{SGS}$', 
+                    color = 'plum',
+                    linewidth = 2)            
+            
+            # #plot wt_data
+            # wt_var_plot = wt_var[:5] +  wt_var[7:]
+            # wt_z_plot = wt_z[:5] +  wt_z[7:]
+            # ax.errorbar(wt_var_plot, wt_z_plot, xerr = 0.025,
+            #             label='wind tunnel', 
+            #             fmt='^', 
+            #             c='orangered')
+
+            ax.set_ylim(0.,140.)
+            ax.grid()
+            ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
+                        borderaxespad = 0., ncol = 3, 
+                        numpoints = 1, fontsize = 18)
+            ax.set_xlabel(r'$\Delta y$ (m)', fontsize = 18)
+            ax.set_ylabel(r'${}^2$ '.format(var_name) + r'(m$^2$ s$^{-2}$)', fontsize = 18)
+            # fig.savefig('../palm_results/{}/run_{}/maskprofiles/{}_variance_{}_mask.png'.format(papy.globals.run_name,
+            #             papy.globals.run_number[-3:],
+            #             papy.globals.run_name,var_name), bbox_inches='tight', dpi=500)
+            ax.set_yscale('log')
+            ax.set_ylim(0.1,140.)
+            fig.savefig('../palm_results/{}/run_{}/maskprofiles/{}_variance_{}_mask_log.png'.format(papy.globals.run_name,
+                        papy.globals.run_number[-3:],
+                        papy.globals.run_name,var_name), bbox_inches='tight', dpi=500)
+            plt.close(12)
+
 
 
 ################
