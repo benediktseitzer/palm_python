@@ -32,7 +32,7 @@ __all__ = [
     'calc_fluxes'
 ]
 
-def calc_spectra(phi,t_eq,height,u_mean):
+def calc_spectra(phi, t_eq, height, u_mean):
     """
     Calculate spectra
 
