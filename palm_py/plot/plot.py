@@ -396,35 +396,35 @@ def plot_spectra(f_comp1_sm, S_comp1_sm,
     fig, ax = plt.subplots()
 
     if var_name == 'u':
-        h1 = ax.loglog(f_sm[:comp1_aliasing], S_comp1_sm[:comp1_aliasing], 'ro', markersize=3,
-                    label=r'PALM - $u$ at ${}$ $m$ with ${}$ $m/s$'.format(height, str(u_mean)[:4]))
-        h2 = ax.loglog(f_sm[comp1_aliasing:], S_comp1_sm[comp1_aliasing:], 'bo', markersize=3,
+        h1 = ax.loglog(f_sm[:comp1_aliasing], S_comp1_sm[:comp1_aliasing], 'o', color='darkmagenta',
+                    label=r'PALM - $u$ at ${}$ m'.format(height))
+        h2 = ax.loglog(f_sm[comp1_aliasing:], S_comp1_sm[comp1_aliasing:], 'o',
                     fillstyle='none')
-        try:
-            if not papy.globals.calc_kai_sim:
-                h3 = ax.fill_between(f_refspecs, E_min, E_max,
-                                facecolor=(1.,0.6,0.6),edgecolor='none',alpha=0.2,
-                                label=r'VDI-range $S _{uu}$')
-            else:
-                h3 = ax.loglog(f_refspecs, E_kai, color='grey', linestyle='--', label=r'Kaimal et al. (1972)')
-                h4 = ax.loglog(f_refspecs, E_sim, color='grey', linestyle='-.', label=r'Simiu and Scanlan (1986)')
-        except:
-            print('\n There are no reference-spectra available for this flow \n')
+        # try:
+        #     if not papy.globals.calc_kai_sim:
+        #         h3 = ax.fill_between(f_refspecs, E_min, E_max,
+        #                         facecolor=(1.,0.6,0.6),edgecolor='none',alpha=0.2,
+        #                         label=r'VDI-range $S _{uu}$')
+        #     else:
+        #         h3 = ax.loglog(f_refspecs, E_kai, color='grey', linestyle='--', label=r'Kaimal et al. (1972)')
+        #         h4 = ax.loglog(f_refspecs, E_sim, color='grey', linestyle='-.', label=r'Simiu and Scanlan (1986)')
+        # except:
+        #     print('\n There are no reference-spectra available for this flow \n')
     elif var_name == 'v':
-        h1 = ax.loglog(f_sm[:comp1_aliasing], S_comp1_sm[:comp1_aliasing], 'ro', markersize=3,
-                    label=r'PALM - $v$ at ${}$ $m$ with ${}$ $m/s$'.format(height, str(u_mean)[:4]))
-        h2 = ax.loglog(f_sm[comp1_aliasing:], S_comp1_sm[comp1_aliasing:], 'bo', markersize=3,
+        h1 = ax.loglog(f_sm[:comp1_aliasing], S_comp1_sm[:comp1_aliasing], 'o', color='darkmagenta',
+                    label=r'PALM - $v$ at ${}$ m'.format(height))
+        h2 = ax.loglog(f_sm[comp1_aliasing:], S_comp1_sm[comp1_aliasing:], 'o', color='darkmagenta',
                     fillstyle='none')
-        try:
-            if not papy.globals.calc_kai_sim:
-                h3 = ax.fill_between(f_refspecs, E_min, E_max,
-                                facecolor=(1.,0.6,0.6),edgecolor='none',alpha=0.2,
-                                label=r'VDI-range $S _{vv}$')
-            else:
-                h3 = ax.loglog(f_refspecs, E_kai, color='grey', linestyle='--', label=r'Kaimal et al. (1972)')
-                h4 = ax.loglog(f_refspecs, E_sim, color='grey', linestyle='-.', label=r'Simiu and Scanlan (1986)')
-        except:
-            print('\n There are no reference-spectra available for this flow \n')            
+        # try:
+        #     if not papy.globals.calc_kai_sim:
+        #         h3 = ax.fill_between(f_refspecs, E_min, E_max,
+        #                         facecolor=(1.,0.6,0.6),edgecolor='none',alpha=0.2,
+        #                         label=r'VDI-range $S _{vv}$')
+        #     else:
+        #         h3 = ax.loglog(f_refspecs, E_kai, color='grey', linestyle='--', label=r'Kaimal et al. (1972)')
+        #         h4 = ax.loglog(f_refspecs, E_sim, color='grey', linestyle='-.', label=r'Simiu and Scanlan (1986)')
+        # except:
+        #     print('\n There are no reference-spectra available for this flow \n')            
     elif var_name == 'w':
         h1 = ax.loglog(f_sm[:comp1_aliasing], S_comp1_sm[:comp1_aliasing], 'ro', markersize=3,
                     label=r'PALM - $w$ at ${}$ $m$ with ${}$ $m/s$'.format(height, str(u_mean)[:4]))
@@ -479,8 +479,12 @@ def plot_spectra(f_comp1_sm, S_comp1_sm,
         except:
             print('\n There are no reference-spectra available for this flow \n')        
 
-    set_limits = True
+    # slopey
+    freq_slopey = np.logspace(np.log10(5*10.**(-2.)), np.log10(10.), num=20)
+    twothird_slopey = 0.01*(freq_slopey)**(-2./3.)
+    ax.plot(freq_slopey, twothird_slopey , label=r'K41: $-2/3$', color='black', linestyle='dashed')
 
+    set_limits = True
     if set_limits:
         if papy.globals.testing:
             if var_name == 'phi1':
@@ -492,8 +496,8 @@ def plot_spectra(f_comp1_sm, S_comp1_sm,
                 ax.set_xlim(10**-4,1)
                 ax.set_ylim(10**-4,10**6)
         else:
-            ax.set_xlim([10**-4,250])
-            ax.set_ylim([10 ** -4, 1])
+            ax.set_xlim([10**-3,10.])
+            ax.set_ylim([10 ** -3, 1])
     else:
         xsmin = np.nanmin(f_sm[np.where(f_sm > 0)])
         xsmax = np.nanmax(f_sm[np.where(f_sm > 0)])
@@ -502,12 +506,17 @@ def plot_spectra(f_comp1_sm, S_comp1_sm,
         ysmax = np.nanmax(S_comp1_sm)
         ax.set_ylim(ysmin,ysmax)
 
-    ax.set_xlabel(r"$f\cdot z\cdot u_{ref}^{-1}$", fontsize = 18)
-    ax.set_ylabel(r"$f\cdot S_{ij}\cdot (\sigma_i\sigma_j)^{-1}$", fontsize = 18)
+    ax.set_xlabel(r"$f\cdot z\cdot \overline{u}^{-1}$", fontsize = 18)
+    if var_name == 'u':
+        ax.set_ylabel(r"$f\cdot S_{uu}\cdot (\sigma_u\sigma_u)^{-1}$", fontsize = 18)
+    elif var_name == 'v':
+        ax.set_ylabel(r"$f\cdot S_{vv}\cdot (\sigma_v\sigma_v)^{-1}$", fontsize = 18)
+    else:
+        ax.set_ylabel(r"$f\cdot S_{ij}\cdot (\sigma_i\sigma_j)^{-1}$", fontsize = 18)
     ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
             borderaxespad = 0., ncol = 2, 
             numpoints = 1, fontsize = 18)
-    ax.grid()
+    ax.grid(True)
 
     if papy.globals.testing:
         fig.savefig('../palm_results/testing/spectra/testing_{}_spectra.png'.format(var_name), bbox_inches='tight')

@@ -42,11 +42,11 @@ GLOBAL VARIABLES
 """
 ################
 # PALM input files
-papy.globals.run_name = 'SB_SI_front'
-papy.globals.run_number = '.024'
+papy.globals.run_name = 'SB_SI_back'
+papy.globals.run_number = '.023'
 papy.globals.run_numbers = ['.007', '.008', '.009', '.010', '.011', '.012', 
                             '.013', '.014', '.015', '.016', '.017', '.018',
-                            '.019', '.020', '.021', '.022', '.023', '.024']
+                            '.019', '.020', '.021', '.022', '.023']
 nc_file_grid = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
 nc_file_path = '../palm/current_version/JOBS/{}/OUTPUT/'.format(papy.globals.run_name)
 mask_name_list = ['M01', 'M02', 'M03', 'M04', 'M05', 'M06', 'M07', 'M08',
@@ -72,9 +72,9 @@ papy.globals.ny = 1024
 papy.globals.dx = 1.
 
 # Steeringflags
-compute_front_mean = False
-compute_front_var = False
-compute_front_covar = False
+compute_back_mean = False
+compute_back_var = False
+compute_back_covar = False
 compute_mean = False
 compute_lux = False
 compute_turbint_masked = False
@@ -101,9 +101,9 @@ for run_no in palm_ref_run_numbers:
 palm_ref = np.mean(palm_u)
 # palm_ref = 1.
 # wind tunnel data
-namelist = ['SB_FL_SI_UV_023',
-            'SB_BR_SI_UV_012',
-            'SB_WB_SI_UV_013']
+namelist = ['SB_FL_SI_UV_022',
+            'SB_BR_SI_UV_011',
+            'SB_WB_SI_UV_012']
 config = 'CO_REF'
 path = '{}/coincidence/timeseries/'.format(wt_path) # path to timeseries folder
 wtref_path = '{}/wtref/'.format(wt_path)
@@ -112,34 +112,34 @@ scale = wt_scale
 
 data_nd = 1
 
-time_series = {}
-time_series.fromkeys(namelist)
-# Gather all files into Timeseries objects
-for name in namelist:
-    files = wt.get_files(path,name)
-    time_series[name] = {}
-    time_series[name].fromkeys(files)
-    for i,file in enumerate(files):
-        ts = wt.Timeseries.from_file(path+file)            
-        ts.get_wind_comps(path+file)
-        ts.get_wtref(wtref_path,name,index=i)
-        ts.wtref = ts.wtref*wtref_factor
-        # edit 6/20/19: Assume that input data is dimensional, not non-dimensional
-        if data_nd == 0:
-            print('Warning: Assuming that data is dimensional. If using non-dimensional input data, set variable data_nd to 1')
-            ts.nondimensionalise()
-        else:
-            if data_nd == 1:
-                []
-            else:
-                print('Warning: data_nd can only be 1 (for non-dimensional input data) or 0 (for dimensional input data)')        
-        #edit 06/20/19: added seperate functionto  calculate equidistant timesteps             
-        ts.adapt_scale(scale)         
-        ts.mask_outliers()
-        ts.index = ts.t_arr         
-        ts.weighted_component_mean
-        ts.weighted_component_variance
-        time_series[name][file] = ts
+# time_series = {}
+# time_series.fromkeys(namelist)
+# # Gather all files into Timeseries objects
+# for name in namelist:
+#     files = wt.get_files(path,name)
+#     time_series[name] = {}
+#     time_series[name].fromkeys(files)
+#     for i,file in enumerate(files):
+#         ts = wt.Timeseries.from_file(path+file)            
+#         ts.get_wind_comps(path+file)
+#         ts.get_wtref(wtref_path,name,index=i)
+#         ts.wtref = ts.wtref*wtref_factor
+#         # edit 6/20/19: Assume that input data is dimensional, not non-dimensional
+#         if data_nd == 0:
+#             print('Warning: Assuming that data is dimensional. If using non-dimensional input data, set variable data_nd to 1')
+#             ts.nondimensionalise()
+#         else:
+#             if data_nd == 1:
+#                 []
+#             else:
+#                 print('Warning: data_nd can only be 1 (for non-dimensional input data) or 0 (for dimensional input data)')        
+#         #edit 06/20/19: added seperate functionto  calculate equidistant timesteps             
+#         ts.adapt_scale(scale)         
+#         ts.mask_outliers()
+#         ts.index = ts.t_arr         
+#         ts.weighted_component_mean
+#         ts.weighted_component_variance
+#         time_series[name][file] = ts
 
 # plotting colors and markers
 c_list = ['forestgreen', 'darkorange', 'navy', 'tab:red', 'tab:olive']
@@ -147,7 +147,7 @@ marker_list = ['^', 'o', 'd', 'x', '8']
 
 ################
 # compute u-mean alongside building
-if compute_front_mean:
+if compute_back_mean:
     var_name_list = ['u', 'v']
     for var_name in var_name_list:
         mean_vars = np.array([])
@@ -214,7 +214,7 @@ if compute_front_mean:
 
 ################
 # compute variances alongside building
-if compute_front_var:
+if compute_back_var:
     var_name_list = ['u', 'v']
     print('     compute variances')
 
@@ -282,8 +282,8 @@ if compute_front_var:
 
 
 ################
-# compute BL var in front of building
-if compute_front_covar:
+# compute BL var in back of building
+if compute_back_covar:
     experiment = 'balcony'
     wt_filename = 'BA_BL_UW_001'
     namelist = [wt_filename]
@@ -461,6 +461,8 @@ if compute_turbint_masked:
 if compute_spectra:
     # heights mode
     print('\n Compute at different heights: \n')
+    # grid_name = 'zu'
+    # z, z_unit = papy.read_nc_grid(nc_file_path,nc_file_grid,grid_name)
 
     var_name_list = ['u', 'v']
     for var_name in var_name_list:
@@ -482,10 +484,11 @@ if compute_spectra:
             mean_vars = np.concatenate([mean_vars, var_mean])
             wall_dists = np.concatenate([wall_dists, wall_dist])
             print('\n HEIGHT = {} m'.format(wall_dist))
-            u_mean  = np.mean(total_var)      
+            if var_name == 'u':
+                u_mean  = np.mean(total_var)      
             f_sm, S_uu_sm, u_aliasing = papy.calc_spectra(total_var, time, wall_dist, u_mean)
             print('    calculated spectra for {}'.format(var_name))
-            papy.plot_spectra(f_sm, S_uu_sm, u_aliasing, u_mean, wall_dist, var_name, mask)
+            papy.plot_spectra(f_sm, S_uu_sm, u_aliasing, u_mean, wall_dist[0], var_name, mask)
             print('    plotted spectra for {} \n'.format(var_name))
 
 print('')

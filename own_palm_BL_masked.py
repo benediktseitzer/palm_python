@@ -44,9 +44,9 @@ GLOBAL VARIABLES
 # PALM input files
 papy.globals.run_name = 'SB_SI_BL'
 papy.globals.run_number = '.021'
-papy.globals.run_numbers = ['.007', '.008', '.009', '.010', '.011',
-                            '.012', '.013', '.014', '.015', '.016', 
-                            '.017', '.019', '.020', '.021']
+papy.globals.run_numbers = ['.007', '.008', '.009', '.010', '.011', '.012', 
+                        '.013', '.014', '.015', '.016', '.017', '.018',
+                        '.019', '.020', '.021', '.022', '.023', '.024']
 nc_file_grid = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
 nc_file_path = '../palm/current_version/JOBS/{}/OUTPUT/'.format(papy.globals.run_name)
 mask_name_list = ['M01', 'M02', 'M03', 'M04', 'M05', 'M06', 'M07', 'M08',
