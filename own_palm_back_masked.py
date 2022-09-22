@@ -75,11 +75,11 @@ papy.globals.dx = 1.
 # Steeringflags
 compute_back_mean = False
 compute_back_var = False
-compute_back_covar = True
-compute_mean = False
+compute_back_covar = False
+compute_spectra = True
+
 compute_lux = False
 compute_turbint_masked = False
-compute_spectra = False
 
 ################
 """
@@ -94,10 +94,11 @@ plt.style.use('classic')
 # get wtref from boundary layer PALM-RUN
 palm_ref_run_numbers = ['.007', '.008', '.009', '.010', '.011', '.012', 
                         '.013', '.014', '.015', '.016', '.017', '.018',
-                        '.019', '.020', '.021', '.022', '.023', '.024']
+                        '.019', '.020', '.021', '.022', '.023', '.024',
+                        '.025', '.026', '.027', '.028']
 palm_ref_file_path = '../palm/current_version/JOBS/{}/OUTPUT/'.format('SB_SI_BL')
 for run_no in palm_ref_run_numbers:
-    palm_ref_file = '{}_masked_{}{}.nc'.format('SB_SI_BL', 'M07', run_no)
+    palm_ref_file = '{}_masked_{}{}.nc'.format('SB_SI_BL', 'M10', run_no)
     palm_u, var_unit = papy.read_nc_var_ms(palm_ref_file_path, palm_ref_file, 'u')
 palm_ref = np.mean(palm_u)
 # palm_ref = 1.
@@ -113,34 +114,34 @@ scale = wt_scale
 
 data_nd = 1
 
-time_series = {}
-time_series.fromkeys(namelist)
-# Gather all files into Timeseries objects
-for name in namelist:
-    files = wt.get_files(path,name)
-    time_series[name] = {}
-    time_series[name].fromkeys(files)
-    for i,file in enumerate(files):
-        ts = wt.Timeseries.from_file(path+file)            
-        ts.get_wind_comps(path+file)
-        ts.get_wtref(wtref_path,name,index=i)
-        ts.wtref = ts.wtref*wtref_factor
-        # edit 6/20/19: Assume that input data is dimensional, not non-dimensional
-        if data_nd == 0:
-            print('Warning: Assuming that data is dimensional. If using non-dimensional input data, set variable data_nd to 1')
-            ts.nondimensionalise()
-        else:
-            if data_nd == 1:
-                []
-            else:
-                print('Warning: data_nd can only be 1 (for non-dimensional input data) or 0 (for dimensional input data)')        
-        #edit 06/20/19: added seperate functionto  calculate equidistant timesteps             
-        ts.adapt_scale(scale)         
-        ts.mask_outliers()
-        ts.index = ts.t_arr         
-        ts.weighted_component_mean
-        ts.weighted_component_variance
-        time_series[name][file] = ts
+# time_series = {}
+# time_series.fromkeys(namelist)
+# # Gather all files into Timeseries objects
+# for name in namelist:
+#     files = wt.get_files(path,name)
+#     time_series[name] = {}
+#     time_series[name].fromkeys(files)
+#     for i,file in enumerate(files):
+#         ts = wt.Timeseries.from_file(path+file)            
+#         ts.get_wind_comps(path+file)
+#         ts.get_wtref(wtref_path,name,index=i)
+#         ts.wtref = ts.wtref*wtref_factor
+#         # edit 6/20/19: Assume that input data is dimensional, not non-dimensional
+#         if data_nd == 0:
+#             print('Warning: Assuming that data is dimensional. If using non-dimensional input data, set variable data_nd to 1')
+#             ts.nondimensionalise()
+#         else:
+#             if data_nd == 1:
+#                 []
+#             else:
+#                 print('Warning: data_nd can only be 1 (for non-dimensional input data) or 0 (for dimensional input data)')        
+#         #edit 06/20/19: added seperate functionto  calculate equidistant timesteps             
+#         ts.adapt_scale(scale)         
+#         ts.mask_outliers()
+#         ts.index = ts.t_arr         
+#         ts.weighted_component_mean
+#         ts.weighted_component_variance
+#         time_series[name][file] = ts
 
 # plotting colors and markers
 c_list = ['forestgreen', 'darkorange', 'navy', 'tab:red', 'tab:olive']
@@ -176,7 +177,6 @@ if compute_back_mean:
         ax.errorbar(wall_dists, mean_vars/palm_ref, yerr=err, 
                     label= r'PALM', 
                     fmt='o', c='darkmagenta')
-
         #plot wt_data
         for i,name in enumerate(namelist):
             wt_var1 = []
@@ -184,8 +184,8 @@ if compute_back_mean:
             wt_z = []
             files = wt.get_files(path,name)            
             for file in files:
-                wt_var1.append(time_series[name][file].weighted_component_mean[0]/(time_series[name][file].wtref*wtref_factor))
-                wt_var2.append(time_series[name][file].weighted_component_mean[1]/(time_series[name][file].wtref*wtref_factor))
+                wt_var1.append(time_series[name][file].weighted_component_mean[0]/(time_series[name][file].wtref))
+                wt_var2.append(time_series[name][file].weighted_component_mean[1]/(time_series[name][file].wtref))
                 wt_z.append(time_series[name][file].y)
             wt_z_plot = np.asarray(wt_z)-0.115*scale
             if var_name == 'u':
@@ -193,12 +193,20 @@ if compute_back_mean:
                 ax.errorbar(wt_z_plot, wt_var_plot, yerr = 0.025,
                             label=name, 
                             fmt=marker_list[i], color=c_list[i])
+                if i==1:
+                    ax.vlines(0.0066*150.*5., 0., 1.4, colors='tab:red', 
+                            linestyles='dashed', 
+                            label=r'$5 \cdot h_{r}$')
                 ax.set_ylabel(r'$\overline{u}$ $u_{ref}^{-1}$ (-)', fontsize = 18)                            
             elif var_name == 'v':
                 wt_var_plot = wt_var2                
                 ax.errorbar(wt_z_plot, wt_var_plot, yerr = 0.025,
                             label=name, 
                             fmt=marker_list[i], color=c_list[i])
+                if i==1:                            
+                    ax.vlines(0.0066*150.*5., -0.12, 0.04, colors='tab:red', 
+                            linestyles='dashed', 
+                            label=r'$5 \cdot h_{r}$')
                 ax.set_ylabel(r'$\overline{v}$ $u_{ref}^{-1}$ (-)', fontsize = 18)                            
                 
         ax.grid(True, 'both', 'both')
@@ -254,8 +262,8 @@ if compute_back_var:
             wt_z = []
             files = wt.get_files(path,name)            
             for file in files:
-                wt_var1.append(time_series[name][file].weighted_component_variance[0]/(time_series[name][file].wtref*wtref_factor)**2.)
-                wt_var2.append(time_series[name][file].weighted_component_variance[1]/(time_series[name][file].wtref*wtref_factor)**2.)
+                wt_var1.append(time_series[name][file].weighted_component_variance[0]/(time_series[name][file].wtref)**2.)
+                wt_var2.append(time_series[name][file].weighted_component_variance[1]/(time_series[name][file].wtref)**2.)
                 wt_z.append(time_series[name][file].y)
             wt_z_plot = np.asarray(wt_z)-0.115*scale
             if var_name == 'u':
@@ -263,12 +271,20 @@ if compute_back_var:
                 ax.errorbar(wt_z_plot, wt_var_plot, yerr = 0.025,
                             label=name, 
                             fmt=marker_list[i], color=c_list[i])
+                if i==1:
+                    ax.vlines(0.0066*150.*5., -0.05, 0.25, colors='tab:red', 
+                            linestyles='dashed', 
+                            label=r'$5 \cdot h_{r}$')
                 ax.set_ylabel(r'$u^\prime u^\prime$ $u_{ref}^{-2}$ (-)', fontsize = 18)
             elif var_name == 'v':
                 wt_var_plot = wt_var2                
                 ax.errorbar(wt_z_plot, wt_var_plot, yerr = 0.025,
                             label=name, 
                             fmt=marker_list[i], color=c_list[i])
+                if i==1:
+                    ax.vlines(0.0066*150.*5., -0.04, 0.14, colors='tab:red', 
+                            linestyles='dashed', 
+                            label=r'$5 \cdot h_{r}$')
                 ax.set_ylabel(r'$v^\prime v^\prime$ $u_{ref}^{-2}$ (-)', fontsize = 18)
         ax.grid(True, 'both', 'both')
         ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
@@ -317,6 +333,9 @@ if compute_back_covar:
     # plot PALM masked output
     ax.errorbar(wall_dists, var_vars, yerr=err, 
                 label= r'PALM', fmt='o', c='darkmagenta')
+    ax.vlines(0.0066*150.*5., -0.7, 0.1, colors='tab:red', 
+                linestyles='dashed', 
+                label=r'$5 \cdot h_{r}$')
     # plot wind tunnel data
     for i,name in enumerate(namelist):
         files = wt.get_files(path,name)
@@ -425,12 +444,15 @@ if compute_spectra:
             # gather values
             var_mean = np.asarray([np.mean(total_var)])
             wall_dist = np.asarray([abs(y[0]-530.)])
-            mean_vars = np.concatenate([mean_vars, var_mean])
-            wall_dists = np.concatenate([wall_dists, wall_dist])
             print('\n HEIGHT = {} m'.format(wall_dist))
+            # # equidistant timestepping
+            time_eq = np.linspace(total_time[0], total_time[-1], len(total_time))
+            var_eq = wt.equ_dist_ts(total_time, time_eq, total_var)
+
             if var_name == 'u':
-                u_mean  = np.mean(total_var)      
-            f_sm, S_uu_sm, u_aliasing = papy.calc_spectra(total_var, time, wall_dist, u_mean)
+                u_mean = var_mean[0]
+            # f_sm, S_uu_sm, u_aliasing = papy.calc_spectra(total_var, total_time, wall_dist, u_mean)
+            f_sm, S_uu_sm, u_aliasing = papy.calc_spectra(var_eq, time_eq, wall_dist, u_mean)
             print('    calculated spectra for {}'.format(var_name))
             papy.plot_spectra(f_sm, S_uu_sm, u_aliasing, u_mean, wall_dist[0], var_name, mask)
             print('    plotted spectra for {} \n'.format(var_name))

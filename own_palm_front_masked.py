@@ -76,10 +76,10 @@ papy.globals.dx = 1.
 compute_front_mean = True
 compute_front_var = True
 compute_front_covar = True
-compute_mean = False
+compute_spectra = False
+
 compute_lux = False
 compute_turbint_masked = False
-compute_spectra = True
 
 ################
 """
@@ -98,9 +98,13 @@ palm_ref_run_numbers = ['.007', '.008', '.009', '.010', '.011', '.012',
                         '.025', '.026', '.027', '.028']
 palm_ref_file_path = '../palm/current_version/JOBS/{}/OUTPUT/'.format('SB_SI_BL')
 for run_no in palm_ref_run_numbers:
-    palm_ref_file = '{}_masked_{}{}.nc'.format('SB_SI_BL', 'M07', run_no)
+    palm_ref_file = '{}_masked_{}{}.nc'.format('SB_SI_BL', 'M10', run_no)
     palm_u, var_unit = papy.read_nc_var_ms(palm_ref_file_path, palm_ref_file, 'u')
-palm_ref = np.mean(palm_u)
+data_nd = 1
+if data_nd == 1:
+    palm_ref = np.mean(palm_u)
+else:
+    palm_ref = 1.
 print('     PALM REFERENCE VELOCITY: {} m/s'.format(palm_ref))
 # wind tunnel data
 namelist = ['SB_FL_SI_UV_023',
@@ -111,8 +115,6 @@ path = '{}/coincidence/timeseries/'.format(wt_path) # path to timeseries folder
 wtref_path = '{}/wtref/'.format(wt_path)
 wtref_factor = 0.738
 scale = wt_scale
-
-data_nd = 1
 
 time_series = {}
 time_series.fromkeys(namelist)
@@ -177,7 +179,6 @@ if compute_front_mean:
         ax.errorbar(wall_dists, mean_vars/palm_ref, yerr=err, 
                     label= r'PALM', 
                     fmt='o', c='darkmagenta')
-
         #plot wt_data
         for i,name in enumerate(namelist):
             wt_var1 = []
@@ -185,8 +186,8 @@ if compute_front_mean:
             wt_z = []
             files = wt.get_files(path,name)            
             for file in files:
-                wt_var1.append(time_series[name][file].weighted_component_mean[0]/(time_series[name][file].wtref*wtref_factor))
-                wt_var2.append(time_series[name][file].weighted_component_mean[1]/(time_series[name][file].wtref*wtref_factor))
+                wt_var1.append(time_series[name][file].weighted_component_mean[0]/(time_series[name][file].wtref))
+                wt_var2.append(time_series[name][file].weighted_component_mean[1]/(time_series[name][file].wtref))
                 wt_z.append(time_series[name][file].y)
             wt_z_plot = np.asarray(wt_z)-0.115*scale
             if var_name == 'u':
@@ -194,13 +195,21 @@ if compute_front_mean:
                 ax.errorbar(wt_z_plot, wt_var_plot, yerr = 0.025,
                             label=name, 
                             fmt=marker_list[i], color=c_list[i])
-                ax.set_ylabel(r'$\overline{u}$ $u_{ref}^{-1}$ (-)', fontsize = 18)                            
+                if i==1:
+                    ax.vlines(0.0066*150.*5., -1., 2, colors='tab:red', 
+                            linestyles='dashed', 
+                            label=r'$5 \cdot h_{r}$')
+                ax.set_ylabel(r'$\overline{u}$ $u_{ref}^{-1}$ (-)', fontsize = 18)
             elif var_name == 'v':
                 wt_var_plot = wt_var2                
                 ax.errorbar(wt_z_plot, wt_var_plot, yerr = 0.025,
                             label=name, 
                             fmt=marker_list[i], color=c_list[i])
-                ax.set_ylabel(r'$\overline{v}$ $u_{ref}^{-1}$ (-)', fontsize = 18)                            
+                if i==1:
+                    ax.vlines(0.0066*150.*5., -0.1, 0.3, colors='tab:red', 
+                            linestyles='dashed', 
+                            label=r'$5 \cdot h_{r}$')
+                ax.set_ylabel(r'$\overline{v}$ $u_{ref}^{-1}$ (-)', fontsize = 18)
                 
         ax.grid(True, 'both', 'both')
         ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
@@ -247,7 +256,6 @@ if compute_front_var:
         ax.errorbar(wall_dists, var_vars/palm_ref**2., yerr=err, 
                     label= r'PALM', 
                     fmt='o', c='darkmagenta')
-
         #plot wt_data
         for i,name in enumerate(namelist):
             wt_var1 = []
@@ -255,8 +263,8 @@ if compute_front_var:
             wt_z = []
             files = wt.get_files(path,name)            
             for file in files:
-                wt_var1.append(time_series[name][file].weighted_component_variance[0]/(time_series[name][file].wtref*wtref_factor)**2.)
-                wt_var2.append(time_series[name][file].weighted_component_variance[1]/(time_series[name][file].wtref*wtref_factor)**2.)
+                wt_var1.append(time_series[name][file].weighted_component_variance[0]/(time_series[name][file].wtref)**2.)
+                wt_var2.append(time_series[name][file].weighted_component_variance[1]/(time_series[name][file].wtref)**2.)
                 wt_z.append(time_series[name][file].y)
             wt_z_plot = np.asarray(wt_z)-0.115*scale
             if var_name == 'u':
@@ -264,12 +272,22 @@ if compute_front_var:
                 ax.errorbar(wt_z_plot, wt_var_plot, yerr = 0.025,
                             label=name, 
                             fmt=marker_list[i], color=c_list[i])
+                if i==1:                            
+                    # vertical line
+                    ax.vlines(0.0066*150.*5., -0.1, 0.6, colors='tab:red', 
+                            linestyles='dashed', 
+                            label=r'$5 \cdot h_{r}$')
                 ax.set_ylabel(r'$u^\prime u^\prime$ $u_{ref}^{-2}$ (-)', fontsize = 18)
             elif var_name == 'v':
                 wt_var_plot = wt_var2                
                 ax.errorbar(wt_z_plot, wt_var_plot, yerr = 0.025,
                             label=name, 
                             fmt=marker_list[i], color=c_list[i])
+                if i==1:
+                    # vertical line
+                    ax.vlines(0.0066*150.*5., -0.1, 0.2, colors='tab:red', 
+                            linestyles='dashed', 
+                            label=r'$5 \cdot h_{r}$')
                 ax.set_ylabel(r'$v^\prime v^\prime$ $u_{ref}^{-2}$ (-)', fontsize = 18)
         ax.grid(True, 'both', 'both')
         ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
@@ -318,6 +336,10 @@ if compute_front_covar:
     # plot PALM masked output
     ax.errorbar(wall_dists, var_vars, yerr=err, 
                 label= r'PALM', fmt='o', c='darkmagenta')
+    # vertical line
+    ax.vlines(0.0066*150.*5., -1., 0.2, colors='tab:red', 
+                linestyles='dashed', 
+                label=r'$5 \cdot h_{r}$')                
     # plot wind tunnel data
     for i,name in enumerate(namelist):
         files = wt.get_files(path,name)
