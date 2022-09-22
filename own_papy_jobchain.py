@@ -34,17 +34,18 @@ GLOBAL VARIABLES
 """
 ################
 # PALM input files
-papy.globals.run_name = 'SB_SI_front'
-papy.globals.run_number = '.017'
+papy.globals.run_name = 'SB_SI_back'
+papy.globals.run_number = '.026'
 # papy.globals.run_numbers = ['.029', '.028']
 # papy.globals.jobchain_numbers = ['.001', '.002', '.003', '.004', '.005',
 #                                 '.006', '.007','.008','.009','.010','.011',
 #                                 '.012', '.013','.014','.015','.016','.017',
 #                                 '.018', '.019']
 papy.globals.jobchain_numbers = ['.001', '.002', '.003', '.004', '.005',
-                                '.006','.007', '.008', '.009', '.010', '.011',
-                                '.012', '.013', '.014', '.015', '.016', 
-                                '.017']
+                                '.006', '.007', '.008', '.009', '.010', '.011', '.012', 
+                                '.013', '.014', '.015', '.016', '.017', '.018',
+                                '.019', '.020', '.021', '.022', '.023', '.024',
+                                '.025', '.026']
 nc_file_grid = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
 nc_file_path = '../palm/current_version/JOBS/{}/OUTPUT/'.format(papy.globals.run_name)
 
