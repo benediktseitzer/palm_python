@@ -43,10 +43,11 @@ GLOBAL VARIABLES
 ################
 # PALM input files
 papy.globals.run_name = 'SB_SI_BL'
-papy.globals.run_number = '.021'
+papy.globals.run_number = '.028'
 papy.globals.run_numbers = ['.007', '.008', '.009', '.010', '.011', '.012', 
                         '.013', '.014', '.015', '.016', '.017', '.018',
-                        '.019', '.020', '.021', '.022', '.023', '.024']
+                        '.019', '.020', '.021', '.022', '.023', '.024',
+                        '.025', '.026', '.027', '.028']
 nc_file_grid = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
 nc_file_path = '../palm/current_version/JOBS/{}/OUTPUT/'.format(papy.globals.run_name)
 mask_name_list = ['M01', 'M02', 'M03', 'M04', 'M05', 'M06', 'M07', 'M08',
@@ -93,8 +94,8 @@ mode = mode_list[1]
 
 # Steeringflags
 compute_BL_mean = True
-compute_BL_var = False
-compute_BL_covar = False
+compute_BL_var = True
+compute_BL_covar = True
 
 compute_lux = False
 
@@ -443,7 +444,7 @@ if compute_BL_var:
                         borderaxespad = 0., ncol = 3, 
                         numpoints = 1, fontsize = 18)
             ax.set_xlabel(r'$\Delta y$ (m)', fontsize = 18)
-            ax.set_ylabel(r'${}^2$ '.format(var_name) + r'(m$^2$ s$^{-2}$)', fontsize = 18)
+            ax.set_ylabel(r'${}^\prime {}^\prime$ '.format(var_name, var_name) + r'(m$^2$ s$^{-2}$)', fontsize = 18)
             # fig.savefig('../palm_results/{}/run_{}/maskprofiles/{}_variance_{}_mask.png'.format(papy.globals.run_name,
             #             papy.globals.run_number[-3:],
             #             papy.globals.run_name,var_name), bbox_inches='tight', dpi=500)
