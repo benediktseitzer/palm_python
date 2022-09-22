@@ -496,8 +496,8 @@ def plot_spectra(f_comp1_sm, S_comp1_sm,
                 ax.set_xlim(10**-4,1)
                 ax.set_ylim(10**-4,10**6)
         else:
-            ax.set_xlim([10**-3,10.])
-            ax.set_ylim([10 ** -3, 1])
+            ax.set_xlim([10**-3,100.])
+            ax.set_ylim([10 ** -4, 1])
     else:
         xsmin = np.nanmin(f_sm[np.where(f_sm > 0)])
         xsmax = np.nanmax(f_sm[np.where(f_sm > 0)])
