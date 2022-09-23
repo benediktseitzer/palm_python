@@ -43,11 +43,11 @@ GLOBAL VARIABLES
 ################
 # PALM input files
 papy.globals.run_name = 'SB_SI_back'
-papy.globals.run_number = '.026'
+papy.globals.run_number = '.030'
 papy.globals.run_numbers = ['.007', '.008', '.009', '.010', '.011', '.012', 
-                        '.013', '.014', '.015', '.016', '.017', '.018',
-                        '.019', '.020', '.021', '.022', '.023', '.024',
-                        '.025', '.026']
+                            '.013', '.014', '.015', '.016', '.017', '.018',
+                            '.019', '.020', '.021', '.022', '.023', '.024',
+                            '.025', '.026', '.027', '.028', '.029', '.030']
 nc_file_grid = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
 nc_file_path = '../palm/current_version/JOBS/{}/OUTPUT/'.format(papy.globals.run_name)
 mask_name_list = ['M01', 'M02', 'M03', 'M04', 'M05', 'M06', 'M07', 'M08',
@@ -73,10 +73,10 @@ papy.globals.ny = 1024
 papy.globals.dx = 1.
 
 # Steeringflags
-compute_back_mean = False
-compute_back_var = False
-compute_back_covar = False
-compute_spectra = True
+compute_back_mean = True
+compute_back_var = True
+compute_back_covar = True
+compute_spectra = False
 
 compute_lux = False
 compute_turbint_masked = False
@@ -95,7 +95,8 @@ plt.style.use('classic')
 palm_ref_run_numbers = ['.007', '.008', '.009', '.010', '.011', '.012', 
                         '.013', '.014', '.015', '.016', '.017', '.018',
                         '.019', '.020', '.021', '.022', '.023', '.024',
-                        '.025', '.026', '.027', '.028']
+                        '.025', '.026', '.027', '.028', '.029', '.030', 
+                        '.031']
 palm_ref_file_path = '../palm/current_version/JOBS/{}/OUTPUT/'.format('SB_SI_BL')
 for run_no in palm_ref_run_numbers:
     palm_ref_file = '{}_masked_{}{}.nc'.format('SB_SI_BL', 'M10', run_no)
@@ -114,42 +115,44 @@ scale = wt_scale
 
 data_nd = 1
 
-# time_series = {}
-# time_series.fromkeys(namelist)
-# # Gather all files into Timeseries objects
-# for name in namelist:
-#     files = wt.get_files(path,name)
-#     time_series[name] = {}
-#     time_series[name].fromkeys(files)
-#     for i,file in enumerate(files):
-#         ts = wt.Timeseries.from_file(path+file)            
-#         ts.get_wind_comps(path+file)
-#         ts.get_wtref(wtref_path,name,index=i)
-#         ts.wtref = ts.wtref*wtref_factor
-#         # edit 6/20/19: Assume that input data is dimensional, not non-dimensional
-#         if data_nd == 0:
-#             print('Warning: Assuming that data is dimensional. If using non-dimensional input data, set variable data_nd to 1')
-#             ts.nondimensionalise()
-#         else:
-#             if data_nd == 1:
-#                 []
-#             else:
-#                 print('Warning: data_nd can only be 1 (for non-dimensional input data) or 0 (for dimensional input data)')        
-#         #edit 06/20/19: added seperate functionto  calculate equidistant timesteps             
-#         ts.adapt_scale(scale)         
-#         ts.mask_outliers()
-#         ts.index = ts.t_arr         
-#         ts.weighted_component_mean
-#         ts.weighted_component_variance
-#         time_series[name][file] = ts
+time_series = {}
+time_series.fromkeys(namelist)
+# Gather all files into Timeseries objects
+for name in namelist:
+    files = wt.get_files(path,name)
+    time_series[name] = {}
+    time_series[name].fromkeys(files)
+    for i,file in enumerate(files):
+        ts = wt.Timeseries.from_file(path+file)            
+        ts.get_wind_comps(path+file)
+        ts.get_wtref(wtref_path,name,index=i)
+        ts.wtref = ts.wtref*wtref_factor
+        # edit 6/20/19: Assume that input data is dimensional, not non-dimensional
+        if data_nd == 0:
+            print('Warning: Assuming that data is dimensional. If using non-dimensional input data, set variable data_nd to 1')
+            ts.nondimensionalise()
+        else:
+            if data_nd == 1:
+                []
+            else:
+                print('Warning: data_nd can only be 1 (for non-dimensional input data) or 0 (for dimensional input data)')        
+        #edit 06/20/19: added seperate functionto  calculate equidistant timesteps             
+        ts.adapt_scale(scale)         
+        ts.mask_outliers()
+        ts.index = ts.t_arr         
+        ts.weighted_component_mean
+        ts.weighted_component_variance
+        time_series[name][file] = ts
 
 # plotting colors and markers
 c_list = ['forestgreen', 'darkorange', 'navy', 'tab:red', 'tab:olive']
 marker_list = ['^', 'o', 'd', 'x', '8']
 
-################
+######################################################
 # compute u-mean alongside building
+######################################################
 if compute_back_mean:
+    print('\n     compute means')    
     var_name_list = ['u', 'v']
     for var_name in var_name_list:
         mean_vars = np.array([])
@@ -194,7 +197,7 @@ if compute_back_mean:
                             label=name, 
                             fmt=marker_list[i], color=c_list[i])
                 if i==1:
-                    ax.vlines(0.0066*150.*5., 0., 1.4, colors='tab:red', 
+                    ax.vlines(0.0066*150.*5., 0., 1.2, colors='tab:red', 
                             linestyles='dashed', 
                             label=r'$5 \cdot h_{r}$')
                 ax.set_ylabel(r'$\overline{u}$ $u_{ref}^{-1}$ (-)', fontsize = 18)                            
@@ -204,7 +207,7 @@ if compute_back_mean:
                             label=name, 
                             fmt=marker_list[i], color=c_list[i])
                 if i==1:                            
-                    ax.vlines(0.0066*150.*5., -0.12, 0.04, colors='tab:red', 
+                    ax.vlines(0.0066*150.*5., -0.1, 0.04, colors='tab:red', 
                             linestyles='dashed', 
                             label=r'$5 \cdot h_{r}$')
                 ax.set_ylabel(r'$\overline{v}$ $u_{ref}^{-1}$ (-)', fontsize = 18)                            
@@ -218,14 +221,20 @@ if compute_back_mean:
         ax.set_xscale('log')
         fig.savefig('../palm_results/{}/run_{}/maskprofiles/{}_mean_{}_mask_log.png'.format(papy.globals.run_name,
                     papy.globals.run_number[-3:],
-                    papy.globals.run_name, var_name), bbox_inches='tight', dpi=500)            
+                    papy.globals.run_name, var_name), bbox_inches='tight', dpi=500)
+        print('     SAVED TO: ' 
+                + '../palm_results/{}/run_{}/maskprofiles/{}_mean_{}_mask_log.png'.format(papy.globals.run_name,
+                papy.globals.run_number[-3:],
+                papy.globals.run_name, var_name))
         plt.close(12)
 
-################
+
+######################################################
 # compute variances alongside building
+######################################################
 if compute_back_var:
     var_name_list = ['u', 'v']
-    print('     compute variances')
+    print('\n     compute variances')
 
     for var_name in var_name_list:
         var_vars = np.array([])
@@ -248,7 +257,7 @@ if compute_back_var:
             wall_dists = np.concatenate([wall_dists, wall_dist])
 
         #plot profiles
-        err = np.mean(var_vars/palm_ref**2)*0.05
+        err = np.mean(var_vars/palm_ref**2)*0.1
         fig, ax = plt.subplots()
         # plot PALM masked output
         ax.errorbar(wall_dists, var_vars/palm_ref**2., yerr=err, 
@@ -268,24 +277,24 @@ if compute_back_var:
             wt_z_plot = np.asarray(wt_z)-0.115*scale
             if var_name == 'u':
                 wt_var_plot = wt_var1
-                ax.errorbar(wt_z_plot, wt_var_plot, yerr = 0.025,
+                ax.errorbar(wt_z_plot, wt_var_plot, yerr = 0.025/palm_ref**2.,
                             label=name, 
                             fmt=marker_list[i], color=c_list[i])
                 if i==1:
-                    ax.vlines(0.0066*150.*5., -0.05, 0.25, colors='tab:red', 
+                    ax.vlines(0.0066*150.*5., 0., 0.15, colors='tab:red', 
                             linestyles='dashed', 
                             label=r'$5 \cdot h_{r}$')
-                ax.set_ylabel(r'$u^\prime u^\prime$ $u_{ref}^{-2}$ (-)', fontsize = 18)
+                ax.set_ylabel(r'$\overline{u^\prime u^\prime}$ $u_{ref}^{-2}$ (-)', fontsize = 18)
             elif var_name == 'v':
                 wt_var_plot = wt_var2                
-                ax.errorbar(wt_z_plot, wt_var_plot, yerr = 0.025,
+                ax.errorbar(wt_z_plot, wt_var_plot, yerr = 0.025/palm_ref**2.,
                             label=name, 
                             fmt=marker_list[i], color=c_list[i])
                 if i==1:
-                    ax.vlines(0.0066*150.*5., -0.04, 0.14, colors='tab:red', 
+                    ax.vlines(0.0066*150.*5., 0., 0.08, colors='tab:red', 
                             linestyles='dashed', 
                             label=r'$5 \cdot h_{r}$')
-                ax.set_ylabel(r'$v^\prime v^\prime$ $u_{ref}^{-2}$ (-)', fontsize = 18)
+                ax.set_ylabel(r'$\overline{v^\prime v^\prime}$ $u_{ref}^{-2}$ (-)', fontsize = 18)
         ax.grid(True, 'both', 'both')
         ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                     borderaxespad = 0., ncol = 2, 
@@ -295,13 +304,18 @@ if compute_back_var:
         fig.savefig('../palm_results/{}/run_{}/maskprofiles/{}_variance_{}_mask_log.png'.format(papy.globals.run_name,
                     papy.globals.run_number[-3:],
                     papy.globals.run_name,var_name), bbox_inches='tight', dpi=500)
+        print('     SAVED TO: ' 
+                    + '../palm_results/{}/run_{}/maskprofiles/{}_variance_{}_mask_log.png'.format(papy.globals.run_name,
+                    papy.globals.run_number[-3:],
+                    papy.globals.run_name,var_name))
         plt.close(12)
 
 
-################
+######################################################
 # compute covariance in back of building
+######################################################
 if compute_back_covar:
-    print('     compute co-variance')
+    print('\n     compute co-variance')
     var_vars = np.array([])
     wall_dists = np.array([])
     for mask in mask_name_list:
@@ -321,19 +335,19 @@ if compute_back_covar:
         # gather values
         var1_fluc = np.asarray([np.mean(total_var1)]-total_var1)
         var2_fluc = np.asarray([np.mean(total_var2)]-total_var2)
-        var_flux = np.asarray([np.mean(var1_fluc*var2_fluc)])
+        var_flux = np.asarray([np.mean(var1_fluc*var2_fluc)/palm_ref**2.])
         wall_dist = np.asarray([abs(y[0]-530.)])
         # wall_dist = np.asarray([abs(y[0])])
         var_vars = np.concatenate([var_vars, var_flux])
         wall_dists = np.concatenate([wall_dists, wall_dist])
 
     #plot profiles
-    err = np.mean(var_vars)*0.05
+    err = np.mean(var_vars)*0.1
     fig, ax = plt.subplots()
     # plot PALM masked output
     ax.errorbar(wall_dists, var_vars, yerr=err, 
                 label= r'PALM', fmt='o', c='darkmagenta')
-    ax.vlines(0.0066*150.*5., -0.7, 0.1, colors='tab:red', 
+    ax.vlines(0.0066*150.*5., -0.06, 0.01, colors='tab:red', 
                 linestyles='dashed', 
                 label=r'$5 \cdot h_{r}$')
     # plot wind tunnel data
@@ -346,10 +360,10 @@ if compute_back_covar:
             wt_flux.append(wt.transit_time_weighted_flux(
                                     time_series[name][file].t_transit,
                                     time_series[name][file].u.dropna(),
-                                    time_series[name][file].v.dropna()))
+                                    time_series[name][file].v.dropna())/time_series[name][file].wtref**2.)
             wt_z.append(time_series[name][file].y)
         wt_z_plot = np.asarray(wt_z)-0.115*scale
-        ax.errorbar(wt_z_plot, wt_flux, yerr = 0.025,
+        ax.errorbar(wt_z_plot, wt_flux, yerr = 0.025/palm_ref**2.,
                     label=name, 
                     fmt=marker_list[i], color=c_list[i])
     ax.grid(True, 'both')
@@ -357,12 +371,55 @@ if compute_back_covar:
                 borderaxespad = 0., ncol = 2, 
                 numpoints = 1, fontsize = 18)
     ax.set_xlabel(r'$\Delta y$ (m)', fontsize = 18)
-    ax.set_ylabel(r'$\overline{u^\prime v^\prime}$ ' + r'(m$^2$ s$^{-2}$)', fontsize = 18)
+    ax.set_ylabel(r'$\overline{u^\prime v^\prime} u_{ref}^-1$ ' + r'(-)', fontsize = 18)
     ax.set_xscale('log')
     fig.savefig('../palm_results/{}/run_{}/maskprofiles/{}_covariance_{}_mask_log.png'.format(papy.globals.run_name,
                 papy.globals.run_number[-3:],
                 papy.globals.run_name,'uw'), bbox_inches='tight', dpi=500)
+    print('     SAVED TO: ' 
+                + '../palm_results/{}/run_{}/maskprofiles/{}_covariance_{}_mask_log.png'.format(papy.globals.run_name,
+                papy.globals.run_number[-3:],
+                papy.globals.run_name,'uw'))
     plt.close(12)
+
+
+#################
+# Copmute spectra
+#################
+if compute_spectra:
+    # heights mode
+    print('\n Compute at different heights: \n')
+    # grid_name = 'zu'
+    # z, z_unit = papy.read_nc_grid(nc_file_path,nc_file_grid,grid_name)
+
+    var_name_list = ['u', 'v']
+    for var_name in var_name_list:
+        mean_vars = np.array([])
+        wall_dists = np.array([])
+        for mask in mask_name_list:
+            total_var = np.array([])
+            total_time = np.array([])
+            for run_no in papy.globals.run_numbers:
+                nc_file = '{}_masked_{}{}.nc'.format(papy.globals.run_name, mask, run_no)
+                time, time_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'time')
+                var, var_unit = papy.read_nc_var_ms(nc_file_path, nc_file, var_name)
+                y, y_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'y')
+                total_time = np.concatenate([total_time, time])
+                total_var = np.concatenate([total_var, var])
+            # gather values
+            var_mean = np.asarray([np.mean(total_var)])
+            wall_dist = np.asarray([abs(y[0]-530.)])
+            print('\n HEIGHT = {} m'.format(wall_dist))
+            # # equidistant timestepping
+            time_eq = np.linspace(total_time[0], total_time[-1], len(total_time))
+            var_eq = wt.equ_dist_ts(total_time, time_eq, total_var)
+            if var_name == 'u':
+                u_mean = var_mean[0]
+            # f_sm, S_uu_sm, u_aliasing = papy.calc_spectra(total_var, total_time, wall_dist, u_mean)
+            f_sm, S_uu_sm, u_aliasing = papy.calc_spectra(var_eq, time_eq, wall_dist, u_mean)
+            print('    calculated spectra for {}'.format(var_name))
+            papy.plot_spectra(f_sm, S_uu_sm, u_aliasing, u_mean, wall_dist[0], var_name, mask)
+            print('    plotted spectra for {} \n'.format(var_name))
 
 
 ################
@@ -419,43 +476,6 @@ if compute_turbint_masked:
     papy.plot_turbint_profile(Iw, height_list, 'w')
     print('\n plotted turbulence intensity profiles for w-component')
 
-################
-# Copmute spectra
-if compute_spectra:
-    # heights mode
-    print('\n Compute at different heights: \n')
-    # grid_name = 'zu'
-    # z, z_unit = papy.read_nc_grid(nc_file_path,nc_file_grid,grid_name)
-
-    var_name_list = ['u', 'v']
-    for var_name in var_name_list:
-        mean_vars = np.array([])
-        wall_dists = np.array([])
-        for mask in mask_name_list:
-            total_var = np.array([])
-            total_time = np.array([])
-            for run_no in papy.globals.run_numbers:
-                nc_file = '{}_masked_{}{}.nc'.format(papy.globals.run_name, mask, run_no)
-                time, time_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'time')
-                var, var_unit = papy.read_nc_var_ms(nc_file_path, nc_file, var_name)
-                y, y_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'y')
-                total_time = np.concatenate([total_time, time])
-                total_var = np.concatenate([total_var, var])
-            # gather values
-            var_mean = np.asarray([np.mean(total_var)])
-            wall_dist = np.asarray([abs(y[0]-530.)])
-            print('\n HEIGHT = {} m'.format(wall_dist))
-            # # equidistant timestepping
-            time_eq = np.linspace(total_time[0], total_time[-1], len(total_time))
-            var_eq = wt.equ_dist_ts(total_time, time_eq, total_var)
-
-            if var_name == 'u':
-                u_mean = var_mean[0]
-            # f_sm, S_uu_sm, u_aliasing = papy.calc_spectra(total_var, total_time, wall_dist, u_mean)
-            f_sm, S_uu_sm, u_aliasing = papy.calc_spectra(var_eq, time_eq, wall_dist, u_mean)
-            print('    calculated spectra for {}'.format(var_name))
-            papy.plot_spectra(f_sm, S_uu_sm, u_aliasing, u_mean, wall_dist[0], var_name, mask)
-            print('    plotted spectra for {} \n'.format(var_name))
 
 print('')
 print('Finished processing of: {}{}'.format(papy.globals.run_name, papy.globals.run_number))
