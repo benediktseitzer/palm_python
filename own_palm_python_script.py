@@ -83,7 +83,7 @@ GLOBAL VARIABLES
 """
 ################
 # PALM input files
-papy.globals.run_name = 'SB_SI_BL'
+papy.globals.run_name = 'SB_LE'
 papy.globals.run_number = '.007'
 papy.globals.run_numbers = ['.029', '.028']
 nc_file_grid = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
@@ -138,10 +138,10 @@ compute_turbint = False
 compute_vertprof = False
 compute_vertprof_flux = False
 compute_spectra = False
-compute_crosssections = True
+compute_crosssections = False
 compute_pure_fluxes = False
 compute_simrange = False
-compute_modelinput = False
+compute_modelinput = True
 
 ################
 """
@@ -844,8 +844,8 @@ if compute_modelinput:
     elif topo_file_roughness_building:
         print('     Start constructing Topo-file')
         building_height = 50.
-        building_x_length = 36.
-        building_y_length = 76.
+        building_x_length = 76.
+        building_y_length = 36.
         rough_height = 3.
         rough_dist_x = 60.
         rough_dist_y = 30.
