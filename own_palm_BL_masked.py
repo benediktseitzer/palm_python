@@ -43,12 +43,14 @@ GLOBAL VARIABLES
 ################
 # PALM input files
 papy.globals.run_name = 'SB_SI_BL'
-papy.globals.run_number = '.031'
+papy.globals.run_number = '.045'
 papy.globals.run_numbers = ['.007', '.008', '.009', '.010', '.011', '.012', 
-                            '.013', '.014', '.015', '.016', '.017', '.018',
-                            '.019', '.020', '.021', '.022', '.023', '.024',
-                            '.025', '.026', '.027', '.028', '.029', '.030', 
-                            '.031']
+                        '.013', '.014', '.015', '.016', '.017', '.018',
+                        '.019', '.020', '.021', '.022', '.023', '.024',
+                        '.025', '.026', '.027', '.028', '.029', '.030', 
+                        '.031', '.032', '.033', '.034', '.035', '.036',
+                        '.037', '.038', '.039', '.040', '.041', '.042',
+                        '.043', '.044', '.045']
 nc_file_grid = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
 nc_file_path = '../palm/current_version/JOBS/{}/OUTPUT/'.format(papy.globals.run_name)
 mask_name_list = ['M01', 'M02', 'M03', 'M04', 'M05', 'M06', 'M07', 'M08',
@@ -94,12 +96,11 @@ mode_list = ['testing', 'heights', 'compare', 'filtercheck']
 mode = mode_list[1]
 
 # Steeringflags
-compute_BL_mean = False
-compute_BL_var = False
-compute_BL_covar = False
+compute_BL_mean = True
+compute_BL_var = True
+compute_BL_covar = True
 compute_spectra = True
-
-compute_lux = False
+compute_BL_lux = True
 
 ################
 """
@@ -576,23 +577,6 @@ if compute_BL_covar:
                     papy.globals.run_name,'uw'), bbox_inches='tight', dpi=500)
         plt.close(12)
 
-################
-# Intergral length scale Lux
-if compute_lux:
-    nc_file = '{}_masked_M02{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
-    lux = np.zeros(len(height_list))
-    var_name = 'u'
-
-    for i,mask_name in enumerate(mask_name_list): 
-        nc_file = '{}_masked_{}{}.nc'.format(papy.globals.run_name,mask_name,papy.globals.run_number)
-        height = height_list[i]
-        time, time_unit = papy.read_nc_var_ms(nc_file_path,nc_file,'time')        
-        var, var_unit = papy.read_nc_var_ms(nc_file_path,nc_file,var_name)        
-        lux[i] = papy.calc_lux(np.abs(time[1]-time[0]),var)
-        print('\n calculated integral length scale for {}'.format(str(height)))
-
-    papy.plot_lux_profile(lux, height_list)
-    print('\n plotted integral length scale profiles')
 
 ################
 # Copmute spectra
@@ -629,6 +613,68 @@ if compute_spectra:
             print('    calculated spectra for {}'.format(var_name))
             papy.plot_spectra(f_sm, S_uu_sm, u_aliasing, u_mean, wall_dist[0], var_name, mask)
             print('    plotted spectra for {} \n'.format(var_name))
+
+######################################################
+# Intergral length scale Lux
+######################################################  
+if compute_BL_lux:
+    print('     compute Lux-profiles')
+    lux = np.zeros(len(mask_name_list))
+    var_name = 'u'
+    wall_dists = np.array([])
+    for i,mask in enumerate(mask_name_list):
+        total_var = np.array([])
+        total_time = np.array([])
+        for run_no in papy.globals.run_numbers:
+            nc_file = '{}_masked_{}{}.nc'.format(papy.globals.run_name, mask, run_no)
+            time, time_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'time')
+            var, var_unit = papy.read_nc_var_ms(nc_file_path, nc_file, var_name)
+            y, y_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'zu_3d')
+            total_time = np.concatenate([total_time, time])
+            total_var = np.concatenate([total_var, var])
+        # gather values
+        wall_dist = np.asarray([abs(y[0])])
+        wall_dists = np.concatenate([wall_dists, wall_dist])
+        lux[i] = papy.calc_lux(np.abs(total_time[1]-total_time[0]), total_var)
+        print('    calculated palm-LUX for {}'.format(wall_dist[0]))
+
+
+    # plotting wt and PALM data
+    fig, ax = plt.subplots()
+    err = 0.1 * lux
+    ref_path = None
+    Lux_10,Lux_1,Lux_01,Lux_001,Lux_obs_smooth,Lux_obs_rough = \
+    papy.get_lux_referencedata(ref_path)
+    h1 = ax.errorbar(lux, wall_dists, xerr=err, fmt='o',
+                label=r'PALM - $u$', color='darkviolet')
+    ref1 = ax.plot(Lux_10[1,:], Lux_10[0,:], 'k-', 
+            linewidth=1, label=r'$z_0=10\ m$ (theory)')
+    ref2 = ax.plot(Lux_1[1,:], Lux_1[0,:], 'k--', 
+            linewidth=1, label=r'$z_0=1\ m$ (theory)')
+    ref3 = ax.plot(Lux_01[1,:], Lux_01[0,:], 'k-.', 
+            linewidth=1, label=r'$z_0=0.1\ m$ (theory)')
+    ref4 = ax.plot(Lux_001[1,:], Lux_001[0,:], 'k:', 
+            linewidth=1, label=r'$z_0=0.01\ m$ (theory)')
+    ref5 = ax.plot(Lux_obs_smooth[1,:], Lux_obs_smooth[0,:], 'k+',
+            linewidth=1, label='observations smooth surface')
+    ref6 = ax.plot(Lux_obs_rough[1,:], Lux_obs_rough[0,:], 'kx',
+            linewidth=1, label='observations rough surface')
+    ax.set_xlim(10.,1000.)
+    # ax.set_ylim([4.,1000.])
+    ax.set_yscale('log')
+    ax.set_xscale('log')
+    ax.set_xlabel(r"$L _{u}^x$ (m)")
+    ax.set_ylabel(r"$z$ (m)" )
+    ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
+            borderaxespad = 0., ncol = 2, 
+            numpoints = 1, fontsize = 18)
+    ax.grid(True,'both','both')
+    plt.savefig('../palm_results/{}/run_{}/lux/{}_lux.png'.format(papy.globals.run_name,papy.globals.run_number[-3:],
+                papy.globals.run_name), bbox_inches='tight')
+    print(' SAVED TO: ../palm_results/{}/run_{}/lux/{}_lux.png'.format(papy.globals.run_name,papy.globals.run_number[-3:],
+                papy.globals.run_name))                
+    print('\n plotted integral length scale profiles')
+
 
 print('')
 print('Finished processing of: {}{}'.format(papy.globals.run_name, papy.globals.run_number))
