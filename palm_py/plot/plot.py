@@ -121,8 +121,12 @@ def plot_timeseries(var, var_unit, var_name, time, time_unit):
         ax.set_ylim()
     elif var_name == 'E':
         ax.set_ylabel(r'$E$  $(m^2/s^2)$', fontsize = 18)
+        ax.set_yscale('log')
+        ax.set_ylim(ymin=0.1, ymax=100)
     elif var_name == 'E*':
         ax.set_ylabel(r'$E^*$  $(m^2/s^2)$', fontsize = 18)
+        ax.set_yscale('log')
+        ax.set_ylim(ymin=0.1, ymax=100)
     elif var_name == 'umax':
         ax.set_ylabel(r'$u_{max}$  $(m/s)$')
     elif var_name == 'div_new':
