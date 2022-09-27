@@ -84,7 +84,7 @@ def plot_lux_profile(lux, height_list):
     ax.set_xlabel(r"$L _{ux}$ (m)")
     ax.set_ylabel(r"$z$ (m)" )
     ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
-            borderaxespad = 0., ncol = 3, 
+            borderaxespad = 0., ncol = 2, 
             numpoints = 1, fontsize = 18)
     ax.grid(True,'both','both')
 
