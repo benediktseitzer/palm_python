@@ -17,13 +17,14 @@ import math as m
 import pandas as pd
 import sys
 import os
-# matplotlib
+import scipy.stats as stats
+
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FormatStrFormatter
 plt.style.use('classic')
-# palm_python package
+
 import palm_py as papy
-# wind tunnel package
+
 sys.path.append('/home/bene/Documents/phd/windtunnel_py/windtunnel/')    
 import windtunnel as wt
 
@@ -43,14 +44,14 @@ GLOBAL VARIABLES
 ################
 # PALM input files
 papy.globals.run_name = 'SB_SI_back'
-papy.globals.run_number = '.043'
+papy.globals.run_number = '.046'
 papy.globals.run_numbers = ['.007', '.008', '.009', '.010', '.011', '.012', 
                         '.013', '.014', '.015', '.016', '.017', '.018',
                         '.019', '.020', '.021', '.022', '.023', '.024',
                         '.025', '.026', '.027', '.028', '.029', '.030', 
                         '.031', '.032', '.033', '.034', '.035', '.036',
                         '.037', '.038', '.039', '.040', '.041', '.042',
-                        '.043']
+                        '.043', '.044', '.045', '.046']
 nc_file_grid = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
 nc_file_path = '../palm/current_version/JOBS/{}/OUTPUT/'.format(papy.globals.run_name)
 mask_name_list = ['M01', 'M02', 'M03', 'M04', 'M05', 'M06', 'M07', 'M08',
@@ -80,11 +81,13 @@ papy.globals.dx = 1.
 Steeringflags
 """
 ################
-compute_back_mean = True
-compute_back_var = True
-compute_back_covar = True
+compute_back_mean = False
+compute_back_pdfs = False
+compute_back_highermoments = True
+compute_back_var = False
+compute_back_covar = False
 compute_back_spectra = False
-compute_back_lux = True
+compute_back_lux = False
 
 ################
 """
@@ -102,7 +105,7 @@ palm_ref_run_numbers = ['.007', '.008', '.009', '.010', '.011', '.012',
                         '.025', '.026', '.027', '.028', '.029', '.030', 
                         '.031', '.032', '.033', '.034', '.035', '.036',
                         '.037', '.038', '.039', '.040', '.041', '.042',
-                        '.043', '.044', '.045']
+                        '.043', '.044', '.045', '.046', '.047']
 palm_ref_file_path = '../palm/current_version/JOBS/{}/OUTPUT/'.format('SB_SI_BL')
 for run_no in palm_ref_run_numbers:
     palm_ref_file = '{}_masked_{}{}.nc'.format('SB_SI_BL', 'M10', run_no)
@@ -113,6 +116,12 @@ palm_ref = np.mean(palm_u)
 namelist = ['SB_FL_SI_UV_022',
             'SB_BR_SI_UV_011',
             'SB_WB_SI_UV_012']
+# namelist = ['SB_FL_SI_UV_002',
+#             'SB_FL_SI_UV_007',
+#             'SB_FL_SI_UV_008',
+#             'SB_FL_SI_UV_009',
+#             'SB_FL_SI_UV_014',
+#             'SB_FL_SI_UV_022']
 config = 'CO_REF'
 path = '{}/coincidence/timeseries/'.format(wt_path) # path to timeseries folder
 wtref_path = '{}/wtref/'.format(wt_path)
@@ -121,7 +130,7 @@ scale = wt_scale
 
 data_nd = 1
 
-if compute_back_mean or compute_back_var or compute_back_var or compute_back_lux:
+if compute_back_mean or compute_back_var or compute_back_var or compute_back_lux or compute_back_highermoments:
     time_series = {}
     time_series.fromkeys(namelist)
     # Gather all files into Timeseries objects
@@ -154,12 +163,13 @@ if compute_back_mean or compute_back_var or compute_back_var or compute_back_lux
             time_series[name][file] = ts
 
 # plotting colors and markers
-c_list = ['forestgreen', 'darkorange', 'navy', 'tab:red', 'tab:olive']
-marker_list = ['^', 'o', 'd', 'x', '8']
-label_list = ['flat facade', 'rough facade', 'medium rough facade', '{}']
+c_list = ['forestgreen', 'darkorange', 'navy', 'tab:red', 'tab:olive', 'cyan']
+marker_list = ['^', 'o', 'd', 'x', '8', '<']
+label_list = ['flat facade', 'rough facade', 'medium rough facade']
+# label_list = namelist
 
 ######################################################
-# compute u-mean alongside building
+# compute u-mean alongside the building
 ######################################################
 if compute_back_mean:
     print('\n     compute means')    
@@ -236,6 +246,291 @@ if compute_back_mean:
                 + '../palm_results/{}/run_{}/maskprofiles/{}_mean_{}_mask_log.png'.format(papy.globals.run_name,
                 papy.globals.run_number[-3:],
                 papy.globals.run_name, var_name))
+        plt.close(12)
+
+
+######################################################
+# compute PDFs alongside the building
+######################################################
+if compute_back_pdfs:
+    print('\n     compute PDF')    
+    # velocity and variance PDFs
+    var_name_list = ['u', 'v', 'w']
+    for var_name in var_name_list:
+        mean_vars = np.array([])
+        wall_dists = np.array([])
+        for mask in mask_name_list:
+            total_var = np.array([])
+            total_variance = np.array([])
+            total_time = np.array([])
+            for run_no in papy.globals.run_numbers:
+                nc_file = '{}_masked_{}{}.nc'.format(papy.globals.run_name, mask, run_no)
+                time, time_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'time')
+                var, var_unit = papy.read_nc_var_ms(nc_file_path, nc_file, var_name)
+                y, y_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'y')
+                total_time = np.concatenate([total_time, time])
+                total_var = np.concatenate([total_var, var])
+            # gather values
+            var_mean = np.asarray([np.mean(total_var/palm_ref)])
+            total_variance = (total_var-np.mean(total_var))**2.
+            wall_dist = np.asarray([abs(y[0]-530.)])
+
+            #plot PDF
+            fig, ax = plt.subplots()
+            # plot PALM masked output
+            ax.hist(total_var/palm_ref, bins=100, density=True,
+                    label=r'${}$ at $\Delta y={}$ m'.format(var_name, wall_dist[0]))
+            if var_name == 'u':
+                ax.vlines(var_mean, 0., 2., colors='tab:red', 
+                            linestyles='dashed', 
+                            label=r'$\overline{u}$' + r'$u_{ref}^-1$')
+            elif var_name == 'v':
+                ax.vlines(var_mean, 0., 2., colors='tab:red', 
+                            linestyles='dashed', 
+                            label=r'$\overline{v}$' + r'$u_{ref}^-1$')
+            elif var_name == 'w':
+                ax.vlines(var_mean, 0., 2., colors='tab:red', 
+                            linestyles='dashed', 
+                            label=r'$\overline{w}$' + r'$u_{ref}^-1$')
+            ax.grid(True, 'both', 'both')
+            ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
+                        borderaxespad = 0., ncol = 2, 
+                        numpoints = 1, fontsize = 18)
+            ax.set_xlabel(r'${}$'.format(var_name) + r'$u_{ref}^{-1}$ (-)', fontsize = 18)
+            ax.set_ylabel(r'relative frequency', fontsize = 18)            
+            if abs(min(total_var/palm_ref))<abs(max(total_var/palm_ref)):
+                ax.set_xlim(-abs(max(total_var/palm_ref)), abs(max(total_var/palm_ref)))
+            else:
+                ax.set_xlim(-abs(min(total_var/palm_ref)), abs(min(total_var/palm_ref)))
+            # save plots
+            fig.savefig('../palm_results/{}/run_{}/histogram/{}_hist_{}_{}.png'.format(papy.globals.run_name,
+                        papy.globals.run_number[-3:],
+                        papy.globals.run_name, var_name, mask), bbox_inches='tight', dpi=500)
+            print('     SAVED TO: ' 
+                    + '../palm_results/{}/run_{}/histogram/{}_hist_{}_{}.png'.format(papy.globals.run_name,
+                    papy.globals.run_number[-3:],
+                    papy.globals.run_name, var_name, mask))
+            plt.close(12)
+            fig, ax = plt.subplots()
+            # plot PALM masked output
+            ax.hist(total_variance/palm_ref**2., bins=100, density=True,
+                    label=r'${}$ at $\Delta y={}$ m'.format(var_name, wall_dist[0]))
+            if var_name == 'u':
+                ax.vlines(np.mean(total_variance/palm_ref**2.), 0., 2., colors='tab:red', 
+                            linestyles='dashed', 
+                            label=r'$\overline{u}$ ' + r'$u_{ref}^-1$')
+                ax.set_xlabel(r'$u^\prime u^\prime$ ' + r'$u_{ref}^{-2}$ (-)', fontsize = 18)
+            elif var_name == 'v':
+                ax.vlines(np.mean(total_variance/palm_ref**2.), 0., 2., colors='tab:red', 
+                            linestyles='dashed', 
+                            label=r'$\overline{v}$ ' + r'$u_{ref}^-1$')
+                ax.set_xlabel(r'$v^\prime v^\prime$ ' + r'$u_{ref}^{-2}$ (-)', fontsize = 18)
+            elif var_name == 'w':
+                ax.vlines(np.mean(total_variance/palm_ref**2.), 0., 2., colors='tab:red', 
+                            linestyles='dashed', 
+                            label=r'$\overline{w}$ ' + r'$u_{ref}^-1$')
+                ax.set_xlabel(r'$w^\prime w^\prime$ ' + r'$u_{ref}^{-2}$ (-)', fontsize = 18)
+            ax.grid(True, 'both', 'both')
+            ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
+                        borderaxespad = 0., ncol = 2, 
+                        numpoints = 1, fontsize = 18)
+            ax.set_ylabel(r'relative frequency', fontsize = 18)
+            # save plots
+            fig.savefig('../palm_results/{}/run_{}/histogram/{}_hist_{}{}_{}.png'.format(papy.globals.run_name,
+                        papy.globals.run_number[-3:],
+                        papy.globals.run_name, var_name, var_name, mask), bbox_inches='tight', dpi=500)
+            print('     SAVED TO: ' 
+                    + '../palm_results/{}/run_{}/histogram/{}_hist_{}{}_{}.png'.format(papy.globals.run_name,
+                    papy.globals.run_number[-3:],
+                    papy.globals.run_name, var_name, var_name, mask))
+            plt.close(13)
+    # flux PDFs
+    var_vars = np.array([])
+    wall_dists = np.array([])
+    for mask in mask_name_list:
+        total_var1 = np.array([])
+        total_var2 = np.array([])
+        total_time = np.array([])
+        for run_no in papy.globals.run_numbers:
+            nc_file = '{}_masked_{}{}.nc'.format(papy.globals.run_name, mask, run_no)
+            # var_name = 'u'
+            time, time_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'time')
+            var1, var1_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'u')
+            var2, var2_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'v')
+            y, y_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'y')
+            total_time = np.concatenate([total_time, time])
+            total_var1 = np.concatenate([total_var1, var1])
+            total_var2 = np.concatenate([total_var2, var2])            
+        # gather values
+        var1_fluc = np.asarray([np.mean(total_var1)]-total_var1)
+        var2_fluc = np.asarray([np.mean(total_var2)]-total_var2)
+        var_flux = np.asarray(var1_fluc*var2_fluc/palm_ref**2.)
+        wall_dist = np.asarray([abs(y[0]-530.)])
+        #plot PDF
+        fig, ax = plt.subplots()
+        # plot PALM masked output
+        ax.hist(var_flux, bins=100, density=True,
+                label=r'$u^\prime v^\prime$ at $\Delta y={}$ m'.format(wall_dist[0]))
+        ax.vlines(np.mean(var_flux), 0., 2., colors='tab:red', 
+                        linestyles='dashed', 
+                        label=r'$\overline{u^\prime v^\prime}$ ' + r'$u_{ref}^-1$')
+        ax.grid(True, 'both', 'both')
+        ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
+                    borderaxespad = 0., ncol = 2, 
+                    numpoints = 1, fontsize = 18)
+        ax.set_xlabel(r'$u^\prime v^\prime$ ' + r'$u_{ref}^{-2}$ (-)', fontsize = 18)
+        ax.set_ylabel(r'relative frequency', fontsize = 18)
+        if abs(min(var_flux))<abs(max(var_flux)):        
+            ax.set_xlim(-abs(max(var_flux)), abs(max(var_flux)))
+        else:
+            ax.set_xlim(-abs(min(var_flux)), abs(min(var_flux)))        
+        # save plots
+        fig.savefig('../palm_results/{}/run_{}/histogram/{}_hist_flux_{}.png'.format(papy.globals.run_name,
+                    papy.globals.run_number[-3:],
+                    papy.globals.run_name, mask), bbox_inches='tight', dpi=500)
+        print('     SAVED TO: ' 
+                + '../palm_results/{}/run_{}/histogram/{}_hist_flux_{}.png'.format(papy.globals.run_name,
+                papy.globals.run_number[-3:],
+                papy.globals.run_name, mask))
+        plt.close(13)        
+
+
+######################################################
+# compute skewness and kurtosis profiles
+######################################################
+if compute_back_highermoments:
+    print('\n     compute higher statistical moments')    
+    # velocity and variance PDFs
+    var_name_list = ['u', 'v']
+    for var_name in var_name_list:
+        skew_vars = np.array([])
+        kurt_vars = np.array([])
+        wall_dists = np.array([])
+        for mask in mask_name_list:
+            total_var = np.array([])
+            total_variance = np.array([])
+            total_time = np.array([])
+            for run_no in papy.globals.run_numbers:
+                nc_file = '{}_masked_{}{}.nc'.format(papy.globals.run_name, mask, run_no)
+                time, time_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'time')
+                var, var_unit = papy.read_nc_var_ms(nc_file_path, nc_file, var_name)
+                y, y_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'y')
+                total_time = np.concatenate([total_time, time])
+                total_var = np.concatenate([total_var, var])
+            # gather values
+            var_mean = np.asarray([np.mean(total_var/palm_ref)])
+            total_skew = np.asarray([stats.skew(total_var)])
+            total_kurt = np.asarray([stats.kurtosis(total_var, fisher=False)])
+            wall_dist = np.asarray([abs(y[0]-530.)])
+            wall_dist = np.asarray([abs(y[0]-530.)])
+            skew_vars = np.concatenate([skew_vars, total_skew])
+            kurt_vars = np.concatenate([kurt_vars, total_kurt])            
+            wall_dists = np.concatenate([wall_dists, wall_dist])
+
+        #plot profiles
+        err = 0.05
+        fig, ax = plt.subplots()
+        # plot PALM masked output
+        ax.errorbar(wall_dists, skew_vars, yerr=err, 
+                    label= r'PALM', 
+                    fmt='o', c='darkmagenta')                        
+        #plot wt_data
+        for i,name in enumerate(namelist):
+            wt_skew = []        
+            wt_z = []
+            files = wt.get_files(path,name)            
+            for file in files:
+                if var_name == 'u':
+                    wt_skew.append(stats.skew(time_series[name][file].u.dropna()))
+                elif var_name == 'v':
+                    wt_skew.append(stats.skew(time_series[name][file].v.dropna()))
+                wt_z.append(time_series[name][file].y)
+            wt_z_plot = np.asarray(wt_z)-0.115*scale
+            if var_name == 'u':
+                ax.errorbar(wt_z_plot, wt_skew, yerr = 0.05,
+                            label=label_list[i], 
+                            fmt=marker_list[i], color=c_list[i])
+                if i==1:
+                    ax.vlines(0.0066*150.*5., -1.5, 1, colors='tab:red', 
+                            linestyles='dashed', 
+                            label=r'$5 \cdot h_{r}$')
+                ax.set_ylabel(r'$\gamma$ (-)', fontsize = 18)
+            elif var_name == 'v':             
+                ax.errorbar(wt_z_plot, wt_skew, yerr = 0.05,
+                            label=label_list[i], 
+                            fmt=marker_list[i], color=c_list[i])
+                if i==1:
+                    ax.vlines(0.0066*150.*5., -0.5, 1, colors='tab:red', 
+                            linestyles='dashed', 
+                            label=r'$5 \cdot h_{r}$')
+                ax.set_ylabel(r'$\gamma$ (-)', fontsize = 18)
+        ax.grid(True, 'both', 'both')
+        ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
+                    borderaxespad = 0., ncol = 2, 
+                    numpoints = 1, fontsize = 18)
+        ax.set_xlabel(r'$\Delta y$ (m)', fontsize = 18)
+        # save plots
+        ax.set_xscale('log')
+        fig.savefig('../palm_results/{}/run_{}/maskprofiles/{}_skewness_{}_mask_log.png'.format(papy.globals.run_name,
+                    papy.globals.run_number[-3:],
+                    papy.globals.run_name, var_name), bbox_inches='tight', dpi=500)
+        print('     SAVED TO: ' 
+                + '../palm_results/{}/run_{}/maskprofiles/{}_skewness_{}_mask_log.png'.format(papy.globals.run_name,
+                papy.globals.run_number[-3:],
+                papy.globals.run_name, var_name))                    
+        plt.close(12)
+
+        #plot profiles
+        err = 0.1
+        fig, ax = plt.subplots()
+        # plot PALM masked output
+        ax.errorbar(wall_dists, kurt_vars, yerr=err, 
+                    label= r'PALM', 
+                    fmt='o', c='darkmagenta')                        
+        #plot wt_data
+        for i,name in enumerate(namelist):
+            wt_kurt = []
+            wt_z = []
+            files = wt.get_files(path,name)            
+            for file in files:
+                if var_name == 'u':
+                    wt_kurt.append(stats.kurtosis(time_series[name][file].u.dropna(), fisher=False))
+                elif var_name == 'v':
+                    wt_kurt.append(stats.kurtosis(time_series[name][file].v.dropna(), fisher=False))
+                wt_z.append(time_series[name][file].y)
+            wt_z_plot = np.asarray(wt_z)-0.115*scale
+            if var_name == 'u':
+                ax.errorbar(wt_z_plot, wt_kurt, yerr = 0.1,
+                            label=label_list[i], 
+                            fmt=marker_list[i], color=c_list[i])
+                if i==1:
+                    ax.vlines(0.0066*150.*5., 1, 7, colors='tab:red', 
+                            linestyles='dashed', 
+                            label=r'$5 \cdot h_{r}$')
+                ax.set_ylabel(r'$\beta$ (-)', fontsize = 18)
+            elif var_name == 'v':             
+                ax.errorbar(wt_z_plot, wt_kurt, yerr = 0.1,
+                            label=label_list[i], 
+                            fmt=marker_list[i], color=c_list[i])
+                if i==1:
+                    ax.vlines(0.0066*150.*5., 1, 7, colors='tab:red', 
+                            linestyles='dashed', 
+                            label=r'$5 \cdot h_{r}$')
+                ax.set_ylabel(r'$\beta$ (-)', fontsize = 18)
+        ax.grid(True, 'both', 'both')
+        ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
+                    borderaxespad = 0., ncol = 2, 
+                    numpoints = 1, fontsize = 18)
+        ax.set_xlabel(r'$\Delta y$ (m)', fontsize = 18)
+        # save plots
+        ax.set_xscale('log')
+        fig.savefig('../palm_results/{}/run_{}/maskprofiles/{}_kurtosis_{}_mask_log.png'.format(papy.globals.run_name,
+                    papy.globals.run_number[-3:],
+                    papy.globals.run_name, var_name), bbox_inches='tight', dpi=500)
+        print('     SAVED TO: ' 
+                + '../palm_results/{}/run_{}/maskprofiles/{}_kurtosis_{}_mask_log.png'.format(papy.globals.run_name,
+                papy.globals.run_number[-3:],
+                papy.globals.run_name, var_name))                    
         plt.close(12)
 
 
@@ -510,6 +805,12 @@ if compute_back_lux:
             + '../palm_results/{}/run_{}/maskprofiles/{}_lux_{}_mask_loglog.png'.format(papy.globals.run_name,
             papy.globals.run_number[-3:],
             papy.globals.run_name, var_name))    
+
+
+
+
+
+
 
 print('')
 print('Finished processing of: {}{}'.format(papy.globals.run_name, papy.globals.run_number))
