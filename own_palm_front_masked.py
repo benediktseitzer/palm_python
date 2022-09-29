@@ -77,13 +77,13 @@ papy.globals.ny = 1024
 papy.globals.dx = 1.
 
 # Steeringflags
-compute_front_mean = False
-compute_front_pdfs = False
+compute_front_mean = True
+compute_front_pdfs = True
 compute_front_highermoments = True
-compute_front_var = False
-compute_front_covar = False
-compute_spectra = False
-compute_front_lux = False
+compute_front_var = True
+compute_front_covar = True
+compute_spectra = True
+compute_front_lux = True
 
 ################
 """
@@ -104,12 +104,14 @@ palm_ref_run_numbers = ['.007', '.008', '.009', '.010', '.011', '.012',
                         '.037', '.038', '.039', '.040', '.041', '.042',
                         '.043', '.044', '.045', '.046', '.047']
 palm_ref_file_path = '../palm/current_version/JOBS/{}/OUTPUT/'.format('SB_SI_BL')
+total_palm_u = np.array([])
 for run_no in palm_ref_run_numbers:
     palm_ref_file = '{}_masked_{}{}.nc'.format('SB_SI_BL', 'M10', run_no)
     palm_u, var_unit = papy.read_nc_var_ms(palm_ref_file_path, palm_ref_file, 'u')
+    total_palm_u = np.concatenate([total_palm_u, palm_u])
 data_nd = 1
 if data_nd == 1:
-    palm_ref = np.mean(palm_u)
+    palm_ref = np.mean(total_palm_u)
 else:
     palm_ref = 1.
 print('     PALM REFERENCE VELOCITY: {} m/s \n'.format(palm_ref))
@@ -122,6 +124,57 @@ path = '{}/coincidence/timeseries/'.format(wt_path) # path to timeseries folder
 wtref_path = '{}/wtref/'.format(wt_path)
 wtref_factor = 0.738
 scale = wt_scale
+
+wt_err = {}
+wt_err.fromkeys(namelist)
+for name in namelist:
+    files = wt.get_files(path,name)
+    var_names = ['umean', 'vmean', 'u_var', 'v_var', 'covar', 'lux']    
+    wt_err[name] = {}
+    wt_err[name].fromkeys(var_names)
+    if name[3:5] == 'FL':
+        wt_err[name]['umean'] = [0.0395, 0.0395, 0.0395, 0.0395, 0.0395, 0.0395, 0.0395, 0.0395, 0.0395, 0.0395, 
+                                0.0395, 0.0395, 0.0395, 0.0217, 0.0217, 0.0217, 0.0167, 0.0167, 0.0229, 0.0229, 0.0229, 0.0173]
+        wt_err[name]['vmean'] = [0.0107, 0.0107, 0.0107, 0.0107, 0.0107, 0.0107, 0.0107, 0.0107, 0.0107, 0.0107, 
+                                0.0107, 0.0107, 0.0107, 0.0101, 0.0101, 0.0101, 0.0152, 0.0152, 0.0081, 0.0081, 0.0081, 0.008]
+        wt_err[name]['u_var'] = [0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 
+                                0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0039, 0.0039, 0.0047, 0.0047, 0.0047, 0.0006]
+        wt_err[name]['v_var'] = [0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 
+                                0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0039, 0.0039, 0.0047, 0.0047, 0.0047, 0.0006]
+        wt_err[name]['covar'] = [0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 
+                                0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0039, 0.0039, 0.0047, 0.0047, 0.0047, 0.0006]
+        wt_err[name]['lux'] =   [3.1814, 3.1814, 3.1814, 3.1814, 3.1814, 3.1814, 3.1814, 3.1814, 3.1814, 3.1814, 
+                                3.1814, 3.1814, 3.1814, 1.5144, 1.5144, 1.5144, 2.9411, 2.9411, 2.2647, 2.2647, 2.2647, 26.5786]
+    if name[3:5] == 'BR':
+        wt_err[name]['umean'] = [0.0255, 0.0255, 0.0255, 0.0255, 0.0255, 0.0255, 0.0255, 0.0255, 0.0465, 0.0465, 
+                                0.0465, 0.0292, 0.0292, 0.0179, 0.0179, 0.0179, 0.0202]
+        wt_err[name]['vmean'] = [0.0156, 0.0156, 0.0156, 0.0156, 0.0156, 0.0156, 0.0156, 0.0156, 0.0116, 0.0116, 
+                                0.0116, 0.0101, 0.0101, 0.0114, 0.0114, 0.0114, 0.0073]
+        wt_err[name]['u_var'] = [0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 
+                                0.0029, 0.0048, 0.0048, 0.0037, 0.0037, 0.0037, 0.0007]
+        wt_err[name]['v_var'] = [0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 
+                                0.0029, 0.0048, 0.0048, 0.0037, 0.0037, 0.0037, 0.0007]
+        wt_err[name]['covar'] = [0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 
+                                0.0029, 0.0048, 0.0048, 0.0037, 0.0037, 0.0037, 0.0007]
+        wt_err[name]['lux'] =   [2.6852, 2.6852, 2.6852, 2.6852, 2.6852, 2.6852, 2.6852, 2.6852, 3.3587, 3.3587, 
+                                3.3587, 1.9594, 1.9594, 4.7631, 4.7631, 4.7631, 22.5726]
+    if name[3:5] == 'WB':
+        wt_err[name]['umean'] = [0.0171, 0.0171, 0.0171, 0.0171, 0.0171, 0.0171, 0.0171, 0.0171, 0.0245, 0.0245, 
+                                0.0245, 0.0335, 0.0335, 0.0175, 0.0175, 0.0175, 0.0202]
+        wt_err[name]['vmean'] = [0.0133, 0.0133, 0.0133, 0.0133, 0.0133, 0.0133, 0.0133, 0.0133, 0.016, 0.016, 
+                                0.016, 0.0106, 0.0106, 0.007, 0.007, 0.007, 0.0006]
+        wt_err[name]['u_var'] = [0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0028, 0.0028, 
+                                0.0028, 0.004, 0.004, 0.0029, 0.0029, 0.0029, 0.0008]
+        wt_err[name]['v_var'] = [0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0028, 0.0028, 
+                                0.0028, 0.004, 0.004, 0.0029, 0.0029, 0.0029, 0.0008]
+        wt_err[name]['covar'] = [0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0028, 0.0028, 
+                                0.0028, 0.004, 0.004, 0.0029, 0.0029, 0.0029, 0.0008]
+        wt_err[name]['lux'] =   [1.9007, 1.9007, 1.9007, 1.9007, 1.9007, 1.9007, 1.9007, 1.9007, 2.2369, 2.2369, 
+                                2.2369, 4.4863, 4.4863, 2.6004, 2.6004, 2.6004, 33.5205]
+
+
+
+
 
 if compute_front_covar or compute_front_var or compute_front_mean or compute_front_lux or compute_front_highermoments:
     time_series = {}
@@ -206,7 +259,7 @@ if compute_front_mean:
             wt_z_plot = np.asarray(wt_z)-0.115*scale
             if var_name == 'u':
                 wt_var_plot = wt_var1
-                ax.errorbar(wt_z_plot, wt_var_plot, yerr = 0.025,
+                ax.errorbar(wt_z_plot, wt_var_plot, yerr = wt_err[name]['umean'],
                             label=label_list[i], 
                             fmt=marker_list[i], color=c_list[i])
                 if i==1:
@@ -216,7 +269,7 @@ if compute_front_mean:
                 ax.set_ylabel(r'$\overline{u}$ $u_{ref}^{-1}$ (-)', fontsize = 18)
             elif var_name == 'v':
                 wt_var_plot = wt_var2                
-                ax.errorbar(wt_z_plot, wt_var_plot, yerr = 0.025,
+                ax.errorbar(wt_z_plot, wt_var_plot, yerr = wt_err[name]['vmean'],
                             label=label_list[i], 
                             fmt=marker_list[i], color=c_list[i])
                 if i==1:
@@ -447,7 +500,7 @@ if compute_front_highermoments:
                     ax.vlines(0.0066*150.*5., -1.5, 1.5, colors='tab:red', 
                             linestyles='dashed', 
                             label=r'$5 \cdot h_{r}$')
-                ax.set_ylabel(r'$\gamma$ (-)', fontsize = 18)
+                ax.set_ylabel(r'$\gamma_u$ (-)', fontsize = 18)
             elif var_name == 'v':             
                 ax.errorbar(wt_z_plot, wt_skew, yerr = 0.05,
                             label=label_list[i], 
@@ -456,7 +509,7 @@ if compute_front_highermoments:
                     ax.vlines(0.0066*150.*5., -0.8, 1., colors='tab:red', 
                             linestyles='dashed', 
                             label=r'$5 \cdot h_{r}$')
-                ax.set_ylabel(r'$\gamma$ (-)', fontsize = 18)
+                ax.set_ylabel(r'$\gamma_v$ (-)', fontsize = 18)
         ax.grid(True, 'both', 'both')
         ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                     borderaxespad = 0., ncol = 2, 
@@ -500,7 +553,7 @@ if compute_front_highermoments:
                     ax.vlines(0.0066*150.*5., 1, 7, colors='tab:red', 
                             linestyles='dashed', 
                             label=r'$5 \cdot h_{r}$')
-                ax.set_ylabel(r'$\beta$ (-)', fontsize = 18)
+                ax.set_ylabel(r'$\beta_u$ (-)', fontsize = 18)
             elif var_name == 'v':             
                 ax.errorbar(wt_z_plot, wt_kurt, yerr = 0.1,
                             label=label_list[i], 
@@ -509,7 +562,7 @@ if compute_front_highermoments:
                     ax.vlines(0.0066*150.*5., 1, 7, colors='tab:red', 
                             linestyles='dashed', 
                             label=r'$5 \cdot h_{r}$')
-                ax.set_ylabel(r'$\beta$ (-)', fontsize = 18)
+                ax.set_ylabel(r'$\beta_v$ (-)', fontsize = 18)
         ax.grid(True, 'both', 'both')
         ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                     borderaxespad = 0., ncol = 2, 
@@ -574,18 +627,18 @@ if compute_front_var:
             wt_z_plot = np.asarray(wt_z)-0.115*scale
             if var_name == 'u':
                 wt_var_plot = wt_var1
-                ax.errorbar(wt_z_plot, wt_var_plot, yerr = 0.025/palm_ref**2.,
+                ax.errorbar(wt_z_plot, wt_var_plot, yerr = wt_err[name]['u_var'],
                             label=label_list[i], 
                             fmt=marker_list[i], color=c_list[i])
                 if i==1:                            
                     # vertical line
-                    ax.vlines(0.0066*150.*5., 0., 0.4, colors='tab:red', 
+                    ax.vlines(0.0066*150.*5., 0., 0.35, colors='tab:red', 
                             linestyles='dashed', 
                             label=r'$5 \cdot h_{r}$')
                 ax.set_ylabel(r'$\overline{u^\prime u^\prime}$ $u_{ref}^{-2}$ (-)', fontsize = 18)
             elif var_name == 'v':
                 wt_var_plot = wt_var2                
-                ax.errorbar(wt_z_plot, wt_var_plot, yerr = 0.025/palm_ref**2.,
+                ax.errorbar(wt_z_plot, wt_var_plot, yerr = wt_err[name]['v_var'],
                             label=label_list[i], 
                             fmt=marker_list[i], color=c_list[i])
                 if i==1:
@@ -663,7 +716,7 @@ if compute_front_covar:
                                     time_series[name][file].v.dropna())/time_series[name][file].wtref**2.)
             wt_z.append(time_series[name][file].y)
         wt_z_plot = np.asarray(wt_z)-0.115*scale
-        ax.errorbar(wt_z_plot, wt_flux, yerr = 0.025/palm_ref**2.,
+        ax.errorbar(wt_z_plot, wt_flux, yerr = wt_err[name]['covar'],
                     label=label_list[i], 
                     fmt=marker_list[i], color=c_list[i])
     ax.grid(True, 'both')
@@ -768,7 +821,7 @@ if compute_front_lux:
     for j,name in enumerate(namelist):
         err = np.asarray(wt_lux[name]) * 0.1
         ax.errorbar(np.asarray(wt_z[name]), np.asarray(wt_lux[name]), 
-                yerr=err, label=label_list[j], 
+                yerr=wt_err[name]['lux'], label=label_list[j], 
                 fmt=marker_list[j], color=c_list[j])
     ax.vlines(0.0066*150.*5., 0, 140, colors='tab:red', 
             linestyles='dashed', 
