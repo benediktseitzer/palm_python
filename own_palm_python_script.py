@@ -83,8 +83,8 @@ GLOBAL VARIABLES
 """
 ################
 # PALM input files
-papy.globals.run_name = 'SB_LE'
-papy.globals.run_number = '.007'
+papy.globals.run_name = 'SB_SI_BL'
+papy.globals.run_number = '.047'
 papy.globals.run_numbers = ['.029', '.028']
 nc_file_grid = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
 nc_file_path = '../palm/current_version/JOBS/{}/OUTPUT/'.format(papy.globals.run_name)
@@ -138,10 +138,10 @@ compute_turbint = False
 compute_vertprof = False
 compute_vertprof_flux = False
 compute_spectra = False
-compute_crosssections = False
+compute_crosssections = True
 compute_pure_fluxes = False
 compute_simrange = False
-compute_modelinput = True
+compute_modelinput = False
 
 ################
 """
@@ -749,6 +749,27 @@ if compute_crosssections:
     nc_file = '{}_3d{}.nc'.format(papy.globals.run_name, papy.globals.run_number)
     nc_file_path = '../palm/current_version/JOBS/{}/OUTPUT/'.format(papy.globals.run_name)
 
+    # get reference velocity
+    palm_ref_run_numbers = ['.007', '.008', '.009', '.010', '.011', '.012', 
+                            '.013', '.014', '.015', '.016', '.017', '.018',
+                            '.019', '.020', '.021', '.022', '.023', '.024',
+                            '.025', '.026', '.027', '.028', '.029', '.030', 
+                            '.031', '.032', '.033', '.034', '.035', '.036',
+                            '.037', '.038', '.039', '.040', '.041', '.042',
+                            '.043', '.044', '.045', '.046', '.047']
+    palm_ref_file_path = '../palm/current_version/JOBS/{}/OUTPUT/'.format('SB_SI_BL')
+    total_palm_u = np.array([])
+    for run_no in palm_ref_run_numbers:
+        palm_ref_file = '{}_masked_{}{}.nc'.format('SB_SI_BL', 'M10', run_no)
+        palm_u, var_unit = papy.read_nc_var_ms(palm_ref_file_path, palm_ref_file, 'u')
+        total_palm_u = np.concatenate([total_palm_u, palm_u])
+    data_nd = 1
+    if data_nd == 1:
+        palm_ref = np.mean(total_palm_u)
+    else:
+        palm_ref = 1.
+    print('\n    PALM REFERENCE VELOCITY: {} m/s'.format(palm_ref))
+
     # read variables for plot
     x_grid_name = 'x'
     y_grid_name = 'y'
@@ -759,17 +780,13 @@ if compute_crosssections:
 
     time, time_unit = papy.read_nc_time(nc_file_path,nc_file)
     time_show = time.nonzero()[0][0]
-
-    print('     show time-slice {} of {}'.format(time_show, len(time)))
-
-    print('\n READ {}{}\n'.format(nc_file_path,nc_file))
-
+    print('     Show time-slice {} of {}'.format(time_show, len(time)))
+    print('     READ {}{}\n'.format(nc_file_path,nc_file))
     var_name_list = ['u', 'v', 'w']
 
     for var_name in var_name_list:
-        print('\n --> plot {}: \n'.format(var_name))
-        
-        # if crosssection == 'xz':
+        print('\n --> plot {}:'.format(var_name))
+        # vertical crossection
         crosssection = 'xz'
         y_level = int(len(y_grid)/2)
         print('     y={}    level={}'.format(round(y_grid[y_level],2), y_level))
@@ -778,19 +795,19 @@ if compute_crosssections:
         var, var_unit = papy.read_nc_var_ver_3d(nc_file_path, nc_file, 
                         var_name, y_level, time_show)
         plt.figure(8)
-        papy.plot_contour_crosssection(x_grid, z_grid, var, var_name, y_grid, 
+        papy.plot_contour_crosssection(x_grid, z_grid, var/palm_ref, var_name, y_grid, 
                         y_level, vert_gridname, cut_gridname, crosssection)
         plt.close(8)
-        # elif crosssection == 'xy':
+        # horizontal crosssection
         crosssection = 'xy'
-        z_level = int(len(z_grid)/6)
+        z_level = int(len(z_grid)/6)+2
         vert_gridname = y_grid_name
         cut_gridname = x_grid_name
         print('     z={}    level={}'.format(round(z_grid[z_level],2), z_level))
         var, var_unit = papy.read_nc_var_hor_3d(nc_file_path, nc_file, 
                         var_name, z_level, time_show)
         plt.figure(9)
-        papy.plot_contour_crosssection(x_grid, y_grid, var, var_name, z_grid, 
+        papy.plot_contour_crosssection(x_grid, y_grid, var/palm_ref, var_name, z_grid, 
                         z_level, vert_gridname, cut_gridname, crosssection)
         plt.close(9)
     print(' Finished Crosssections')
