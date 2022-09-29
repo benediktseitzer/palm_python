@@ -560,7 +560,7 @@ def plot_contour_crosssection(x, y, var, var_name, o_grid, o_level, vert_gridnam
 
     # set colorbar and mark masked buildings in grey
     current_cmap = plt.cm.seismic
-    current_cmap.set_bad(color='gray')
+    current_cmap.set_bad(color='dimgray')
     # plot the 2D-array var
     im = ax.imshow(var, interpolation='bilinear', cmap=current_cmap,
                     extent=(np.min(x), np.max(x), np.min(y), np.max(y)),
@@ -568,17 +568,40 @@ def plot_contour_crosssection(x, y, var, var_name, o_grid, o_level, vert_gridnam
 
     # labeling 
     if crosssection=='xz':
-        ax.set_yticks([0,40,70,100,140])
-        fig.colorbar(im, label=r'${}$  (m/s)'.format(var_name), 
+        ax.set_yticks([0,35,70,105,140])
+        fig.colorbar(im, label=r'${}$'.format(var_name) + r' $u_{ref}^-1$  (-)', 
                     orientation = 'horizontal')
+        vert_x = [129., 129., 129., 129., 129., 129., 129., 129., 129., 129., 129., 129.]
+        vert_y = [1., 2.5, 5., 7.5, 10., 12.5, 15., 20., 30., 45., 60., 100. ]
+        ax.plot(vert_x, vert_y, 'x', color='cyan', 
+                markersize=2, label='vertical reference profile')
+        ax.set_ylim(0., 140.)
+        ax.set_xlim(0., 1024.)
     else:
-        fig.colorbar(im, label=r'${}$  (m/s)'.format(var_name), 
-                    orientation = 'vertical')        
+        fig.colorbar(im, label=r'${}$'.format(var_name) + r' $u_{ref}^-1$  (-)', 
+                    orientation = 'vertical')
+        meas_x = [531., 531., 531., 531., 531., 531., 531., 531., 531., 531., 531., 531., 
+                    512., 512., 512., 512., 512., 512., 512., 512., 512., 512., 512., 512., 
+                    493., 493., 493., 493., 493., 493., 493., 493., 493., 493., 493., 493.]
+        meas_y = [530., 531., 532., 533., 534., 535., 536., 538., 540., 542., 550., 575., 
+                    530., 531., 532., 533., 534., 535., 536., 538., 540., 542., 550., 575., 
+                    530., 531., 532., 533., 534., 535., 536., 538., 540., 542., 550., 575.]
+        ax.plot(meas_x, meas_y, '+', color='lime', 
+                markersize=2, label='wall normal profiles')
+        vert_x = [129.]
+        vert_y = [512.]
+        ax.plot(vert_x, vert_y, 'x', color='cyan', 
+                markersize=3, label='vertical reference profile')   
+        ax.set_ylim(0., 1024.)
+        ax.set_xlim(0., 1024.)
+
     ax.set_xlabel(r'${}$  (m)'.format(x_grid_name), 
                     fontsize = 18)
     ax.set_ylabel(r'${}$  (m)'.format(vert_gridname), 
                     fontsize = 18)
-
+    ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
+                borderaxespad = 0., ncol = 2, 
+                numpoints = 1)                    
     # file output
     fig.savefig('../palm_results/{}/run_{}/crosssections/{}_{}_cs_{}_{}.png'.format(
                 papy.globals.run_name,papy.globals.run_number[-3:],
@@ -586,3 +609,14 @@ def plot_contour_crosssection(x, y, var, var_name, o_grid, o_level, vert_gridnam
                 crosssection), 
                 bbox_inches='tight', 
                 dpi=600)
+    if crosssection=='xy':                
+        ax.set_ylim(412., 612.)
+        ax.set_xlim(412., 612.)
+        # file output
+        fig.savefig('../palm_results/{}/run_{}/crosssections/{}_{}_cs_close_{}_{}.png'.format(
+                    papy.globals.run_name,papy.globals.run_number[-3:],
+                    papy.globals.run_name,var_name,str(round(o_grid[o_level],2)),
+                    crosssection), 
+                    bbox_inches='tight', 
+                    dpi=600)
+
