@@ -51,12 +51,12 @@ papy.globals.run_numbers = ['.007', '.008', '.009', '.010', '.011', '.012',
                         '.031', '.032', '.033', '.034', '.035', '.036',
                         '.037', '.038', '.039', '.040', '.041', '.042',
                         '.043', '.044', '.045', '.046']
-papy.globals.run_name = 'SB_SI'
-papy.globals.run_numbers = ['.007', '.008', '.009', '.010', '.011', '.012', 
-                        '.013', '.014', '.015', '.016', '.017', '.018',
-                        '.019', '.020', '.021', '.022', '.023', '.024',
-                        '.025', '.026', '.027', '.028', '.029', '.030', 
-                        '.031', '.032', '.033']
+# papy.globals.run_name = 'SB_SI'
+# papy.globals.run_numbers = ['.007', '.008', '.009', '.010', '.011', '.012', 
+#                         '.013', '.014', '.015', '.016', '.017', '.018',
+#                         '.019', '.020', '.021', '.022', '.023', '.024',
+#                         '.025', '.026', '.027', '.028', '.029', '.030', 
+#                         '.031', '.032', '.033']
 papy.globals.run_number = papy.globals.run_numbers[-1]       
 print(papy.globals.run_number)                 
 nc_file_grid = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
@@ -302,11 +302,11 @@ if compute_back_mean:
         ax.set_xscale('log')
         fig.savefig('../palm_results/{}/run_{}/maskprofiles/{}_mean_{}_mask_log.png'.format(papy.globals.run_name,
                     papy.globals.run_number[-3:],
-                    papy.globals.run_name, var_name), bbox_inches='tight', dpi=500)
+                    'back', var_name), bbox_inches='tight', dpi=500)
         print('     SAVED TO: ' 
                 + '../palm_results/{}/run_{}/maskprofiles/{}_mean_{}_mask_log.png'.format(papy.globals.run_name,
                 papy.globals.run_number[-3:],
-                papy.globals.run_name, var_name))
+                'back', var_name))
         plt.close(12)
 
 
@@ -344,15 +344,15 @@ if compute_back_pdfs:
             if var_name == 'u':
                 ax.vlines(var_mean, 0., 2., colors='tab:red', 
                             linestyles='dashed', 
-                            label=r'$\overline{u}$' + r'$u_{ref}^-1$')
+                            label=r'$\overline{u}$' + r'$u_{ref}^{-1}$')
             elif var_name == 'v':
                 ax.vlines(var_mean, 0., 2., colors='tab:red', 
                             linestyles='dashed', 
-                            label=r'$\overline{v}$' + r'$u_{ref}^-1$')
+                            label=r'$\overline{v}$' + r'$u_{ref}^{-1}$')
             elif var_name == 'w':
                 ax.vlines(var_mean, 0., 2., colors='tab:red', 
                             linestyles='dashed', 
-                            label=r'$\overline{w}$' + r'$u_{ref}^-1$')
+                            label=r'$\overline{w}$' + r'$u_{ref}^{-1}$')
             ax.grid(True, 'both', 'both')
             ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                         borderaxespad = 0., ncol = 2, 
@@ -366,11 +366,11 @@ if compute_back_pdfs:
             # save plots
             fig.savefig('../palm_results/{}/run_{}/histogram/{}_hist_{}_{}.png'.format(papy.globals.run_name,
                         papy.globals.run_number[-3:],
-                        papy.globals.run_name, var_name, mask), bbox_inches='tight', dpi=500)
+                        'back', var_name, mask), bbox_inches='tight', dpi=500)
             print('     SAVED TO: ' 
                     + '../palm_results/{}/run_{}/histogram/{}_hist_{}_{}.png'.format(papy.globals.run_name,
                     papy.globals.run_number[-3:],
-                    papy.globals.run_name, var_name, mask))
+                    'back', var_name, mask))
             plt.close(12)
             fig, ax = plt.subplots()
             # plot PALM masked output
@@ -379,17 +379,17 @@ if compute_back_pdfs:
             if var_name == 'u':
                 ax.vlines(np.mean(total_variance/palm_ref**2.), 0., 2., colors='tab:red', 
                             linestyles='dashed', 
-                            label=r'$\overline{u}$ ' + r'$u_{ref}^-1$')
+                            label=r'$\overline{u}$ ' + r'$u_{ref}^{-2}$')
                 ax.set_xlabel(r'$u^\prime u^\prime$ ' + r'$u_{ref}^{-2}$ (-)', fontsize = 18)
             elif var_name == 'v':
                 ax.vlines(np.mean(total_variance/palm_ref**2.), 0., 2., colors='tab:red', 
                             linestyles='dashed', 
-                            label=r'$\overline{v}$ ' + r'$u_{ref}^-1$')
+                            label=r'$\overline{v}$ ' + r'$u_{ref}^{-2}$')
                 ax.set_xlabel(r'$v^\prime v^\prime$ ' + r'$u_{ref}^{-2}$ (-)', fontsize = 18)
             elif var_name == 'w':
                 ax.vlines(np.mean(total_variance/palm_ref**2.), 0., 2., colors='tab:red', 
                             linestyles='dashed', 
-                            label=r'$\overline{w}$ ' + r'$u_{ref}^-1$')
+                            label=r'$\overline{w}$ ' + r'$u_{ref}^{-2}$')
                 ax.set_xlabel(r'$w^\prime w^\prime$ ' + r'$u_{ref}^{-2}$ (-)', fontsize = 18)
             ax.grid(True, 'both', 'both')
             ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
@@ -399,11 +399,11 @@ if compute_back_pdfs:
             # save plots
             fig.savefig('../palm_results/{}/run_{}/histogram/{}_hist_{}{}_{}.png'.format(papy.globals.run_name,
                         papy.globals.run_number[-3:],
-                        papy.globals.run_name, var_name, var_name, mask), bbox_inches='tight', dpi=500)
+                        'back', var_name, var_name, mask), bbox_inches='tight', dpi=500)
             print('     SAVED TO: ' 
                     + '../palm_results/{}/run_{}/histogram/{}_hist_{}{}_{}.png'.format(papy.globals.run_name,
                     papy.globals.run_number[-3:],
-                    papy.globals.run_name, var_name, var_name, mask))
+                    'back', var_name, var_name, mask))
             plt.close(13)
     # flux PDFs
     var_vars = np.array([])
@@ -434,7 +434,7 @@ if compute_back_pdfs:
                 label=r'$u^\prime v^\prime$ at $\Delta y={}$ m'.format(wall_dist[0]))
         ax.vlines(np.mean(var_flux), 0., 2., colors='tab:red', 
                         linestyles='dashed', 
-                        label=r'$\overline{u^\prime v^\prime}$ ' + r'$u_{ref}^-1$')
+                        label=r'$\overline{u^\prime v^\prime}$ ' + r'$u_{ref}^{-2}$')
         ax.grid(True, 'both', 'both')
         ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                     borderaxespad = 0., ncol = 2, 
@@ -534,11 +534,11 @@ if compute_back_highermoments:
         ax.set_xscale('log')
         fig.savefig('../palm_results/{}/run_{}/maskprofiles/{}_skewness_{}_mask_log.png'.format(papy.globals.run_name,
                     papy.globals.run_number[-3:],
-                    papy.globals.run_name, var_name), bbox_inches='tight', dpi=500)
+                    'back', var_name), bbox_inches='tight', dpi=500)
         print('     SAVED TO: ' 
                 + '../palm_results/{}/run_{}/maskprofiles/{}_skewness_{}_mask_log.png'.format(papy.globals.run_name,
                 papy.globals.run_number[-3:],
-                papy.globals.run_name, var_name))                    
+                'back', var_name))                    
         plt.close(12)
 
         #plot profiles
@@ -587,11 +587,11 @@ if compute_back_highermoments:
         ax.set_xscale('log')
         fig.savefig('../palm_results/{}/run_{}/maskprofiles/{}_kurtosis_{}_mask_log.png'.format(papy.globals.run_name,
                     papy.globals.run_number[-3:],
-                    papy.globals.run_name, var_name), bbox_inches='tight', dpi=500)
+                    'back', var_name), bbox_inches='tight', dpi=500)
         print('     SAVED TO: ' 
                 + '../palm_results/{}/run_{}/maskprofiles/{}_kurtosis_{}_mask_log.png'.format(papy.globals.run_name,
                 papy.globals.run_number[-3:],
-                papy.globals.run_name, var_name))                    
+                'back', var_name))                    
         plt.close(12)
 
 
@@ -737,15 +737,15 @@ if compute_back_covar:
                 borderaxespad = 0., ncol = 2, 
                 numpoints = 1, fontsize = 18)
     ax.set_xlabel(r'$\Delta y$ (m)', fontsize = 18)
-    ax.set_ylabel(r'$\overline{u^\prime v^\prime} u_{ref}^-1$ ' + r'(-)', fontsize = 18)
+    ax.set_ylabel(r'$\overline{u^\prime v^\prime} u_{ref}^{-2}$ ' + r'(-)', fontsize = 18)
     ax.set_xscale('log')
     fig.savefig('../palm_results/{}/run_{}/maskprofiles/{}_covariance_{}_mask_log.png'.format(papy.globals.run_name,
                 papy.globals.run_number[-3:],
-                papy.globals.run_name,'uw'), bbox_inches='tight', dpi=500)
+                'back', 'uv'), bbox_inches='tight', dpi=500)
     print('     SAVED TO: ' 
                 + '../palm_results/{}/run_{}/maskprofiles/{}_covariance_{}_mask_log.png'.format(papy.globals.run_name,
                 papy.globals.run_number[-3:],
-                papy.globals.run_name,'uw'))
+                'back', 'uv'))
     plt.close(12)
 
 
@@ -852,19 +852,19 @@ if compute_back_lux:
     ax.set_xscale('log')
     fig.savefig('../palm_results/{}/run_{}/maskprofiles/{}_lux_{}_mask_log.png'.format(papy.globals.run_name,
                 papy.globals.run_number[-3:],
-                papy.globals.run_name, var_name), bbox_inches='tight', dpi=500)
+                'back', var_name), bbox_inches='tight', dpi=500)
     print('     SAVED TO: ' 
             + '../palm_results/{}/run_{}/maskprofiles/{}_lux_{}_mask_log.png'.format(papy.globals.run_name,
             papy.globals.run_number[-3:],
-            papy.globals.run_name, var_name))
+            'back', var_name))
     ax.set_yscale('log')
     fig.savefig('../palm_results/{}/run_{}/maskprofiles/{}_lux_{}_mask_loglog.png'.format(papy.globals.run_name,
                 papy.globals.run_number[-3:],
-                papy.globals.run_name, var_name), bbox_inches='tight', dpi=500)
+                'back', var_name), bbox_inches='tight', dpi=500)
     print('     SAVED TO: ' 
             + '../palm_results/{}/run_{}/maskprofiles/{}_lux_{}_mask_loglog.png'.format(papy.globals.run_name,
             papy.globals.run_number[-3:],
-            papy.globals.run_name, var_name))    
+            'back', var_name))    
 
 
 

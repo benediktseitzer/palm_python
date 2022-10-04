@@ -51,6 +51,13 @@ papy.globals.run_numbers = ['.007', '.008', '.009', '.010', '.011', '.012',
                         '.031', '.032', '.033', '.034', '.035', '.036',
                         '.037', '.038', '.039', '.040', '.041', '.042',
                         '.043', '.044', '.045', '.046', '.047']
+papy.globals.run_name = 'SB_SI_2'
+papy.globals.run_numbers = ['.007', '.008', '.009', '.010', '.011', '.012', 
+                        '.013', '.014', '.015', '.016', '.017', '.018',
+                        '.019', '.020', '.021', '.022', '.023', '.024',
+                        '.025', '.026', '.027', '.028', '.029', '.030', 
+                        '.031', '.032', '.033']
+papy.globals.run_number = papy.globals.run_numbers[-1]
 nc_file_grid = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
 nc_file_path = '../palm/current_version/JOBS/{}/OUTPUT/'.format(papy.globals.run_name)
 mask_name_list = ['M01', 'M02', 'M03', 'M04', 'M05', 'M06', 'M07', 'M08',
@@ -271,13 +278,13 @@ if compute_BL_mean:
             # save plots
             fig.savefig('../palm_results/{}/run_{}/maskprofiles/{}_mean_{}_mask.png'.format(papy.globals.run_name,
                         papy.globals.run_number[-3:],
-                        papy.globals.run_name,var_name), bbox_inches='tight', dpi=500)
+                        'BL',var_name), bbox_inches='tight', dpi=500)
             if var_name == 'u':
                 ax.set_yscale('log')
                 ax.set_ylim(0.1,140.)
                 fig.savefig('../palm_results/{}/run_{}/maskprofiles/{}_mean_{}_mask_log.png'.format(papy.globals.run_name,
                             papy.globals.run_number[-3:],
-                            papy.globals.run_name,var_name), bbox_inches='tight', dpi=500)            
+                            'BL',var_name), bbox_inches='tight', dpi=500)            
             plt.close(12)
 
 ################
@@ -448,12 +455,12 @@ if compute_BL_var:
             ax.set_ylabel(r'${}^\prime {}^\prime$ '.format(var_name, var_name) + r'(m$^2$ s$^{-2}$)', fontsize = 18)
             # fig.savefig('../palm_results/{}/run_{}/maskprofiles/{}_variance_{}_mask.png'.format(papy.globals.run_name,
             #             papy.globals.run_number[-3:],
-            #             papy.globals.run_name,var_name), bbox_inches='tight', dpi=500)
+            #             'BL',var_name), bbox_inches='tight', dpi=500)
             ax.set_yscale('log')
             ax.set_ylim(0.1,140.)
             fig.savefig('../palm_results/{}/run_{}/maskprofiles/{}_variance_{}_mask_log.png'.format(papy.globals.run_name,
                         papy.globals.run_number[-3:],
-                        papy.globals.run_name,var_name), bbox_inches='tight', dpi=500)
+                        'BL',var_name), bbox_inches='tight', dpi=500)
             plt.close(12)
             print('         plotted variance of {}'.format(var_name))
 
@@ -574,7 +581,7 @@ if compute_BL_covar:
         ax.set_ylim(0.1,140.)
         fig.savefig('../palm_results/{}/run_{}/maskprofiles/{}_covariance_{}_mask_log.png'.format(papy.globals.run_name,
                     papy.globals.run_number[-3:],
-                    papy.globals.run_name,'uw'), bbox_inches='tight', dpi=500)
+                    'BL','uw'), bbox_inches='tight', dpi=500)
         plt.close(12)
 
 
