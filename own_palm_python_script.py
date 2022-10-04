@@ -83,8 +83,8 @@ GLOBAL VARIABLES
 """
 ################
 # PALM input files
-papy.globals.run_name = 'SB_SI_BL'
-papy.globals.run_number = '.047'
+papy.globals.run_name = 'SB_SI_back_yshift'
+papy.globals.run_number = '.017'
 papy.globals.run_numbers = ['.029', '.028']
 nc_file_grid = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
 nc_file_path = '../palm/current_version/JOBS/{}/OUTPUT/'.format(papy.globals.run_name)
