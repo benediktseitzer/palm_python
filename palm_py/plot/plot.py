@@ -574,7 +574,7 @@ def plot_contour_crosssection(x, y, var, var_name, o_grid, o_level, vert_gridnam
         vert_x = [129., 129., 129., 129., 129., 129., 129., 129., 129., 129., 129., 129.]
         vert_y = [1., 2.5, 5., 7.5, 10., 12.5, 15., 20., 30., 45., 60., 100. ]
         ax.plot(vert_x, vert_y, 'x', color='cyan', 
-                markersize=2, label='vertical reference profile')
+                markersize=3, label='vertical reference profile')
         ax.set_ylim(0., 140.)
         ax.set_xlim(0., 1024.)
     else:
@@ -587,7 +587,7 @@ def plot_contour_crosssection(x, y, var, var_name, o_grid, o_level, vert_gridnam
                     530., 531., 532., 533., 534., 535., 536., 538., 540., 542., 550., 575., 
                     530., 531., 532., 533., 534., 535., 536., 538., 540., 542., 550., 575.]
         ax.plot(meas_x, meas_y, '+', color='lime', 
-                markersize=2, label='wall normal profiles')
+                markersize=3, label='wall normal profiles')
         vert_x = [129.]
         vert_y = [512.]
         ax.plot(vert_x, vert_y, 'x', color='cyan', 
