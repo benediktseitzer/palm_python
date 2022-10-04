@@ -88,13 +88,13 @@ papy.globals.dx = 1.
 Steeringflags
 """
 ################
-compute_back_mean = True
+compute_back_mean = False
 compute_back_pdfs = False
 compute_back_highermoments = True
-compute_back_var = True
-compute_back_covar = True
+compute_back_var = False
+compute_back_covar = False
 compute_back_spectra = False
-compute_back_lux = True
+compute_back_lux = False
 
 ################
 """
@@ -465,6 +465,7 @@ if compute_back_highermoments:
     var_name_list = ['u', 'v']
     for var_name in var_name_list:
         skew_vars = np.array([])
+        skew_errs = np.array([])
         kurt_vars = np.array([])
         wall_dists = np.array([])
         for mask in mask_name_list:
@@ -485,14 +486,16 @@ if compute_back_highermoments:
             wall_dist = np.asarray([abs(y[0]-530.)])
             wall_dist = np.asarray([abs(y[0]-530.)])
             skew_vars = np.concatenate([skew_vars, total_skew])
+            N_samp = len(total_var)
+            skew_err = np.asarray([np.sqrt((6.*N_samp*(N_samp-1.))/((N_samp-2.)*(N_samp+1.)*(N_samp+3.)))])
+            skew_errs = np.concatenate([skew_errs, skew_err])
             kurt_vars = np.concatenate([kurt_vars, total_kurt])            
             wall_dists = np.concatenate([wall_dists, wall_dist])
 
         #plot profiles
-        err = 0.05
         fig, ax = plt.subplots()
         # plot PALM masked output
-        ax.errorbar(wall_dists, skew_vars, yerr=err, 
+        ax.errorbar(wall_dists, skew_vars, yerr=skew_errs, 
                     label= r'PALM', 
                     fmt='o', c='darkmagenta')                        
         #plot wt_data
@@ -503,12 +506,16 @@ if compute_back_highermoments:
             for file in files:
                 if var_name == 'u':
                     wt_skew.append(stats.skew(time_series[name][file].u.dropna()))
+                    N_wt_samp = len(time_series[name][file].u.dropna())
+                    wt_skew_errs = np.sqrt((6.*N_wt_samp*(N_wt_samp-1.))/((N_wt_samp-2.)*(N_wt_samp+1.)*(N_wt_samp+3.)))
                 elif var_name == 'v':
                     wt_skew.append(stats.skew(time_series[name][file].v.dropna()))
+                    N_wt_samp = len(time_series[name][file].v.dropna())
+                    wt_skew_errs = np.sqrt((6.*N_wt_samp*(N_wt_samp-1.))/((N_wt_samp-2.)*(N_wt_samp+1.)*(N_wt_samp+3.)))                    
                 wt_z.append(time_series[name][file].y)
             wt_z_plot = np.asarray(wt_z)-0.115*scale
             if var_name == 'u':
-                ax.errorbar(wt_z_plot, wt_skew, yerr = 0.05,
+                ax.errorbar(wt_z_plot, wt_skew, yerr = wt_skew_errs,
                             label=label_list[i], 
                             fmt=marker_list[i], color=c_list[i])
                 if i==1:
@@ -517,7 +524,7 @@ if compute_back_highermoments:
                             label=r'$5 \cdot h_{r}$')
                 ax.set_ylabel(r'$\gamma_u$ (-)', fontsize = 18)
             elif var_name == 'v':             
-                ax.errorbar(wt_z_plot, wt_skew, yerr = 0.05,
+                ax.errorbar(wt_z_plot, wt_skew, yerr = wt_skew_errs,
                             label=label_list[i], 
                             fmt=marker_list[i], color=c_list[i])
                 if i==1:
