@@ -792,7 +792,8 @@ if compute_front_lux:
         wall_dist = np.asarray([abs(y[0]-530.)])
         wall_dists = np.concatenate([wall_dists, wall_dist])
         lux[i] = papy.calc_lux(np.abs(total_time[1]-total_time[0]),total_var)
-        print('    calculated palm-LUX for {}'.format(wall_dist[0]))
+    print('    calculated palm-LUX for {}'.format(nc_file))
+        
     # calculate wt-LUX
     wt_lux = {}
     wt_lux.fromkeys(namelist)
@@ -804,7 +805,7 @@ if compute_front_lux:
         wt_z[name] = []
         for file in files:
             # equidistant timestepping
-            dt = time_series[name][file].t_eq[1] - time_series[name][file].t_eq[0]            
+            dt = time_series[name][file].t_eq[1] - time_series[name][file].t_eq[0]
             wt_lux[name].append(papy.calc_lux(dt, time_series[name][file].u_eq.dropna().values))
             wt_z[name].append(time_series[name][file].y-0.115*scale)        
         # wt_z_plot = np.asarray(wt_z)-0.115*scale

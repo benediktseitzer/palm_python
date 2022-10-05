@@ -831,7 +831,7 @@ if compute_back_lux:
             wt_lux[name].append(papy.calc_lux(dt, time_series[name][file].u_eq.dropna().values))
             wt_z[name].append(time_series[name][file].y-0.115*scale)        
         # wt_z_plot = np.asarray(wt_z)-0.115*scale
-        print('    calculated wt-LUX for {}'.format(name))
+    print('    calculated palm-LUX for {}'.format(nc_file))
 
     #plot profiles
     err = lux*0.1

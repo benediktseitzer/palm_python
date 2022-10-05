@@ -643,8 +643,7 @@ if compute_BL_lux:
         wall_dist = np.asarray([abs(y[0])])
         wall_dists = np.concatenate([wall_dists, wall_dist])
         lux[i] = papy.calc_lux(np.abs(total_time[1]-total_time[0]), total_var)
-        print('    calculated palm-LUX for {}'.format(wall_dist[0]))
-
+    print('    calculated palm-LUX for {}'.format(nc_file))
 
     # plotting wt and PALM data
     fig, ax = plt.subplots()
