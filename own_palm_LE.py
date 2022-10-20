@@ -48,25 +48,21 @@ papy.globals.run_numbers = ['.008', '.009', '.010', '.011', '.012',
                         '.013', '.014', '.015', '.016', '.017', '.018',
                         '.019', '.020', '.021', '.022', '.023', '.024',
                         '.025', '.026', '.027', '.028', '.029', '.030',
-                        '.031', '.032']
-# papy.globals.run_name = 'SB_SI'
-# papy.globals.run_numbers = ['.007', '.008', '.009', '.010', '.011', '.012', 
-#                         '.013', '.014', '.015', '.016', '.017', '.018',
-#                         '.019', '.020', '.021', '.022', '.023', '.024',
-#                         '.025', '.026', '.027', '.028', '.029', '.030', 
-#                         '.031', '.032', '.033']
+                        '.031', '.032', '.033', '.034', '.035', '.036',
+                        '.037', '.038', '.039', '.040', '.041', '.042',
+                        '.043', '.044', '.045', '.046', '.047', '.048',
+                        '.049', '.050',]
+
 papy.globals.run_number = papy.globals.run_numbers[-1]       
-print(papy.globals.run_number)                 
+print('Analyze PALM-run up to: ' + papy.globals.run_number)             
 nc_file_grid = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
 nc_file_path = '../palm/current_version/JOBS/{}/OUTPUT/'.format(papy.globals.run_name)
 building_height = '_mid'
 mask_name_list = ['M02', 'M03', 'M04', 'M05', 'M06', 'M07', 'M08',
                     'M09', 'M10', 'M11', 'M12']
-building_height = '_up'
-mask_name_list = ['M14', 'M15', 'M16', 'M17', 'M18', 'M19',
-                    'M20', 'M21', 'M22', 'M23', 'M24']
-distance_list = []
-height_list = []
+# building_height = '_up'
+# mask_name_list = ['M14', 'M15', 'M16', 'M17', 'M18', 'M19',
+#                     'M20', 'M21', 'M22', 'M23', 'M24']
 
 # WIND TUNNEL INPIUT FILES
 experiment = 'single_building'
@@ -95,8 +91,10 @@ compute_back_pdfs = False
 compute_back_highermoments = True
 compute_back_var = True
 compute_back_covar = True
-compute_back_spectra = False
+compute_back_spectra = True
 compute_back_lux = True
+
+compute_quadrant_analysis = True
 
 ################
 """
@@ -186,37 +184,36 @@ for name in namelist:
         wt_err[name]['lux'] =   1.9007
 
 data_nd = 1
-if compute_back_mean or compute_back_var or compute_back_var or compute_back_lux or compute_back_highermoments:
-    time_series = {}
-    time_series.fromkeys(namelist)
-    # Gather all files into Timeseries objects
-    for name in namelist:
-        files = wt.get_files(path,name)
-        time_series[name] = {}
-        time_series[name].fromkeys(files)
-        for i,file in enumerate(files):
-            ts = wt.Timeseries.from_file(path+file)            
-            ts.get_wind_comps(path+file)
-            ts.get_wtref(wtref_path,name,index=i)
-            ts.wtref = ts.wtref*wtref_factor
-            # edit 6/20/19: Assume that input data is dimensional, not non-dimensional
-            if data_nd == 0:
-                print('Warning: Assuming that data is dimensional. If using non-dimensional input data, set variable data_nd to 1')
-                ts.nondimensionalise()
+time_series = {}
+time_series.fromkeys(namelist)
+# Gather all files into Timeseries objects
+for name in namelist:
+    files = wt.get_files(path,name)
+    time_series[name] = {}
+    time_series[name].fromkeys(files)
+    for i,file in enumerate(files):
+        ts = wt.Timeseries.from_file(path+file)            
+        ts.get_wind_comps(path+file)
+        ts.get_wtref(wtref_path,name,index=i)
+        ts.wtref = ts.wtref*wtref_factor
+        # edit 6/20/19: Assume that input data is dimensional, not non-dimensional
+        if data_nd == 0:
+            print('Warning: Assuming that data is dimensional. If using non-dimensional input data, set variable data_nd to 1')
+            ts.nondimensionalise()
+        else:
+            if data_nd == 1:
+                []
             else:
-                if data_nd == 1:
-                    []
-                else:
-                    print('Warning: data_nd can only be 1 (for non-dimensional input data) or 0 (for dimensional input data)')        
-            #edit 06/20/19: added seperate functionto  calculate equidistant timesteps             
-            ts.adapt_scale(scale)         
-            ts.mask_outliers()
-            ts_eq = ts
-            ts_eq.calc_equidistant_timesteps()            
-            ts.index = ts.t_arr         
-            ts.weighted_component_mean
-            ts.weighted_component_variance
-            time_series[name][file] = ts
+                print('Warning: data_nd can only be 1 (for non-dimensional input data) or 0 (for dimensional input data)')        
+        #edit 06/20/19: added seperate functionto  calculate equidistant timesteps             
+        ts.adapt_scale(scale)         
+        ts.mask_outliers()
+        ts_eq = ts
+        ts_eq.calc_equidistant_timesteps()            
+        ts.index = ts.t_arr         
+        ts.weighted_component_mean
+        ts.weighted_component_variance
+        time_series[name][file] = ts
 
 # plotting colors and markers
 c_list = ['forestgreen', 'darkorange', 'navy', 'tab:red', 'tab:olive', 'cyan']
@@ -228,7 +225,7 @@ label_list = ['flat facade', 'rough facade', 'medium rough facade']
 # compute u-mean alongside the building
 ######################################################
 if compute_back_mean:
-    print('\n     compute means')    
+    print('\n   compute means')    
     var_name_list = ['u', 'w']
     for var_name in var_name_list:
         mean_vars = np.array([])
@@ -288,7 +285,7 @@ if compute_back_mean:
                             label=r'$5 \cdot h_{r}$')
                 ax.set_ylabel(r'$\overline{w}$ $u_{ref}^{-1}$ (-)', fontsize = 18)                            
                 
-        ax.grid(True, 'both', 'both')
+        ax.grid(True)
         ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                     borderaxespad = 0., ncol = 2, 
                     numpoints = 1, fontsize = 18)
@@ -309,7 +306,7 @@ if compute_back_mean:
 # compute PDFs alongside the building
 ######################################################
 if compute_back_pdfs:
-    print('\n     compute PDF')    
+    print('\n   compute PDFs')    
     # velocity and variance PDFs
     var_name_list = ['u', 'v', 'w']
     for var_name in var_name_list:
@@ -348,7 +345,7 @@ if compute_back_pdfs:
                 ax.vlines(var_mean, 0., 2., colors='tab:red', 
                             linestyles='dashed', 
                             label=r'$\overline{w}$' + r'$u_{ref}^{-1}$')
-            ax.grid(True, 'both', 'both')
+            ax.grid(True)
             ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                         borderaxespad = 0., ncol = 2, 
                         numpoints = 1, fontsize = 18)
@@ -386,7 +383,7 @@ if compute_back_pdfs:
                             linestyles='dashed', 
                             label=r'$\overline{w}$ ' + r'$u_{ref}^{-2}$')
                 ax.set_xlabel(r'$w^\prime w^\prime$ ' + r'$u_{ref}^{-2}$ (-)', fontsize = 18)
-            ax.grid(True, 'both', 'both')
+            ax.grid(True)
             ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                         borderaxespad = 0., ncol = 2, 
                         numpoints = 1, fontsize = 18)
@@ -430,7 +427,7 @@ if compute_back_pdfs:
         ax.vlines(np.mean(var_flux), 0., 2., colors='tab:red', 
                         linestyles='dashed', 
                         label=r'$\overline{u^\prime v^\prime}$ ' + r'$u_{ref}^{-2}$')
-        ax.grid(True, 'both', 'both')
+        ax.grid(True)
         ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                     borderaxespad = 0., ncol = 2, 
                     numpoints = 1, fontsize = 18)
@@ -455,7 +452,7 @@ if compute_back_pdfs:
 # compute skewness and kurtosis profiles
 ######################################################
 if compute_back_highermoments:
-    print('\n     compute higher statistical moments')    
+    print('\n   compute higher statistical moments')    
     var_name_list = ['u', 'w']
     for var_name in var_name_list:
         skew_vars = np.array([])
@@ -526,7 +523,7 @@ if compute_back_highermoments:
                             linestyles='dashed', 
                             label=r'$5 \cdot h_{r}$')
                 ax.set_ylabel(r'$\gamma_w$ (-)', fontsize = 18)
-        ax.grid(True, 'both', 'both')
+        ax.grid(True)
         ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                     borderaxespad = 0., ncol = 2, 
                     numpoints = 1, fontsize = 18)
@@ -537,7 +534,7 @@ if compute_back_highermoments:
                     papy.globals.run_number[-3:],
                     'LE', building_height, var_name), bbox_inches='tight', dpi=500)
         print('     SAVED TO: ' 
-                + '../palm_results/{}/run_{}/maskprofiles/{}{}_skewness_{}_mask_log.png'.format(papy.globals.run_name,
+                + '../palm_results/{}/run_{}/maskprofiles/{}{   }_skewness_{}_mask_log.png'.format(papy.globals.run_name,
                 papy.globals.run_number[-3:],
                 'LE', building_height, var_name))                    
         plt.close(12)
@@ -579,7 +576,7 @@ if compute_back_highermoments:
                             linestyles='dashed', 
                             label=r'$5 \cdot h_{r}$')
                 ax.set_ylabel(r'$\beta_w$ (-)', fontsize = 18)
-        ax.grid(True, 'both', 'both')
+        ax.grid(True)
         ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                     borderaxespad = 0., ncol = 2, 
                     numpoints = 1, fontsize = 18)
@@ -601,7 +598,7 @@ if compute_back_highermoments:
 ######################################################
 if compute_back_var:
     var_name_list = ['u', 'w']
-    print('\n     compute variances')
+    print('\n   compute variances')
 
     for var_name in var_name_list:
         var_vars = np.array([])
@@ -662,7 +659,7 @@ if compute_back_var:
                             linestyles='dashed', 
                             label=r'$5 \cdot h_{r}$')
                 ax.set_ylabel(r'$\overline{w^\prime w^\prime}$ $u_{ref}^{-2}$ (-)', fontsize = 18)
-        ax.grid(True, 'both', 'both')
+        ax.grid(True)
         ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                     borderaxespad = 0., ncol = 2, 
                     numpoints = 1, fontsize = 18)
@@ -682,7 +679,7 @@ if compute_back_var:
 # compute covariance in back of building
 ######################################################
 if compute_back_covar:
-    print('\n     compute co-variance')
+    print('\n   compute co-variance')
     var_vars = np.array([])
     wall_dists = np.array([])
     for mask in mask_name_list:
@@ -755,7 +752,7 @@ if compute_back_covar:
 ######################################################
 if compute_back_spectra:
     # heights mode
-    print('\n Compute at different heights: \n')
+    print('\n   Compute Spectra')
     # grid_name = 'zu'
     # z, z_unit = papy.read_nc_grid(nc_file_path,nc_file_grid,grid_name)
 
@@ -791,7 +788,7 @@ if compute_back_spectra:
 # Intergral length scale Lux
 ######################################################  
 if compute_back_lux:
-    print('     compute Lux-profiles')
+    print('\n   compute Lux-profiles')
     lux = np.zeros(len(mask_name_list))
     var_name = 'u'
     wall_dists = np.array([])
@@ -809,7 +806,7 @@ if compute_back_lux:
         wall_dist = np.asarray([abs(y[0]-530.)])
         wall_dists = np.concatenate([wall_dists, wall_dist])
         lux[i] = papy.calc_lux(np.abs(total_time[1]-total_time[0]),total_var)
-    print('    calculated palm-LUX for {}'.format(nc_file))
+    print('     calculated palm-LUX for {}'.format(nc_file))
     # calculate wt-LUX
     wt_lux = {}
     wt_lux.fromkeys(namelist)
@@ -825,7 +822,7 @@ if compute_back_lux:
             wt_lux[name].append(papy.calc_lux(dt, time_series[name][file].u_eq.dropna().values))
             wt_z[name].append(abs(time_series[name][file].x)-0.115*scale)        
         # wt_z_plot = np.asarray(wt_z)-0.115*scale
-        print('    calculated wt-LUX for {}'.format(name))
+        print('     calculated wt-LUX for {}'.format(name))
 
     #plot profiles
     err = lux*0.1
@@ -843,7 +840,7 @@ if compute_back_lux:
             linestyles='dashed', 
             label=r'$5 \cdot h_{r}$')
 
-    ax.grid(True, 'both', 'both')
+    ax.grid(True)
     ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                 borderaxespad = 0., ncol = 2, 
                 numpoints = 1, fontsize = 18)
@@ -868,6 +865,324 @@ if compute_back_lux:
             'LE', building_height, var_name))    
 
 
+######################################################
+# Quadrant Analysis
+######################################################  
+if compute_quadrant_analysis:
+    print('     compute Quadrant Analysis')
+    wall_dists = np.array([])
+    q1_fluxes = np.array([])
+    q2_fluxes = np.array([])
+    q3_fluxes = np.array([])
+    q4_fluxes = np.array([])
+    s1_all = np.array([])
+    s2_all = np.array([])
+    s3_all = np.array([])
+    s4_all = np.array([])
+    for i,mask in enumerate(mask_name_list):
+        total_varu = np.array([])
+        total_varv = np.array([])
+        for run_no in papy.globals.run_numbers:
+            nc_file = '{}_masked_{}{}.nc'.format(papy.globals.run_name, mask, run_no)
+            varu, varu_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'w')
+            varv, varv_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'u')
+            y, y_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'x')
+            total_varu = np.concatenate([total_varu, varu/palm_ref])
+            total_varv = np.concatenate([total_varv, varv/palm_ref])
+
+        varu_fluc = np.asarray(np.mean(total_varu)-total_varu)
+        varv_fluc = np.asarray(np.mean(total_varv)-total_varv)
+        total_flux = np.asarray(varu_fluc * varv_fluc)
+
+        q1_ind = np.where(np.logical_and(varu_fluc>0, varv_fluc>0))
+        q2_ind = np.where(np.logical_and(varu_fluc<0, varv_fluc>0))
+        q3_ind = np.where(np.logical_and(varu_fluc<0, varv_fluc<0))
+        q4_ind = np.where(np.logical_and(varu_fluc>0, varv_fluc<0))
+
+        q1_flux = np.asarray([np.mean(total_flux[q1_ind])])
+        q2_flux = np.asarray([np.mean(total_flux[q2_ind])])
+        q3_flux = np.asarray([np.mean(total_flux[q3_ind])])
+        q4_flux = np.asarray([np.mean(total_flux[q4_ind])])
+
+        q1_fluxes = np.concatenate([q1_fluxes, q1_flux])
+        q2_fluxes = np.concatenate([q2_fluxes, q2_flux])
+        q3_fluxes = np.concatenate([q3_fluxes, q3_flux])
+        q4_fluxes = np.concatenate([q4_fluxes, q4_flux])
+        
+        wall_dist = np.asarray([abs(y[0]-530.)])
+        # wall_dist = np.asarray([abs(y[0])-530.])
+        wall_dists = np.concatenate([wall_dists, wall_dist])
+
+        s1 = np.asarray([q1_flux[0]/np.mean(total_flux) * len(q1_ind[0])/len(total_flux)])
+        s2 = np.asarray([q2_flux[0]/np.mean(total_flux) * len(q2_ind[0])/len(total_flux)])
+        s3 = np.asarray([q3_flux[0]/np.mean(total_flux) * len(q3_ind[0])/len(total_flux)])
+        s4 = np.asarray([q4_flux[0]/np.mean(total_flux) * len(q4_ind[0])/len(total_flux)])
+
+        s1_all = np.concatenate([s1_all, s1])
+        s2_all = np.concatenate([s2_all, s2])
+        s3_all = np.concatenate([s3_all, s3])
+        s4_all = np.concatenate([s4_all, s4])
+
+        print('\n S1 = {}'.format(str(s1[0])[:6]) + '   N1 = {}'.format(len(q1_ind[0])))
+        print(' S2 = {}'.format(str(s2[0])[:6]) + '   N2 = {}'.format(len(q2_ind[0])))
+        print(' S3 = {}'.format(str(s3[0])[:6]) + '   N3 = {}'.format(len(q3_ind[0])))
+        print(' S4 = {}'.format(str(s4[0])[:6]) + '   N4 = {}'.format(len(q4_ind[0])))
+        print(' Flux = {}'.format(str(np.mean(total_flux))[:6]) + '   N = {}'.format(len(total_flux)))        
+        print(' SUM = {}'.format(str(s1[0] + 
+                                    s2[0]  + 
+                                    s3[0]  + 
+                                    s4[0])))
+
+        plot_QA_PALM = True
+        if plot_QA_PALM:
+            # PLOT SINGLE Quadrant-scatterplots
+            fig, ax = plt.subplots()
+            fig.gca().set_aspect('equal', adjustable='box')
+            ax.plot(varu_fluc[q1_ind], varv_fluc[q1_ind] ,'o', color='blue',
+                    markersize=2,label='Q1')
+            ax.plot(varu_fluc[q2_ind], varv_fluc[q2_ind] ,'o', color='darkorange',
+                    markersize=2, label='Q2')
+            ax.plot(varu_fluc[q3_ind], varv_fluc[q3_ind] ,'o', color='cyan',
+                    markersize=2, label='Q3')
+            ax.plot(varu_fluc[q4_ind], varv_fluc[q4_ind] ,'o', color='red',
+                    markersize=2, label='Q4')
+            ax.grid(True)
+            ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
+                        borderaxespad = 0., ncol = 2, 
+                        numpoints = 1, fontsize = 18)
+            ax.set_xlabel(r'$u^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
+            ax.set_ylabel(r'$v^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
+            # save plots
+            fig.savefig('../palm_results/{}/run_{}/quadrant_analysis/scatter/{}_QA_scatter_mask_{}.png'.format(papy.globals.run_name,
+                        papy.globals.run_number[-3:],
+                        'LE'+ building_height, mask), bbox_inches='tight', dpi=500)
+            print('     SAVED TO: ' 
+                        + '../palm_results/{}/run_{}/quadrant_analysis/scatter/{}_QA_scatter_mask_{}.png'.format(papy.globals.run_name,
+                        papy.globals.run_number[-3:],
+                        'LE'+ building_height, mask))
+            plt.close()
+
+            # PLOT JOINT PROBABILITY DENSITY FUNCTIONS
+            umin = varu_fluc.min()
+            umax = varu_fluc.max()
+            vmin = varv_fluc.min()
+            vmax = varv_fluc.max()
+            u_jpdf, v_jpdf = np.mgrid[umin:umax:100j, vmin:vmax:100j]
+            positions = np.vstack([u_jpdf.ravel(), v_jpdf.ravel()])
+            values = np.vstack([varu_fluc, varv_fluc])
+            kernel = stats.gaussian_kde(values)
+            jpdf = np.reshape(kernel.evaluate(positions).T, u_jpdf.shape)        
+            # plot
+            fig, ax = plt.subplots()
+            fig.gca().set_aspect('equal', adjustable='box')        
+            im1 = ax.contourf(jpdf.T, cmap='YlGnBu',
+                    extent=[umin, umax, vmin, vmax], levels = 15)
+            im2 = ax.contour(jpdf.T, extent=[umin, umax, vmin, vmax], levels = 15,
+                    colors='gray')
+
+            ax.vlines(0., vmin, vmax, colors='darkgray', 
+                    linestyles='dashed')
+            ax.hlines(0., umin, umax, colors='darkgray', 
+                    linestyles='dashed')
+            ax.grid(True)
+            plt.colorbar(im1, label=r'$\rho (u^\prime_{q_i},  v^\prime{q_i})$ (-)')
+            ax.set_xlabel(r'$u^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
+            ax.set_ylabel(r'$v^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
+            # save plots
+            fig.savefig('../palm_results/{}/run_{}/quadrant_analysis/jpdf/{}_QA_jpdf_mask_{}.png'.format(papy.globals.run_name,
+                        papy.globals.run_number[-3:],
+                        'LE'+ building_height, mask), bbox_inches='tight', dpi=500)
+            print('     SAVED TO: ' 
+                        + '../palm_results/{}/run_{}/quadrant_analysis/jpdf/{}_QA_jpdf_mask_{}.png'.format(papy.globals.run_name,
+                        papy.globals.run_number[-3:],
+                        'LE'+ building_height, mask))
+            plt.close()
+
+    # plot wind tunnel data
+    for i,name in enumerate(namelist):
+        files = wt.get_files(path,name)
+        wt_wall_dists = np.array([])
+        wt_q1_fluxes = np.array([])
+        wt_q2_fluxes = np.array([])
+        wt_q3_fluxes = np.array([])
+        wt_q4_fluxes = np.array([])
+        wt_s1_all = np.array([])
+        wt_s2_all = np.array([])
+        wt_s3_all = np.array([])
+        wt_s4_all = np.array([])
+        files = wt.get_files(path,name)            
+        for j,file in enumerate(files):
+            wt_varu_fluc = (time_series[name][file].weighted_component_mean[0] - time_series[name][file].u.dropna().values)/time_series[name][file].wtref
+            wt_varv_fluc = (time_series[name][file].weighted_component_mean[1] - time_series[name][file].v.dropna().values)/time_series[name][file].wtref
+            wt_flux = np.asarray(wt_varu_fluc * wt_varv_fluc)
+
+            wt_q1_ind = np.where(np.logical_and(wt_varu_fluc>0, wt_varv_fluc>0))
+            wt_q2_ind = np.where(np.logical_and(wt_varu_fluc<0, wt_varv_fluc>0))
+            wt_q3_ind = np.where(np.logical_and(wt_varu_fluc<0, wt_varv_fluc<0))
+            wt_q4_ind = np.where(np.logical_and(wt_varu_fluc>0, wt_varv_fluc<0))
+
+            wt_q1_flux = np.asarray([np.mean(wt_flux[wt_q1_ind])])
+            wt_q2_flux = np.asarray([np.mean(wt_flux[wt_q2_ind])])
+            wt_q3_flux = np.asarray([np.mean(wt_flux[wt_q3_ind])])
+            wt_q4_flux = np.asarray([np.mean(wt_flux[wt_q4_ind])])
+
+            wt_q1_fluxes = np.concatenate([wt_q1_fluxes, wt_q1_flux])
+            wt_q2_fluxes = np.concatenate([wt_q2_fluxes, wt_q2_flux])
+            wt_q3_fluxes = np.concatenate([wt_q3_fluxes, wt_q3_flux])
+            wt_q4_fluxes = np.concatenate([wt_q4_fluxes, wt_q4_flux])
+
+            wt_wall_dist = np.asarray([abs(time_series[name][file].x)-0.115*scale])
+            wt_wall_dists = np.concatenate([wt_wall_dists, wt_wall_dist])
+
+            wt_s1 = np.asarray([wt_q1_flux[0]/np.mean(wt_flux) * len(wt_q1_ind[0])/len(wt_flux)])
+            wt_s2 = np.asarray([wt_q2_flux[0]/np.mean(wt_flux) * len(wt_q2_ind[0])/len(wt_flux)])
+            wt_s3 = np.asarray([wt_q3_flux[0]/np.mean(wt_flux) * len(wt_q3_ind[0])/len(wt_flux)])
+            wt_s4 = np.asarray([wt_q4_flux[0]/np.mean(wt_flux) * len(wt_q4_ind[0])/len(wt_flux)])
+
+            wt_s1_all = np.concatenate([wt_s1_all, wt_s1])
+            wt_s2_all = np.concatenate([wt_s2_all, wt_s2])
+            wt_s3_all = np.concatenate([wt_s3_all, wt_s3])
+            wt_s4_all = np.concatenate([wt_s4_all, wt_s4])
+
+            print('\n S1 = {}'.format(str(wt_s1[0])[:6]) + '   N1 = {}'.format(len(wt_q1_ind[0])))
+            print(' S2 = {}'.format(str(wt_s2[0])[:6]) + '   N2 = {}'.format(len(wt_q2_ind[0])))
+            print(' S3 = {}'.format(str(wt_s3[0])[:6]) + '   N3 = {}'.format(len(wt_q3_ind[0])))
+            print(' S4 = {}'.format(str(wt_s4[0])[:6]) + '   N4 = {}'.format(len(wt_q4_ind[0])))
+            print(' Flux = {}'.format(str(np.mean(wt_flux))[:6]) + '   N = {}'.format(len(wt_flux)))        
+            print(' SUM = {}'.format(str(wt_s1[0] + 
+                                        wt_s2[0] + 
+                                        wt_s3[0] + 
+                                        wt_s4[0])))
+
+            # PLOT SINGLE Quadrant-scatterplots
+            plot_WT_QA = True
+            if plot_WT_QA:
+                fig, ax = plt.subplots()
+                fig.gca().set_aspect('equal', adjustable='box')
+                ax.plot(wt_varu_fluc[wt_q1_ind], wt_varv_fluc[wt_q1_ind] ,'o', color='blue',
+                        markersize=2,label='Q1')
+                ax.plot(wt_varu_fluc[wt_q2_ind], wt_varv_fluc[wt_q2_ind] ,'o', color='darkorange',
+                        markersize=2, label='Q2')
+                ax.plot(wt_varu_fluc[wt_q3_ind], wt_varv_fluc[wt_q3_ind] ,'o', color='cyan',
+                        markersize=2, label='Q3')
+                ax.plot(wt_varu_fluc[wt_q4_ind], wt_varv_fluc[wt_q4_ind] ,'o', color='red',
+                        markersize=2, label='Q4')
+                ax.grid(True)
+                ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
+                            borderaxespad = 0., ncol = 2, 
+                            numpoints = 1, fontsize = 18)
+                ax.set_xlabel(r'$u^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
+                ax.set_ylabel(r'$v^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
+                # save plots
+                fig.savefig('../palm_results/{}/run_{}/quadrant_analysis/scatter/{}_QA_scatter_WT_{}.png'.format(papy.globals.run_name,
+                            papy.globals.run_number[-3:],
+                            'LE' + building_height, file), bbox_inches='tight', dpi=500)
+                print('     SAVED TO: ' 
+                            + '../palm_results/{}/run_{}/quadrant_analysis/scatter/{}_QA_scatter_WT_{}.png'.format(papy.globals.run_name,
+                            papy.globals.run_number[-3:],
+                            'LE'+ building_height, file))
+                plt.close()
+
+                # PLOT JOINT PROBABILITY DENSITY FUNCTIONS
+                umin = wt_varu_fluc.min()
+                umax = wt_varu_fluc.max()
+                vmin = wt_varv_fluc.min()
+                vmax = wt_varv_fluc.max()
+                u_jpdf, v_jpdf = np.mgrid[umin:umax:100j, vmin:vmax:100j]
+                positions = np.vstack([u_jpdf.ravel(), v_jpdf.ravel()])
+                values = np.vstack([wt_varu_fluc, wt_varv_fluc])
+                kernel = stats.gaussian_kde(values)
+                jpdf = np.reshape(kernel.evaluate(positions).T, u_jpdf.shape)
+                # plot
+                fig, ax = plt.subplots()
+                fig.gca().set_aspect('equal', adjustable='box')        
+                im1 = ax.contourf(jpdf.T, cmap='YlGnBu',
+                        extent=[umin, umax, vmin, vmax], levels = 15)
+                im2 = ax.contour(jpdf.T, extent=[umin, umax, vmin, vmax], levels = 15,
+                        colors='gray')
+
+                ax.vlines(0., vmin, vmax, colors='darkgray', 
+                        linestyles='dashed')
+                ax.hlines(0., umin, umax, colors='darkgray', 
+                        linestyles='dashed')
+                ax.grid(True)
+                plt.colorbar(im1, 
+                            label=r'$\rho (u^\prime_{q_i},  v^\prime{q_i})$ (-)')
+                ax.set_xlabel(r'$u^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
+                ax.set_ylabel(r'$v^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
+                # save plots
+                fig.savefig('../palm_results/{}/run_{}/quadrant_analysis/jpdf/{}_QA_jpdf_WT_{}.png'.format(papy.globals.run_name,
+                            papy.globals.run_number[-3:],
+                            'LE'+ building_height, file), bbox_inches='tight', dpi=500)
+                print('     SAVED TO: ' 
+                            + '../palm_results/{}/run_{}/quadrant_analysis/jpdf/{}_QA_jpdf_WT_{}.png'.format(papy.globals.run_name,
+                            papy.globals.run_number[-3:],
+                            'LE'+ building_height, file))
+                plt.close()
+
+        # quadrant contributions
+        fig, ax = plt.subplots()
+        ax.errorbar(wt_wall_dists, wt_s1_all, yerr=0.1,
+                label = 'Q1', fmt='o', c='blue')
+        ax.errorbar(wt_wall_dists, wt_s2_all, yerr=0.1,
+                label = 'Q2', fmt='o', c='darkorange')
+        ax.errorbar(wt_wall_dists, wt_s3_all, yerr=0.1,
+                label = 'Q3', fmt='o', c='cyan')
+        ax.errorbar(wt_wall_dists, wt_s4_all, yerr=0.1,
+                label = 'Q4', fmt='o', c='red')
+        ax.vlines(0.0066*150.*5., -5., 5., colors='tab:red', 
+                    linestyles='dashed', 
+                    label=r'$5 \cdot h_{r}$')
+        ax.hlines(0., 0.1, 100, colors='darkgray', 
+                    linestyles='dashed')                
+        ax.grid(True)
+        ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
+                    borderaxespad = 0., ncol = 2, 
+                    numpoints = 1, fontsize = 18)
+        ax.set_ylim(-5., 5.)
+        ax.set_ylabel(r'$\overline{u^\prime v^\prime_{q_i}}$ $\overline{u^\prime v^\prime}^{-1}$ (-)', fontsize = 18)
+        ax.set_xlabel(r'$\Delta y$ (m)', fontsize = 18)
+        ax.set_xscale('log')
+        # save plots
+        fig.savefig('../palm_results/{}/run_{}/quadrant_analysis/{}_quadrantcontribution_profile_{}.png'.format(papy.globals.run_name,
+                    papy.globals.run_number[-3:],
+                    'LE'+ building_height, name), bbox_inches='tight', dpi=500)
+        print('     SAVED TO: ' 
+                    + '../palm_results/{}/run_{}/quadrant_analysis/{}_quadrantcontribution_profile_{}.png'.format(papy.globals.run_name,
+                    papy.globals.run_number[-3:],
+                    'LE'+ building_height, name))
+
+    # quadrant contributions
+    fig, ax = plt.subplots()
+    ax.errorbar(wall_dists, s1_all, yerr=0.1,
+            label = 'Q1', fmt='o', c='blue')
+    ax.errorbar(wall_dists, s2_all, yerr=0.1,
+            label = 'Q2', fmt='o', c='darkorange')
+    ax.errorbar(wall_dists, s3_all, yerr=0.1,
+            label = 'Q3', fmt='o', c='cyan')
+    ax.errorbar(wall_dists, s4_all, yerr=0.1,
+            label = 'Q4', fmt='o', c='red')
+    ax.vlines(0.0066*150.*5., -5., 5., colors='tab:red', 
+                linestyles='dashed', 
+                label=r'$5 \cdot h_{r}$')
+    ax.hlines(0., 0.1, 100, colors='darkgray', 
+                linestyles='dashed')                
+    ax.grid(True)
+    ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
+                borderaxespad = 0., ncol = 2, 
+                numpoints = 1, fontsize = 18)
+    ax.set_ylim(-5., 5.)
+    ax.set_ylabel(r'$\overline{u^\prime v^\prime_{q_i}}$ $\overline{u^\prime v^\prime}^{-1}$ (-)', fontsize = 18)
+    ax.set_xlabel(r'$\Delta y$ (m)', fontsize = 18)
+    ax.set_xscale('log')
+    # save plots
+    fig.savefig('../palm_results/{}/run_{}/quadrant_analysis/{}_quadrantcontribution_profile_PALM.png'.format(papy.globals.run_name,
+                papy.globals.run_number[-3:],
+                'LE'+ building_height), bbox_inches='tight', dpi=500)
+    print('     SAVED TO: ' 
+                + '../palm_results/{}/run_{}/quadrant_analysis/{}_quadrantcontribution_profile_PALM.png'.format(papy.globals.run_name,
+                papy.globals.run_number[-3:],
+                'LE' + building_height))
 
 
 
