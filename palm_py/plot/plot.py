@@ -396,7 +396,6 @@ def plot_spectra(f_comp1_sm, S_comp1_sm,
     f_sm = [f_comp1_sm][np.argmin([np.nanmax(f_comp1_sm)])]
     f_sm = f_sm[:len(S_comp1_sm)]
 
-    plt.style.use('classic')
     fig, ax = plt.subplots()
 
     if var_name == 'u':
