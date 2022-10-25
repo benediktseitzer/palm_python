@@ -45,12 +45,12 @@ GLOBAL VARIABLES
 # PALM input files28
 papy.globals.run_name = 'SB_LU'
 papy.globals.run_numbers = ['.008', '.009', '.010', '.011', '.012', 
-                        '.013', '.014', '.015', '.016', '.017', '.018',
-                        '.019', '.020', '.021', '.022', '.023', '.024',
-                        '.025', '.026', '.027', '.028', '.029', '.030', 
-                        '.031', '.032', '.033', '.034', '.035', '.036',
-                        '.037', '.038', '.039', '.040', '.041', '.042',
-                        '.043']
+                            '.013', '.014', '.015', '.016', '.017', '.018',
+                            '.019', '.020', '.021', '.022', '.023', '.024',
+                            '.025', '.026', '.027', '.028', '.029', '.030', 
+                            '.031', '.032', '.033', '.034', '.035', '.036',
+                            '.037', '.038', '.039', '.040', '.041', '.042',
+                            '.043', '.044', '.045', '.046', '.047']
 
 papy.globals.run_number = papy.globals.run_numbers[-1]       
 print('Analyze PALM-run up to: ' + papy.globals.run_number)
@@ -85,13 +85,13 @@ papy.globals.dx = 1.
 Steeringflags
 """
 ################
-compute_back_mean = True
-compute_back_pdfs = False
-compute_back_highermoments = False
-compute_back_var = False
-compute_back_covar = False
-compute_back_spectra = False
-compute_back_lux = False
+compute_LU_mean = True
+compute_LU_pdfs = False
+compute_LU_highermoments = True
+compute_LU_var = True
+compute_LU_covar = True
+compute_LU_spectra = False
+compute_LU_lux = True
 
 compute_quadrant_analysis = True
 
@@ -219,7 +219,7 @@ label_list = ['flat facade', 'rough facade', 'medium rough facade']
 ######################################################
 # compute u-mean alongside the building
 ######################################################
-if compute_back_mean:
+if compute_LU_mean:
     print('\n   compute means')    
     var_name_list = ['u', 'w']
     for var_name in var_name_list:
@@ -300,7 +300,7 @@ if compute_back_mean:
 ######################################################
 # compute PDFs alongside the building
 ######################################################
-if compute_back_pdfs:
+if compute_LU_pdfs:
     print('\n   compute PDFs')    
     # velocity and variance PDFs
     var_name_list = ['u', 'v', 'w']
@@ -446,7 +446,7 @@ if compute_back_pdfs:
 ######################################################
 # compute skewness and kurtosis profiles
 ######################################################
-if compute_back_highermoments:
+if compute_LU_highermoments:
     print('\n   compute higher statistical moments')    
     # velocity and variance PDFs
     var_name_list = ['u', 'w']
@@ -591,7 +591,7 @@ if compute_back_highermoments:
 ######################################################
 # compute variances alongside building
 ######################################################
-if compute_back_var:
+if compute_LU_var:
     var_name_list = ['u', 'w']
     print('\n   compute variances')
 
@@ -673,7 +673,7 @@ if compute_back_var:
 ######################################################
 # compute covariance in back of building
 ######################################################
-if compute_back_covar:
+if compute_LU_covar:
     print('\n   compute co-variance')
     var_vars = np.array([])
     wall_dists = np.array([])
@@ -745,7 +745,7 @@ if compute_back_covar:
 ######################################################
 # Compute spectra
 ######################################################
-if compute_back_spectra:
+if compute_LU_spectra:
     # heights mode
     print('\n   Compute Spectra')
     # grid_name = 'zu'
@@ -782,7 +782,7 @@ if compute_back_spectra:
 ######################################################
 # Intergral length scale Lux
 ######################################################  
-if compute_back_lux:
+if compute_LU_lux:
     print('\n   compute Lux-profiles')
     lux = np.zeros(len(mask_name_list))
     var_name = 'u'

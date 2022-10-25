@@ -975,6 +975,7 @@ if compute_quadrant_analysis:
             plt.colorbar(im1, label=r'$\rho (u^\prime_{q_i},  v^\prime{q_i})$ (-)')
             ax.set_xlabel(r'$u^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
             ax.set_ylabel(r'$v^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
+            ax.set_title(r'PALM - $\Delta y = {} m$'.format(wall_dist[0]))
             # save plots
             fig.savefig('../palm_results/{}/run_{}/quadrant_analysis/jpdf/{}_QA_jpdf_mask_{}.png'.format(papy.globals.run_name,
                         papy.globals.run_number[-3:],
@@ -1093,6 +1094,14 @@ if compute_quadrant_analysis:
                 ax.hlines(0., umin, umax, colors='darkgray', 
                         linestyles='dashed')
                 ax.grid(True)
+                if name[3:5] == 'FL':
+                    ax.set_title(r'Flat - $\Delta y = {} m$'.format(wt_wall_dist[0]))
+                elif name[3:5] == 'WB':
+                    ax.set_title(r'Medium Rough - $\Delta y = {} m$'.format(wt_wall_dist[0]))
+                elif name[3:5] == 'BR':
+                    ax.set_title(r'Rough - $\Delta y = {} m$'.format(wt_wall_dist[0]))
+                else:
+                    ax.set_title(r'Wind tunnel - $\Delta y = {} m$'.format(wt_wall_dist[0]))
                 plt.colorbar(im1, 
                             label=r'$\rho (u^\prime_{q_i},  v^\prime{q_i})$ (-)')
                 ax.set_xlabel(r'$u^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)

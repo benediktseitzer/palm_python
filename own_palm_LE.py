@@ -60,9 +60,9 @@ nc_file_path = '../palm/current_version/JOBS/{}/OUTPUT/'.format(papy.globals.run
 building_height = '_mid'
 mask_name_list = ['M02', 'M03', 'M04', 'M05', 'M06', 'M07', 'M08',
                     'M09', 'M10', 'M11', 'M12']
-# building_height = '_up'
-# mask_name_list = ['M14', 'M15', 'M16', 'M17', 'M18', 'M19',
-#                     'M20', 'M21', 'M22', 'M23', 'M24']
+building_height = '_up'
+mask_name_list = ['M14', 'M15', 'M16', 'M17', 'M18', 'M19',
+                    'M20', 'M21', 'M22', 'M23', 'M24']
 
 # WIND TUNNEL INPIUT FILES
 experiment = 'single_building'
@@ -86,13 +86,13 @@ papy.globals.dx = 1.
 Steeringflags
 """
 ################
-compute_back_mean = True
-compute_back_pdfs = False
-compute_back_highermoments = True
-compute_back_var = True
-compute_back_covar = True
-compute_back_spectra = True
-compute_back_lux = True
+compute_LE_mean = True
+compute_LE_pdfs = False
+compute_LE_highermoments = True
+compute_LE_var = True
+compute_LE_covar = True
+compute_LE_spectra = False
+compute_LE_lux = True
 
 compute_quadrant_analysis = True
 
@@ -224,7 +224,7 @@ label_list = ['flat facade', 'rough facade', 'medium rough facade']
 ######################################################
 # compute u-mean alongside the building
 ######################################################
-if compute_back_mean:
+if compute_LE_mean:
     print('\n   compute means')    
     var_name_list = ['u', 'w']
     for var_name in var_name_list:
@@ -305,7 +305,7 @@ if compute_back_mean:
 ######################################################
 # compute PDFs alongside the building
 ######################################################
-if compute_back_pdfs:
+if compute_LE_pdfs:
     print('\n   compute PDFs')    
     # velocity and variance PDFs
     var_name_list = ['u', 'v', 'w']
@@ -451,7 +451,7 @@ if compute_back_pdfs:
 ######################################################
 # compute skewness and kurtosis profiles
 ######################################################
-if compute_back_highermoments:
+if compute_LE_highermoments:
     print('\n   compute higher statistical moments')    
     var_name_list = ['u', 'w']
     for var_name in var_name_list:
@@ -534,7 +534,7 @@ if compute_back_highermoments:
                     papy.globals.run_number[-3:],
                     'LE', building_height, var_name), bbox_inches='tight', dpi=500)
         print('     SAVED TO: ' 
-                + '../palm_results/{}/run_{}/maskprofiles/{}{   }_skewness_{}_mask_log.png'.format(papy.globals.run_name,
+                + '../palm_results/{}/run_{}/maskprofiles/{}{}_skewness_{}_mask_log.png'.format(papy.globals.run_name,
                 papy.globals.run_number[-3:],
                 'LE', building_height, var_name))                    
         plt.close(12)
@@ -596,7 +596,7 @@ if compute_back_highermoments:
 ######################################################
 # compute variances alongside building
 ######################################################
-if compute_back_var:
+if compute_LE_var:
     var_name_list = ['u', 'w']
     print('\n   compute variances')
 
@@ -678,7 +678,7 @@ if compute_back_var:
 ######################################################
 # compute covariance in back of building
 ######################################################
-if compute_back_covar:
+if compute_LE_covar:
     print('\n   compute co-variance')
     var_vars = np.array([])
     wall_dists = np.array([])
@@ -750,7 +750,7 @@ if compute_back_covar:
 ######################################################
 # Compute spectra
 ######################################################
-if compute_back_spectra:
+if compute_LE_spectra:
     # heights mode
     print('\n   Compute Spectra')
     # grid_name = 'zu'
@@ -787,7 +787,7 @@ if compute_back_spectra:
 ######################################################
 # Intergral length scale Lux
 ######################################################  
-if compute_back_lux:
+if compute_LE_lux:
     print('\n   compute Lux-profiles')
     lux = np.zeros(len(mask_name_list))
     var_name = 'u'
