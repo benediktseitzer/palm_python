@@ -46,9 +46,9 @@ Steeringflags
 compute_SI_back_spectra = False
 compute_SI_front_spectra = False
 compute_LE_up_spectra = False
-compute_LE_mid_spectra = False
+compute_LE_mid_spectra = True
 compute_LU_spectra = False
-compute_BL_spectra = True
+compute_BL_spectra = False
 
 ################
 """
@@ -175,7 +175,7 @@ if compute_LU_spectra:
                                 '.025', '.026', '.027', '.028', '.029', '.030',
                                 '.031', '.032', '.033', '.034', '.035', '.036',
                                 '.037', '.038', '.039', '.040', '.041', '.041',
-                                '.042', '.043']
+                                '.042', '.043', '.044', '.045', '.046', '.047']
 if compute_BL_spectra:
     mask_name_list = ['M04', 'M05', 'M06', 'M07', 
                     'M08', 'M09', 'M10', 'M11', 'M12']
@@ -416,66 +416,66 @@ if compute_SI_back_spectra or compute_SI_front_spectra:
             fig, ax = plt.subplots()            
             if var_name == 'u':
                 # palm
-                h1 = ax.loglog(f_sm[:u_aliasing], S_uu_sm[:u_aliasing], 'x', color='darkmagenta', markersize=3,
+                h1 = ax.loglog(f_sm[:u_aliasing], S_uu_sm[:u_aliasing], 'x', color='darkmagenta', 
                             label=r'PALM - $\Delta y = {}$ m'.format(wall_dist[0]))
                 h2 = ax.loglog(f_sm[u_aliasing:], S_uu_sm[u_aliasing:], 'x',
                             fillstyle='none')
                 # FL
-                fl_h1 = ax.loglog(fl_f_sm[:fl_u_aliasing], fl_S_uu_sm[:fl_u_aliasing], '^', color='forestgreen', markersize=3,
+                fl_h1 = ax.loglog(fl_f_sm[:fl_u_aliasing], fl_S_uu_sm[:fl_u_aliasing], '^', color='forestgreen', 
                             label=r'Flat - $\Delta y = {}$ m'.format(str(time_series_eq[FL_name][FL_file_list[i]].y-y_val_shift)[0:5]))
-                fl_h2 = ax.loglog(fl_f_sm[fl_u_aliasing:], fl_S_uu_sm[fl_u_aliasing:], '^', color='forestgreen', markersize=3,
+                fl_h2 = ax.loglog(fl_f_sm[fl_u_aliasing:], fl_S_uu_sm[fl_u_aliasing:], '^', color='forestgreen', 
                             fillstyle='none')
                 # BR
-                br_h1 = ax.loglog(br_f_sm[:br_u_aliasing], br_S_uu_sm[:br_u_aliasing], 'o', color='darkorange', markersize=3,
+                br_h1 = ax.loglog(br_f_sm[:br_u_aliasing], br_S_uu_sm[:br_u_aliasing], 'o', color='darkorange', 
                             label=r'Rough - $\Delta y = {}$ m'.format(str(time_series_eq[BR_name][BR_file_list[i]].y-y_val_shift)[0:5]))
-                br_h2 = ax.loglog(br_f_sm[br_u_aliasing:], br_S_uu_sm[br_u_aliasing:], 'o', color='darkorange', markersize=3,
+                br_h2 = ax.loglog(br_f_sm[br_u_aliasing:], br_S_uu_sm[br_u_aliasing:], 'o', color='darkorange', 
                             fillstyle='none')
                 # WB
-                wb_h1 = ax.loglog(wb_f_sm[:wb_u_aliasing], wb_S_uu_sm[:wb_u_aliasing], 'd', color='navy', markersize=3,
+                wb_h1 = ax.loglog(wb_f_sm[:wb_u_aliasing], wb_S_uu_sm[:wb_u_aliasing], 'd', color='navy', 
                             label=r'Medium rough - $\Delta y = {}$ m'.format(str(time_series_eq[WB_name][WB_file_list[i]].y-y_val_shift)[0:5]))
-                wb_h2 = ax.loglog(wb_f_sm[wb_u_aliasing:], wb_S_uu_sm[wb_u_aliasing:], 'd', color='navy', markersize=3,
+                wb_h2 = ax.loglog(wb_f_sm[wb_u_aliasing:], wb_S_uu_sm[wb_u_aliasing:], 'd', color='navy', 
                             fillstyle='none')
                 ax.set_ylabel(r"$f\cdot S_{uu}\cdot (\sigma_u \sigma_u)^{-1}$", fontsize = 18)
             elif var_name == 'v':
-                h1 = ax.loglog(f_sm[:v_aliasing], S_vv_sm[:v_aliasing], 'x', color='darkmagenta', markersize=3,
+                h1 = ax.loglog(f_sm[:v_aliasing], S_vv_sm[:v_aliasing], 'x', color='darkmagenta', 
                             label=r'PALM - $u$ $\Delta y = {}$ m'.format(wall_dist[0]))
-                h2 = ax.loglog(f_sm[v_aliasing:], S_vv_sm[v_aliasing:], 'x', markersize=3,
+                h2 = ax.loglog(f_sm[v_aliasing:], S_vv_sm[v_aliasing:], 'x', 
                             fillstyle='none')
                 # FL
-                fl_h1 = ax.loglog(fl_f_sm[:fl_v_aliasing], fl_S_vv_sm[:fl_v_aliasing], '^', color='forestgreen', markersize=3,
+                fl_h1 = ax.loglog(fl_f_sm[:fl_v_aliasing], fl_S_vv_sm[:fl_v_aliasing], '^', color='forestgreen', 
                             label=r'Flat - $\Delta y = {}$ m'.format(str(time_series_eq[FL_name][FL_file_list[i]].y-y_val_shift)[0:5]))
-                fl_h2 = ax.loglog(fl_f_sm[fl_v_aliasing:], fl_S_vv_sm[fl_v_aliasing:], '^', color='forestgreen', markersize=3,
+                fl_h2 = ax.loglog(fl_f_sm[fl_v_aliasing:], fl_S_vv_sm[fl_v_aliasing:], '^', color='forestgreen', 
                             fillstyle='none')
                 # BR
-                br_h1 = ax.loglog(br_f_sm[:br_v_aliasing], br_S_vv_sm[:br_v_aliasing], 'o', color='darkorange', markersize=3,
+                br_h1 = ax.loglog(br_f_sm[:br_v_aliasing], br_S_vv_sm[:br_v_aliasing], 'o', color='darkorange', 
                             label=r'Rough - $\Delta y = {}$ m'.format(str(time_series_eq[BR_name][BR_file_list[i]].y-y_val_shift)[0:5]))
-                br_h2 = ax.loglog(br_f_sm[br_v_aliasing:], br_S_vv_sm[br_v_aliasing:], 'o', color='darkorange', markersize=3,
+                br_h2 = ax.loglog(br_f_sm[br_v_aliasing:], br_S_vv_sm[br_v_aliasing:], 'o', color='darkorange', 
                             fillstyle='none')
                 # WB
-                wb_h1 = ax.loglog(wb_f_sm[:wb_v_aliasing], wb_S_vv_sm[:wb_v_aliasing], 'd', color='navy', markersize=3,
+                wb_h1 = ax.loglog(wb_f_sm[:wb_v_aliasing], wb_S_vv_sm[:wb_v_aliasing], 'd', color='navy', 
                             label=r'Medium rough - $\Delta y = {}$ m'.format(str(time_series_eq[WB_name][WB_file_list[i]].y-y_val_shift)[0:5]))
-                wb_h2 = ax.loglog(wb_f_sm[wb_v_aliasing:], wb_S_vv_sm[wb_v_aliasing:], 'd', color='navy', markersize=3,
+                wb_h2 = ax.loglog(wb_f_sm[wb_v_aliasing:], wb_S_vv_sm[wb_v_aliasing:], 'd', color='navy', 
                             fillstyle='none')
                 ax.set_ylabel(r"$f\cdot S_{vv}\cdot (\sigma_v \sigma_v)^{-1}$", fontsize = 18)
             elif var_name == 'uv':
-                h1 = ax.loglog(f_sm[:uv_aliasing], S_uv_sm[:uv_aliasing], 'x', color='darkmagenta', markersize=3,
+                h1 = ax.loglog(f_sm[:uv_aliasing], S_uv_sm[:uv_aliasing], 'x', color='darkmagenta', 
                             label=r'PALM - $\Delta y = {}$ m'.format(wall_dist[0]))
-                h2 = ax.loglog(f_sm[uv_aliasing:], S_uv_sm[uv_aliasing:], 'x', markersize=3,
+                h2 = ax.loglog(f_sm[uv_aliasing:], S_uv_sm[uv_aliasing:], 'x', 
                             fillstyle='none')
                 # FL
-                fl_h1 = ax.loglog(fl_f_sm[:fl_uv_aliasing], fl_S_uv_sm[:fl_uv_aliasing], '^', color='forestgreen', markersize=3,
+                fl_h1 = ax.loglog(fl_f_sm[:fl_uv_aliasing], fl_S_uv_sm[:fl_uv_aliasing], '^', color='forestgreen', 
                             label=r'Flat - $\Delta y = {}$ m'.format(str(time_series_eq[FL_name][FL_file_list[i]].y-y_val_shift)[0:5]))
-                fl_h2 = ax.loglog(fl_f_sm[fl_uv_aliasing:], fl_S_uv_sm[fl_uv_aliasing:], '^', color='forestgreen', markersize=3,
+                fl_h2 = ax.loglog(fl_f_sm[fl_uv_aliasing:], fl_S_uv_sm[fl_uv_aliasing:], '^', color='forestgreen', 
                             fillstyle='none')
                 # BR
-                br_h1 = ax.loglog(br_f_sm[:br_uv_aliasing], br_S_uv_sm[:br_uv_aliasing], 'o', color='darkorange', markersize=3,
+                br_h1 = ax.loglog(br_f_sm[:br_uv_aliasing], br_S_uv_sm[:br_uv_aliasing], 'o', color='darkorange', 
                             label=r'Rough - $\Delta y = {}$ m'.format(str(time_series_eq[BR_name][BR_file_list[i]].y-y_val_shift)[0:5]))
-                br_h2 = ax.loglog(br_f_sm[br_uv_aliasing:], br_S_uv_sm[br_uv_aliasing:], 'o', color='darkorange', markersize=3,
+                br_h2 = ax.loglog(br_f_sm[br_uv_aliasing:], br_S_uv_sm[br_uv_aliasing:], 'o', color='darkorange', 
                             fillstyle='none')
                 # WB
-                wb_h1 = ax.loglog(wb_f_sm[:wb_uv_aliasing], wb_S_uv_sm[:wb_uv_aliasing], 'd', color='navy', markersize=3,
+                wb_h1 = ax.loglog(wb_f_sm[:wb_uv_aliasing], wb_S_uv_sm[:wb_uv_aliasing], 'd', color='navy', 
                             label=r'Medium rough - $\Delta y = {}$ m'.format(str(time_series_eq[WB_name][WB_file_list[i]].y-y_val_shift)[0:5]))
-                wb_h2 = ax.loglog(wb_f_sm[wb_uv_aliasing:], wb_S_uv_sm[wb_uv_aliasing:], 'd', color='navy', markersize=3,
+                wb_h2 = ax.loglog(wb_f_sm[wb_uv_aliasing:], wb_S_uv_sm[wb_uv_aliasing:], 'd', color='navy', 
                             fillstyle='none')
                 ax.set_ylabel(r"$f\cdot S_{uv}\cdot (\sigma_u \sigma_v)^{-1}$", fontsize = 18)
             
@@ -562,66 +562,66 @@ if compute_LE_mid_spectra or compute_LE_up_spectra:
             fig, ax = plt.subplots()            
             if var_name == 'u':
                 # palm
-                h1 = ax.loglog(f_sm[:u_aliasing], S_uu_sm[:u_aliasing], 'x', color='darkmagenta', markersize=3,
+                h1 = ax.loglog(f_sm[:u_aliasing], S_uu_sm[:u_aliasing], 'x', color='darkmagenta', 
                             label=r'PALM - $\Delta x = {}$ m'.format(wall_dist[0]))
                 h2 = ax.loglog(f_sm[u_aliasing:], S_uu_sm[u_aliasing:], 'x',
                             fillstyle='none')
                 # FL
-                fl_h1 = ax.loglog(fl_f_sm[:fl_u_aliasing], fl_S_uu_sm[:fl_u_aliasing], '^', color='forestgreen', markersize=3,
+                fl_h1 = ax.loglog(fl_f_sm[:fl_u_aliasing], fl_S_uu_sm[:fl_u_aliasing], '^', color='forestgreen', 
                             label=r'Flat - $\Delta x = {}$ m'.format(str(time_series_eq[FL_name][FL_file_list[i]].x-y_val_shift)[0:5]))
-                fl_h2 = ax.loglog(fl_f_sm[fl_u_aliasing:], fl_S_uu_sm[fl_u_aliasing:], '^', color='forestgreen', markersize=3,
+                fl_h2 = ax.loglog(fl_f_sm[fl_u_aliasing:], fl_S_uu_sm[fl_u_aliasing:], '^', color='forestgreen', 
                             fillstyle='none')
                 # BR
-                br_h1 = ax.loglog(br_f_sm[:br_u_aliasing], br_S_uu_sm[:br_u_aliasing], 'o', color='darkorange', markersize=3,
+                br_h1 = ax.loglog(br_f_sm[:br_u_aliasing], br_S_uu_sm[:br_u_aliasing], 'o', color='darkorange', 
                             label=r'Rough - $\Delta x = {}$ m'.format(str(time_series_eq[BR_name][BR_file_list[i]].x-y_val_shift)[0:5]))
-                br_h2 = ax.loglog(br_f_sm[br_u_aliasing:], br_S_uu_sm[br_u_aliasing:], 'o', color='darkorange', markersize=3,
+                br_h2 = ax.loglog(br_f_sm[br_u_aliasing:], br_S_uu_sm[br_u_aliasing:], 'o', color='darkorange', 
                             fillstyle='none')
                 # WB
-                wb_h1 = ax.loglog(wb_f_sm[:wb_u_aliasing], wb_S_uu_sm[:wb_u_aliasing], 'd', color='navy', markersize=3,
+                wb_h1 = ax.loglog(wb_f_sm[:wb_u_aliasing], wb_S_uu_sm[:wb_u_aliasing], 'd', color='navy', 
                             label=r'Medium rough - $\Delta x = {}$ m'.format(str(time_series_eq[WB_name][WB_file_list[i]].x-y_val_shift)[0:5]))
-                wb_h2 = ax.loglog(wb_f_sm[wb_u_aliasing:], wb_S_uu_sm[wb_u_aliasing:], 'd', color='navy', markersize=3,
+                wb_h2 = ax.loglog(wb_f_sm[wb_u_aliasing:], wb_S_uu_sm[wb_u_aliasing:], 'd', color='navy', 
                             fillstyle='none')
                 ax.set_ylabel(r"$f\cdot S_{uu}\cdot (\sigma_u \sigma_u)^{-1}$", fontsize = 18)
             elif var_name == 'v':
-                h1 = ax.loglog(f_sm[:v_aliasing], S_vv_sm[:v_aliasing], 'x', color='darkmagenta', markersize=3,
+                h1 = ax.loglog(f_sm[:v_aliasing], S_vv_sm[:v_aliasing], 'x', color='darkmagenta', 
                             label=r'PALM - $u$ $\Delta x = {}$ m'.format(wall_dist[0]))
-                h2 = ax.loglog(f_sm[v_aliasing:], S_vv_sm[v_aliasing:], 'x', markersize=3,
+                h2 = ax.loglog(f_sm[v_aliasing:], S_vv_sm[v_aliasing:], 'x', 
                             fillstyle='none')
                 # FL
-                fl_h1 = ax.loglog(fl_f_sm[:fl_v_aliasing], fl_S_vv_sm[:fl_v_aliasing], '^', color='forestgreen', markersize=3,
+                fl_h1 = ax.loglog(fl_f_sm[:fl_v_aliasing], fl_S_vv_sm[:fl_v_aliasing], '^', color='forestgreen', 
                             label=r'Flat - $\Delta x = {}$ m'.format(str(time_series_eq[FL_name][FL_file_list[i]].x-y_val_shift)[0:5]))
-                fl_h2 = ax.loglog(fl_f_sm[fl_v_aliasing:], fl_S_vv_sm[fl_v_aliasing:], '^', color='forestgreen', markersize=3,
+                fl_h2 = ax.loglog(fl_f_sm[fl_v_aliasing:], fl_S_vv_sm[fl_v_aliasing:], '^', color='forestgreen', 
                             fillstyle='none')
                 # BR
-                br_h1 = ax.loglog(br_f_sm[:br_v_aliasing], br_S_vv_sm[:br_v_aliasing], 'o', color='darkorange', markersize=3,
+                br_h1 = ax.loglog(br_f_sm[:br_v_aliasing], br_S_vv_sm[:br_v_aliasing], 'o', color='darkorange', 
                             label=r'Rough - $\Delta x = {}$ m'.format(str(time_series_eq[BR_name][BR_file_list[i]].x-y_val_shift)[0:5]))
-                br_h2 = ax.loglog(br_f_sm[br_v_aliasing:], br_S_vv_sm[br_v_aliasing:], 'o', color='darkorange', markersize=3,
+                br_h2 = ax.loglog(br_f_sm[br_v_aliasing:], br_S_vv_sm[br_v_aliasing:], 'o', color='darkorange', 
                             fillstyle='none')
                 # WB
-                wb_h1 = ax.loglog(wb_f_sm[:wb_v_aliasing], wb_S_vv_sm[:wb_v_aliasing], 'd', color='navy', markersize=3,
+                wb_h1 = ax.loglog(wb_f_sm[:wb_v_aliasing], wb_S_vv_sm[:wb_v_aliasing], 'd', color='navy', 
                             label=r'Medium rough - $\Delta x = {}$ m'.format(str(time_series_eq[WB_name][WB_file_list[i]].x-y_val_shift)[0:5]))
-                wb_h2 = ax.loglog(wb_f_sm[wb_v_aliasing:], wb_S_vv_sm[wb_v_aliasing:], 'd', color='navy', markersize=3,
+                wb_h2 = ax.loglog(wb_f_sm[wb_v_aliasing:], wb_S_vv_sm[wb_v_aliasing:], 'd', color='navy', 
                             fillstyle='none')
                 ax.set_ylabel(r"$f\cdot S_{ww}\cdot (\sigma_w \sigma_w)^{-1}$", fontsize = 18)
             elif var_name == 'uv':
-                h1 = ax.loglog(f_sm[:uv_aliasing], S_uv_sm[:uv_aliasing], 'x', color='darkmagenta', markersize=3,
+                h1 = ax.loglog(f_sm[:uv_aliasing], S_uv_sm[:uv_aliasing], 'x', color='darkmagenta', 
                             label=r'PALM - $\Delta x = {}$ m'.format(wall_dist[0]))
-                h2 = ax.loglog(f_sm[uv_aliasing:], S_uv_sm[uv_aliasing:], 'x', markersize=3,
+                h2 = ax.loglog(f_sm[uv_aliasing:], S_uv_sm[uv_aliasing:], 'x', 
                             fillstyle='none')
                 # FL
-                fl_h1 = ax.loglog(fl_f_sm[:fl_uv_aliasing], fl_S_uv_sm[:fl_uv_aliasing], '^', color='forestgreen', markersize=3,
+                fl_h1 = ax.loglog(fl_f_sm[:fl_uv_aliasing], fl_S_uv_sm[:fl_uv_aliasing], '^', color='forestgreen', 
                             label=r'Flat - $\Delta x = {}$ m'.format(str(time_series_eq[FL_name][FL_file_list[i]].x-y_val_shift)[0:5]))
-                fl_h2 = ax.loglog(fl_f_sm[fl_uv_aliasing:], fl_S_uv_sm[fl_uv_aliasing:], '^', color='forestgreen', markersize=3,
+                fl_h2 = ax.loglog(fl_f_sm[fl_uv_aliasing:], fl_S_uv_sm[fl_uv_aliasing:], '^', color='forestgreen', 
                             fillstyle='none')
                 # BR
-                br_h1 = ax.loglog(br_f_sm[:br_uv_aliasing], br_S_uv_sm[:br_uv_aliasing], 'o', color='darkorange', markersize=3,
+                br_h1 = ax.loglog(br_f_sm[:br_uv_aliasing], br_S_uv_sm[:br_uv_aliasing], 'o', color='darkorange', 
                             label=r'Rough - $\Delta x = {}$ m'.format(str(time_series_eq[BR_name][BR_file_list[i]].x-y_val_shift)[0:5]))
-                br_h2 = ax.loglog(br_f_sm[br_uv_aliasing:], br_S_uv_sm[br_uv_aliasing:], 'o', color='darkorange', markersize=3,
+                br_h2 = ax.loglog(br_f_sm[br_uv_aliasing:], br_S_uv_sm[br_uv_aliasing:], 'o', color='darkorange', 
                             fillstyle='none')
                 # WB
-                wb_h1 = ax.loglog(wb_f_sm[:wb_uv_aliasing], wb_S_uv_sm[:wb_uv_aliasing], 'd', color='navy', markersize=3,
+                wb_h1 = ax.loglog(wb_f_sm[:wb_uv_aliasing], wb_S_uv_sm[:wb_uv_aliasing], 'd', color='navy', 
                             label=r'Medium rough - $\Delta x = {}$ m'.format(str(time_series_eq[WB_name][WB_file_list[i]].x-y_val_shift)[0:5]))
-                wb_h2 = ax.loglog(wb_f_sm[wb_uv_aliasing:], wb_S_uv_sm[wb_uv_aliasing:], 'd', color='navy', markersize=3,
+                wb_h2 = ax.loglog(wb_f_sm[wb_uv_aliasing:], wb_S_uv_sm[wb_uv_aliasing:], 'd', color='navy', 
                             fillstyle='none')
                 ax.set_ylabel(r"$f\cdot S_{uw}\cdot (\sigma_u \sigma_w)^{-1}$", fontsize = 18)
             
@@ -714,66 +714,66 @@ if compute_LU_spectra:
             fig, ax = plt.subplots()            
             if var_name == 'u':
                 # palm
-                h1 = ax.loglog(f_sm[:u_aliasing], S_uu_sm[:u_aliasing], 'x', color='darkmagenta', markersize=3,
+                h1 = ax.loglog(f_sm[:u_aliasing], S_uu_sm[:u_aliasing], 'x', color='darkmagenta', 
                             label=r'PALM - $\Delta x = {}$ m'.format(wall_dist[0]))
                 h2 = ax.loglog(f_sm[u_aliasing:], S_uu_sm[u_aliasing:], 'x',
                             fillstyle='none')
                 # FL
-                fl_h1 = ax.loglog(fl_f_sm[:fl_u_aliasing], fl_S_uu_sm[:fl_u_aliasing], '^', color='forestgreen', markersize=3,
+                fl_h1 = ax.loglog(fl_f_sm[:fl_u_aliasing], fl_S_uu_sm[:fl_u_aliasing], '^', color='forestgreen', 
                             label=r'Flat - $\Delta x = {}$ m'.format(str(abs(time_series_eq[FL_name][FL_file_list[i]].x)-y_val_shift)[0:5]))
-                fl_h2 = ax.loglog(fl_f_sm[fl_u_aliasing:], fl_S_uu_sm[fl_u_aliasing:], '^', color='forestgreen', markersize=3,
+                fl_h2 = ax.loglog(fl_f_sm[fl_u_aliasing:], fl_S_uu_sm[fl_u_aliasing:], '^', color='forestgreen', 
                             fillstyle='none')
                 # BR
-                br_h1 = ax.loglog(br_f_sm[:br_u_aliasing], br_S_uu_sm[:br_u_aliasing], 'o', color='darkorange', markersize=3,
+                br_h1 = ax.loglog(br_f_sm[:br_u_aliasing], br_S_uu_sm[:br_u_aliasing], 'o', color='darkorange', 
                             label=r'Rough - $\Delta x = {}$ m'.format(str(abs(time_series_eq[BR_name][BR_file_list[i]].x)-y_val_shift)[0:5]))
-                br_h2 = ax.loglog(br_f_sm[br_u_aliasing:], br_S_uu_sm[br_u_aliasing:], 'o', color='darkorange', markersize=3,
+                br_h2 = ax.loglog(br_f_sm[br_u_aliasing:], br_S_uu_sm[br_u_aliasing:], 'o', color='darkorange', 
                             fillstyle='none')
                 # WB
-                wb_h1 = ax.loglog(wb_f_sm[:wb_u_aliasing], wb_S_uu_sm[:wb_u_aliasing], 'd', color='navy', markersize=3,
+                wb_h1 = ax.loglog(wb_f_sm[:wb_u_aliasing], wb_S_uu_sm[:wb_u_aliasing], 'd', color='navy', 
                             label=r'Medium rough - $\Delta x = {}$ m'.format(str(abs(time_series_eq[WB_name][WB_file_list[i]].x)-y_val_shift)[0:5]))
-                wb_h2 = ax.loglog(wb_f_sm[wb_u_aliasing:], wb_S_uu_sm[wb_u_aliasing:], 'd', color='navy', markersize=3,
+                wb_h2 = ax.loglog(wb_f_sm[wb_u_aliasing:], wb_S_uu_sm[wb_u_aliasing:], 'd', color='navy', 
                             fillstyle='none')
                 ax.set_ylabel(r"$f\cdot S_{uu}\cdot (\sigma_u \sigma_u)^{-1}$", fontsize = 18)
             elif var_name == 'v':
-                h1 = ax.loglog(f_sm[:v_aliasing], S_vv_sm[:v_aliasing], 'x', color='darkmagenta', markersize=3,
+                h1 = ax.loglog(f_sm[:v_aliasing], S_vv_sm[:v_aliasing], 'x', color='darkmagenta', 
                             label=r'PALM - $u$ $\Delta x = {}$ m'.format(wall_dist[0]))
-                h2 = ax.loglog(f_sm[v_aliasing:], S_vv_sm[v_aliasing:], 'x', markersize=3,
+                h2 = ax.loglog(f_sm[v_aliasing:], S_vv_sm[v_aliasing:], 'x', 
                             fillstyle='none')
                 # FL
-                fl_h1 = ax.loglog(fl_f_sm[:fl_v_aliasing], fl_S_vv_sm[:fl_v_aliasing], '^', color='forestgreen', markersize=3,
+                fl_h1 = ax.loglog(fl_f_sm[:fl_v_aliasing], fl_S_vv_sm[:fl_v_aliasing], '^', color='forestgreen', 
                             label=r'Flat - $\Delta x = {}$ m'.format(str(abs(time_series_eq[FL_name][FL_file_list[i]].x)-y_val_shift)[0:5]))
-                fl_h2 = ax.loglog(fl_f_sm[fl_v_aliasing:], fl_S_vv_sm[fl_v_aliasing:], '^', color='forestgreen', markersize=3,
+                fl_h2 = ax.loglog(fl_f_sm[fl_v_aliasing:], fl_S_vv_sm[fl_v_aliasing:], '^', color='forestgreen', 
                             fillstyle='none')
                 # BR
-                br_h1 = ax.loglog(br_f_sm[:br_v_aliasing], br_S_vv_sm[:br_v_aliasing], 'o', color='darkorange', markersize=3,
+                br_h1 = ax.loglog(br_f_sm[:br_v_aliasing], br_S_vv_sm[:br_v_aliasing], 'o', color='darkorange', 
                             label=r'Rough - $\Delta x = {}$ m'.format(str(abs(time_series_eq[BR_name][BR_file_list[i]].x)-y_val_shift)[0:5]))
-                br_h2 = ax.loglog(br_f_sm[br_v_aliasing:], br_S_vv_sm[br_v_aliasing:], 'o', color='darkorange', markersize=3,
+                br_h2 = ax.loglog(br_f_sm[br_v_aliasing:], br_S_vv_sm[br_v_aliasing:], 'o', color='darkorange', 
                             fillstyle='none')
                 # WB
-                wb_h1 = ax.loglog(wb_f_sm[:wb_v_aliasing], wb_S_vv_sm[:wb_v_aliasing], 'd', color='navy', markersize=3,
+                wb_h1 = ax.loglog(wb_f_sm[:wb_v_aliasing], wb_S_vv_sm[:wb_v_aliasing], 'd', color='navy', 
                             label=r'Medium rough - $\Delta x = {}$ m'.format(str(abs(time_series_eq[WB_name][WB_file_list[i]].x)-y_val_shift)[0:5]))
-                wb_h2 = ax.loglog(wb_f_sm[wb_v_aliasing:], wb_S_vv_sm[wb_v_aliasing:], 'd', color='navy', markersize=3,
+                wb_h2 = ax.loglog(wb_f_sm[wb_v_aliasing:], wb_S_vv_sm[wb_v_aliasing:], 'd', color='navy', 
                             fillstyle='none')
                 ax.set_ylabel(r"$f\cdot S_{ww}\cdot (\sigma_w \sigma_w)^{-1}$", fontsize = 18)
             elif var_name == 'uv':
-                h1 = ax.loglog(f_sm[:uv_aliasing], S_uv_sm[:uv_aliasing], 'x', color='darkmagenta', markersize=3,
+                h1 = ax.loglog(f_sm[:uv_aliasing], S_uv_sm[:uv_aliasing], 'x', color='darkmagenta', 
                             label=r'PALM - $\Delta x = {}$ m'.format(wall_dist[0]))
-                h2 = ax.loglog(f_sm[uv_aliasing:], S_uv_sm[uv_aliasing:], 'x', markersize=3,
+                h2 = ax.loglog(f_sm[uv_aliasing:], S_uv_sm[uv_aliasing:], 'x', 
                             fillstyle='none')
                 # FL
-                fl_h1 = ax.loglog(fl_f_sm[:fl_uv_aliasing], fl_S_uv_sm[:fl_uv_aliasing], '^', color='forestgreen', markersize=3,
+                fl_h1 = ax.loglog(fl_f_sm[:fl_uv_aliasing], fl_S_uv_sm[:fl_uv_aliasing], '^', color='forestgreen', 
                             label=r'Flat - $\Delta x = {}$ m'.format(str(abs(time_series_eq[FL_name][FL_file_list[i]].x)-y_val_shift)[0:5]))
-                fl_h2 = ax.loglog(fl_f_sm[fl_uv_aliasing:], fl_S_uv_sm[fl_uv_aliasing:], '^', color='forestgreen', markersize=3,
+                fl_h2 = ax.loglog(fl_f_sm[fl_uv_aliasing:], fl_S_uv_sm[fl_uv_aliasing:], '^', color='forestgreen', 
                             fillstyle='none')
                 # BR
-                br_h1 = ax.loglog(br_f_sm[:br_uv_aliasing], br_S_uv_sm[:br_uv_aliasing], 'o', color='darkorange', markersize=3,
+                br_h1 = ax.loglog(br_f_sm[:br_uv_aliasing], br_S_uv_sm[:br_uv_aliasing], 'o', color='darkorange', 
                             label=r'Rough - $\Delta x = {}$ m'.format(str(abs(time_series_eq[BR_name][BR_file_list[i]].x)-y_val_shift)[0:5]))
-                br_h2 = ax.loglog(br_f_sm[br_uv_aliasing:], br_S_uv_sm[br_uv_aliasing:], 'o', color='darkorange', markersize=3,
+                br_h2 = ax.loglog(br_f_sm[br_uv_aliasing:], br_S_uv_sm[br_uv_aliasing:], 'o', color='darkorange', 
                             fillstyle='none')
                 # WB
-                wb_h1 = ax.loglog(wb_f_sm[:wb_uv_aliasing], wb_S_uv_sm[:wb_uv_aliasing], 'd', color='navy', markersize=3,
+                wb_h1 = ax.loglog(wb_f_sm[:wb_uv_aliasing], wb_S_uv_sm[:wb_uv_aliasing], 'd', color='navy', 
                             label=r'Medium rough - $\Delta x = {}$ m'.format(str(abs(time_series_eq[WB_name][WB_file_list[i]].x)-y_val_shift)[0:5]))
-                wb_h2 = ax.loglog(wb_f_sm[wb_uv_aliasing:], wb_S_uv_sm[wb_uv_aliasing:], 'd', color='navy', markersize=3,
+                wb_h2 = ax.loglog(wb_f_sm[wb_uv_aliasing:], wb_S_uv_sm[wb_uv_aliasing:], 'd', color='navy', 
                             fillstyle='none')
                 ax.set_ylabel(r"$f\cdot S_{uw}\cdot (\sigma_u \sigma_w)^{-1}$", fontsize = 18)
             
@@ -846,38 +846,38 @@ if compute_BL_spectra:
             fig, ax = plt.subplots()            
             if var_name == 'u':
                 # palm
-                h1 = ax.loglog(f_sm[:u_aliasing], S_uu_sm[:u_aliasing], 'x', color='darkmagenta', markersize=3,
+                h1 = ax.loglog(f_sm[:u_aliasing], S_uu_sm[:u_aliasing], 'x', color='darkmagenta', 
                             label=r'PALM - $z = {}$ m'.format(wall_dist[0]))
                 h2 = ax.loglog(f_sm[u_aliasing:], S_uu_sm[u_aliasing:], 'x',
                             fillstyle='none')
                 # BL
-                fl_h1 = ax.loglog(fl_f_sm[:fl_u_aliasing], fl_S_uu_sm[:fl_u_aliasing], '^', color='orangered', markersize=3,
+                fl_h1 = ax.loglog(fl_f_sm[:fl_u_aliasing], fl_S_uu_sm[:fl_u_aliasing], '^', color='orangered', 
                             label=r'Boundary Layer - $z = {}$ m'.format(str(abs(time_series_eq[BL_name][BL_file_list[i]].z))[0:5]))
-                fl_h2 = ax.loglog(fl_f_sm[fl_u_aliasing:], fl_S_uu_sm[fl_u_aliasing:], '^', color='orangered', markersize=3,
+                fl_h2 = ax.loglog(fl_f_sm[fl_u_aliasing:], fl_S_uu_sm[fl_u_aliasing:], '^', color='orangered', 
                             fillstyle='none')
 
                 ax.set_ylabel(r"$f\cdot S_{uu}\cdot (\sigma_u \sigma_u)^{-1}$", fontsize = 18)
             elif var_name == 'v':
-                h1 = ax.loglog(f_sm[:v_aliasing], S_vv_sm[:v_aliasing], 'x', color='darkmagenta', markersize=3,
+                h1 = ax.loglog(f_sm[:v_aliasing], S_vv_sm[:v_aliasing], 'x', color='darkmagenta', 
                             label=r'PALM - $u$ $z = {}$ m'.format(wall_dist[0]))
-                h2 = ax.loglog(f_sm[v_aliasing:], S_vv_sm[v_aliasing:], 'x', markersize=3,
+                h2 = ax.loglog(f_sm[v_aliasing:], S_vv_sm[v_aliasing:], 'x', 
                             fillstyle='none')
                 # BL
-                fl_h1 = ax.loglog(fl_f_sm[:fl_v_aliasing], fl_S_vv_sm[:fl_v_aliasing], '^', color='orangered', markersize=3,
+                fl_h1 = ax.loglog(fl_f_sm[:fl_v_aliasing], fl_S_vv_sm[:fl_v_aliasing], '^', color='orangered', 
                             label=r'Boundary Layer - $z = {}$ m'.format(str(abs(time_series_eq[BL_name][BL_file_list[i]].z))[0:5]))
-                fl_h2 = ax.loglog(fl_f_sm[fl_v_aliasing:], fl_S_vv_sm[fl_v_aliasing:], '^', color='orangered', markersize=3,
+                fl_h2 = ax.loglog(fl_f_sm[fl_v_aliasing:], fl_S_vv_sm[fl_v_aliasing:], '^', color='orangered', 
                             fillstyle='none')
 
                 ax.set_ylabel(r"$f\cdot S_{ww}\cdot (\sigma_w \sigma_w)^{-1}$", fontsize = 18)
             elif var_name == 'uv':
-                h1 = ax.loglog(f_sm[:uv_aliasing], S_uv_sm[:uv_aliasing], 'x', color='darkmagenta', markersize=3,
+                h1 = ax.loglog(f_sm[:uv_aliasing], S_uv_sm[:uv_aliasing], 'x', color='darkmagenta', 
                             label=r'PALM - $z = {}$ m'.format(wall_dist[0]))
-                h2 = ax.loglog(f_sm[uv_aliasing:], S_uv_sm[uv_aliasing:], 'x', markersize=3,
+                h2 = ax.loglog(f_sm[uv_aliasing:], S_uv_sm[uv_aliasing:], 'x', 
                             fillstyle='none')
                 # BL
-                fl_h1 = ax.loglog(fl_f_sm[:fl_uv_aliasing], fl_S_uv_sm[:fl_uv_aliasing], '^', color='orangered', markersize=3,
+                fl_h1 = ax.loglog(fl_f_sm[:fl_uv_aliasing], fl_S_uv_sm[:fl_uv_aliasing], '^', color='orangered', 
                             label=r'Boundary Layer - $z = {}$ m'.format(str(abs(time_series_eq[BL_name][BL_file_list[i]].z))[0:5]))
-                fl_h2 = ax.loglog(fl_f_sm[fl_uv_aliasing:], fl_S_uv_sm[fl_uv_aliasing:], '^', color='orangered', markersize=3,
+                fl_h2 = ax.loglog(fl_f_sm[fl_uv_aliasing:], fl_S_uv_sm[fl_uv_aliasing:], '^', color='orangered', 
                             fillstyle='none')
                 ax.set_ylabel(r"$f\cdot S_{uw}\cdot (\sigma_u \sigma_w)^{-1}$", fontsize = 18)
             
