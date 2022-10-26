@@ -278,7 +278,7 @@ if compute_front_mean:
                             label=r'$5 \cdot h_{r}$')
                 ax.set_ylabel(r'$\overline{v}$ $u_{ref}^{-1}$ (-)', fontsize = 18)
                 
-        ax.grid(True)
+        ax.grid(True, 'both', 'both')
         ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                     borderaxespad = 0., ncol = 2, 
                     numpoints = 1, fontsize = 18)
@@ -338,7 +338,7 @@ if compute_front_pdfs:
                 ax.vlines(var_mean, 0., 2., colors='tab:red', 
                             linestyles='dashed', 
                             label=r'$\overline{w}$' + r'$u_{ref}^{-1}$')
-            ax.grid(True)
+            ax.grid(True, 'both', 'both')
             ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                         borderaxespad = 0., ncol = 2, 
                         numpoints = 1, fontsize = 18)
@@ -376,7 +376,7 @@ if compute_front_pdfs:
                             linestyles='dashed', 
                             label=r'$\overline{w}$ ' + r'$u_{ref}^{-2}$')
                 ax.set_xlabel(r'$w^\prime w^\prime$ ' + r'$u_{ref}^{-2}$ (-)', fontsize = 18)
-            ax.grid(True)
+            ax.grid(True, 'both', 'both')
             ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                         borderaxespad = 0., ncol = 2, 
                         numpoints = 1, fontsize = 18)
@@ -420,7 +420,7 @@ if compute_front_pdfs:
         ax.vlines(np.mean(var_flux), 0., 2., colors='tab:red', 
                         linestyles='dashed', 
                         label=r'$\overline{u^\prime v^\prime}$ ' + r'$u_{ref}^{-2}$')
-        ax.grid(True)
+        ax.grid(True, 'both', 'both')
         ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                     borderaxespad = 0., ncol = 2, 
                     numpoints = 1, fontsize = 18)
@@ -510,7 +510,7 @@ if compute_front_highermoments:
                             linestyles='dashed', 
                             label=r'$5 \cdot h_{r}$')
                 ax.set_ylabel(r'$\gamma_v$ (-)', fontsize = 18)
-        ax.grid(True)
+        ax.grid(True, 'both', 'both')
         ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                     borderaxespad = 0., ncol = 2, 
                     numpoints = 1, fontsize = 18)
@@ -563,7 +563,7 @@ if compute_front_highermoments:
                             linestyles='dashed', 
                             label=r'$5 \cdot h_{r}$')
                 ax.set_ylabel(r'$\beta_v$ (-)', fontsize = 18)
-        ax.grid(True)
+        ax.grid(True, 'both', 'both')
         ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                     borderaxespad = 0., ncol = 2, 
                     numpoints = 1, fontsize = 18)
@@ -647,7 +647,7 @@ if compute_front_var:
                             linestyles='dashed', 
                             label=r'$5 \cdot h_{r}$')
                 ax.set_ylabel(r'$\overline{v^\prime v^\prime}$ $u_{ref}^{-2}$ (-)', fontsize = 18)
-        ax.grid(True)
+        ax.grid(True, 'both', 'both')
         ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                     borderaxespad = 0., ncol = 2, 
                     numpoints = 1, fontsize = 18)
@@ -828,7 +828,7 @@ if compute_front_lux:
             linestyles='dashed', 
             label=r'$5 \cdot h_{r}$')
 
-    ax.grid(True)
+    ax.grid(True, 'both', 'both')
     ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                 borderaxespad = 0., ncol = 2, 
                 numpoints = 1, fontsize = 18)
@@ -933,7 +933,7 @@ if compute_quadrant_analysis:
                     markersize=2, label='Q3')
             ax.plot(varu_fluc[q4_ind], varv_fluc[q4_ind] ,'o', color='red',
                     markersize=2, label='Q4')
-            ax.grid(True)
+            ax.grid(True, 'both', 'both')
             ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                         borderaxespad = 0., ncol = 2, 
                         numpoints = 1, fontsize = 18)
@@ -971,7 +971,7 @@ if compute_quadrant_analysis:
                     linestyles='dashed')
             ax.hlines(0., umin, umax, colors='darkgray', 
                     linestyles='dashed')
-            ax.grid(True)
+            ax.grid(True, 'both', 'both')
             plt.colorbar(im1, label=r'$\rho (u^\prime_{q_i},  v^\prime{q_i})$ (-)')
             ax.set_xlabel(r'$u^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
             ax.set_ylabel(r'$v^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
@@ -1055,7 +1055,7 @@ if compute_quadrant_analysis:
                         markersize=2, label='Q3')
                 ax.plot(wt_varu_fluc[wt_q4_ind], wt_varv_fluc[wt_q4_ind] ,'o', color='red',
                         markersize=2, label='Q4')
-                ax.grid(True)
+                ax.grid(True, 'both', 'both')
                 ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                             borderaxespad = 0., ncol = 2, 
                             numpoints = 1, fontsize = 18)
@@ -1093,15 +1093,15 @@ if compute_quadrant_analysis:
                         linestyles='dashed')
                 ax.hlines(0., umin, umax, colors='darkgray', 
                         linestyles='dashed')
-                ax.grid(True)
+                ax.grid(True, 'both', 'both')
                 if name[3:5] == 'FL':
-                    ax.set_title(r'Flat - $\Delta y = {} m$'.format(wt_wall_dist[0]))
+                    ax.set_title(r'Flat - $\Delta y = {} m$'.format(str(wt_wall_dist[0])[:5]))
                 elif name[3:5] == 'WB':
-                    ax.set_title(r'Medium Rough - $\Delta y = {} m$'.format(wt_wall_dist[0]))
+                    ax.set_title(r'Medium Rough - $\Delta y = {} m$'.format(str(wt_wall_dist[0])[:5]))
                 elif name[3:5] == 'BR':
-                    ax.set_title(r'Rough - $\Delta y = {} m$'.format(wt_wall_dist[0]))
+                    ax.set_title(r'Rough - $\Delta y = {} m$'.format(str(wt_wall_dist[0])[:5]))
                 else:
-                    ax.set_title(r'Wind tunnel - $\Delta y = {} m$'.format(wt_wall_dist[0]))
+                    ax.set_title(r'Wind tunnel - $\Delta y = {} m$'.format(str(wt_wall_dist[0])[:5]))
                 plt.colorbar(im1, 
                             label=r'$\rho (u^\prime_{q_i},  v^\prime{q_i})$ (-)')
                 ax.set_xlabel(r'$u^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
@@ -1131,7 +1131,7 @@ if compute_quadrant_analysis:
                     label=r'$5 \cdot h_{r}$')
         ax.hlines(0., 0.1, 100, colors='darkgray', 
                     linestyles='dashed')                
-        ax.grid(True)
+        ax.grid(True, 'both', 'both')
         ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                     borderaxespad = 0., ncol = 2, 
                     numpoints = 1, fontsize = 18)
@@ -1163,7 +1163,7 @@ if compute_quadrant_analysis:
                 label=r'$5 \cdot h_{r}$')
     ax.hlines(0., 0.1, 100, colors='darkgray', 
                 linestyles='dashed')                
-    ax.grid(True)
+    ax.grid(True, 'both', 'both')
     ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                 borderaxespad = 0., ncol = 2, 
                 numpoints = 1, fontsize = 18)

@@ -21,6 +21,7 @@ import scipy.stats as stats
 
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FormatStrFormatter
+from matplotlib import colors
 plt.style.use('classic')
 
 import palm_py as papy
@@ -85,13 +86,13 @@ papy.globals.dx = 1.
 Steeringflags
 """
 ################
-compute_LU_mean = True
+compute_LU_mean = False
 compute_LU_pdfs = False
-compute_LU_highermoments = True
-compute_LU_var = True
-compute_LU_covar = True
+compute_LU_highermoments = False
+compute_LU_var = False
+compute_LU_covar = False
 compute_LU_spectra = False
-compute_LU_lux = True
+compute_LU_lux = False
 
 compute_quadrant_analysis = True
 
@@ -280,7 +281,7 @@ if compute_LU_mean:
                             label=r'$5 \cdot h_{r}$')
                 ax.set_ylabel(r'$\overline{w}$ $u_{ref}^{-1}$ (-)', fontsize = 18)                            
                 
-        ax.grid(True)
+        ax.grid(True, 'both', 'both')
         ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                     borderaxespad = 0., ncol = 2, 
                     numpoints = 1, fontsize = 18)
@@ -340,7 +341,7 @@ if compute_LU_pdfs:
                 ax.vlines(var_mean, 0., 2., colors='tab:red', 
                             linestyles='dashed', 
                             label=r'$\overline{w}$' + r'$u_{ref}^{-1}$')
-            ax.grid(True)
+            ax.grid(True, 'both', 'both')
             ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                         borderaxespad = 0., ncol = 2, 
                         numpoints = 1, fontsize = 18)
@@ -378,7 +379,7 @@ if compute_LU_pdfs:
                             linestyles='dashed', 
                             label=r'$\overline{w}$ ' + r'$u_{ref}^{-2}$')
                 ax.set_xlabel(r'$w^\prime w^\prime$ ' + r'$u_{ref}^{-2}$ (-)', fontsize = 18)
-            ax.grid(True)
+            ax.grid(True, 'both', 'both')
             ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                         borderaxespad = 0., ncol = 2, 
                         numpoints = 1, fontsize = 18)
@@ -422,7 +423,7 @@ if compute_LU_pdfs:
         ax.vlines(np.mean(var_flux), 0., 2., colors='tab:red', 
                         linestyles='dashed', 
                         label=r'$\overline{u^\prime v^\prime}$ ' + r'$u_{ref}^{-2}$')
-        ax.grid(True)
+        ax.grid(True, 'both', 'both')
         ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                     borderaxespad = 0., ncol = 2, 
                     numpoints = 1, fontsize = 18)
@@ -518,7 +519,7 @@ if compute_LU_highermoments:
                             linestyles='dashed', 
                             label=r'$5 \cdot h_{r}$')
                 ax.set_ylabel(r'$\gamma_w$ (-)', fontsize = 18)
-        ax.grid(True)
+        ax.grid(True, 'both', 'both')
         ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                     borderaxespad = 0., ncol = 2, 
                     numpoints = 1, fontsize = 18)
@@ -571,7 +572,7 @@ if compute_LU_highermoments:
                             linestyles='dashed', 
                             label=r'$5 \cdot h_{r}$')
                 ax.set_ylabel(r'$\beta_w$ (-)', fontsize = 18)
-        ax.grid(True)
+        ax.grid(True, 'both', 'both')
         ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                     borderaxespad = 0., ncol = 2, 
                     numpoints = 1, fontsize = 18)
@@ -654,7 +655,7 @@ if compute_LU_var:
                             linestyles='dashed', 
                             label=r'$5 \cdot h_{r}$')
                 ax.set_ylabel(r'$\overline{w^\prime w^\prime}$ $u_{ref}^{-2}$ (-)', fontsize = 18)
-        ax.grid(True)
+        ax.grid(True, 'both', 'both')
         ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                     borderaxespad = 0., ncol = 2, 
                     numpoints = 1, fontsize = 18)
@@ -835,7 +836,7 @@ if compute_LU_lux:
             linestyles='dashed', 
             label=r'$5 \cdot h_{r}$')
 
-    ax.grid(True)
+    ax.grid(True, 'both', 'both')
     ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                 borderaxespad = 0., ncol = 2, 
                 numpoints = 1, fontsize = 18)
@@ -880,8 +881,8 @@ if compute_quadrant_analysis:
         total_varv = np.array([])
         for run_no in papy.globals.run_numbers:
             nc_file = '{}_masked_{}{}.nc'.format(papy.globals.run_name, mask, run_no)
-            varu, varu_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'w')
-            varv, varv_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'u')
+            varu, varu_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'u')
+            varv, varv_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'w')
             y, y_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'x')
             total_varu = np.concatenate([total_varu, varu/palm_ref])
             total_varv = np.concatenate([total_varv, varv/palm_ref])
@@ -942,12 +943,12 @@ if compute_quadrant_analysis:
                     markersize=2, label='Q3')
             ax.plot(varu_fluc[q4_ind], varv_fluc[q4_ind] ,'o', color='red',
                     markersize=2, label='Q4')
-            ax.grid(True)
+            ax.grid(True, 'both', 'both')
             ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                         borderaxespad = 0., ncol = 2, 
                         numpoints = 1, fontsize = 18)
             ax.set_xlabel(r'$u^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
-            ax.set_ylabel(r'$v^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
+            ax.set_ylabel(r'$w^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
             # save plots
             fig.savefig('../palm_results/{}/run_{}/quadrant_analysis/scatter/{}_QA_scatter_mask_{}.png'.format(papy.globals.run_name,
                         papy.globals.run_number[-3:],
@@ -967,23 +968,25 @@ if compute_quadrant_analysis:
             positions = np.vstack([u_jpdf.ravel(), v_jpdf.ravel()])
             values = np.vstack([varu_fluc, varv_fluc])
             kernel = stats.gaussian_kde(values)
-            jpdf = np.reshape(kernel.evaluate(positions).T, u_jpdf.shape)        
+            jpdf = np.reshape(kernel.evaluate(positions).T, u_jpdf.shape)
             # plot
             fig, ax = plt.subplots()
-            fig.gca().set_aspect('equal', adjustable='box')        
+            fig.gca().set_aspect('equal', adjustable='box')
             im1 = ax.contourf(jpdf.T, cmap='YlGnBu',
                     extent=[umin, umax, vmin, vmax], levels = 15)
             im2 = ax.contour(jpdf.T, extent=[umin, umax, vmin, vmax], levels = 15,
                     colors='gray')
-
             ax.vlines(0., vmin, vmax, colors='darkgray', 
                     linestyles='dashed')
             ax.hlines(0., umin, umax, colors='darkgray', 
                     linestyles='dashed')
-            ax.grid(True)
-            plt.colorbar(im1, label=r'$\rho (u^\prime_{q_i},  v^\prime{q_i})$ (-)')
+            ax.grid(True, 'both', 'both')
+            ax.set_xlim(-0.4, 0.4)
+            ax.set_ylim(-0.4, 0.4)
+            plt.colorbar(im1, label=r'$\rho (u^\prime_{q_i},  w^\prime_{q_i})$ (-)')
             ax.set_xlabel(r'$u^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
-            ax.set_ylabel(r'$v^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
+            ax.set_ylabel(r'$w^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
+            ax.set_title(r'PALM - $\Delta y = {} m$'.format(wall_dist[0]))            
             # save plots
             fig.savefig('../palm_results/{}/run_{}/quadrant_analysis/jpdf/{}_QA_jpdf_mask_{}.png'.format(papy.globals.run_name,
                         papy.globals.run_number[-3:],
@@ -1063,12 +1066,12 @@ if compute_quadrant_analysis:
                         markersize=2, label='Q3')
                 ax.plot(wt_varu_fluc[wt_q4_ind], wt_varv_fluc[wt_q4_ind] ,'o', color='red',
                         markersize=2, label='Q4')
-                ax.grid(True)
+                ax.grid(True, 'both', 'both')
                 ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                             borderaxespad = 0., ncol = 2, 
                             numpoints = 1, fontsize = 18)
                 ax.set_xlabel(r'$u^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
-                ax.set_ylabel(r'$v^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
+                ax.set_ylabel(r'$w^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
                 # save plots
                 fig.savefig('../palm_results/{}/run_{}/quadrant_analysis/scatter/{}_QA_scatter_WT_{}.png'.format(papy.globals.run_name,
                             papy.globals.run_number[-3:],
@@ -1101,11 +1104,21 @@ if compute_quadrant_analysis:
                         linestyles='dashed')
                 ax.hlines(0., umin, umax, colors='darkgray', 
                         linestyles='dashed')
-                ax.grid(True)
+                ax.grid(True, 'both', 'both')
+                ax.set_xlim(-0.4, 0.4)
+                ax.set_ylim(-0.4, 0.4)
+                if name[3:5] == 'FL':
+                    ax.set_title(r'Flat - $\Delta y = {} m$'.format(str(wt_wall_dist[0])[:5]))
+                elif name[3:5] == 'WB':
+                    ax.set_title(r'Medium Rough - $\Delta y = {} m$'.format(str(wt_wall_dist[0])[:5]))
+                elif name[3:5] == 'BR':
+                    ax.set_title(r'Rough - $\Delta y = {} m$'.format(str(wt_wall_dist[0])[:5]))
+                else:
+                    ax.set_title(r'Wind tunnel - $\Delta y = {} m$'.format(str(wt_wall_dist[0])[:5]))                
                 plt.colorbar(im1, 
-                            label=r'$\rho (u^\prime_{q_i},  v^\prime{q_i})$ (-)')
+                            label=r'$\rho (u^\prime_{q_i},  w^\prime{q_i})$ (-)')
                 ax.set_xlabel(r'$u^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
-                ax.set_ylabel(r'$v^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
+                ax.set_ylabel(r'$w^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
                 # save plots
                 fig.savefig('../palm_results/{}/run_{}/quadrant_analysis/jpdf/{}_QA_jpdf_WT_{}.png'.format(papy.globals.run_name,
                             papy.globals.run_number[-3:],
@@ -1131,12 +1144,12 @@ if compute_quadrant_analysis:
                     label=r'$5 \cdot h_{r}$')
         ax.hlines(0., 0.1, 100, colors='darkgray', 
                     linestyles='dashed')                
-        ax.grid(True)
+        ax.grid(True, 'both', 'both')
         ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                     borderaxespad = 0., ncol = 2, 
                     numpoints = 1, fontsize = 18)
         ax.set_ylim(-5., 5.)
-        ax.set_ylabel(r'$\overline{u^\prime v^\prime_{q_i}}$ $\overline{u^\prime v^\prime}^{-1}$ (-)', fontsize = 18)
+        ax.set_ylabel(r'$\overline{u^\prime w^\prime_{q_i}}$ $\overline{u^\prime w^\prime}^{-1}$ (-)', fontsize = 18)
         ax.set_xlabel(r'$\Delta y$ (m)', fontsize = 18)
         ax.set_xscale('log')
         # save plots
@@ -1163,12 +1176,12 @@ if compute_quadrant_analysis:
                 label=r'$5 \cdot h_{r}$')
     ax.hlines(0., 0.1, 100, colors='darkgray', 
                 linestyles='dashed')                
-    ax.grid(True)
+    ax.grid(True, 'both', 'both')
     ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                 borderaxespad = 0., ncol = 2, 
                 numpoints = 1, fontsize = 18)
     ax.set_ylim(-5., 5.)
-    ax.set_ylabel(r'$\overline{u^\prime v^\prime_{q_i}}$ $\overline{u^\prime v^\prime}^{-1}$ (-)', fontsize = 18)
+    ax.set_ylabel(r'$\overline{u^\prime w^\prime_{q_i}}$ $\overline{u^\prime w^\prime}^{-1}$ (-)', fontsize = 18)
     ax.set_xlabel(r'$\Delta y$ (m)', fontsize = 18)
     ax.set_xscale('log')
     # save plots

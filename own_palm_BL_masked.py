@@ -823,7 +823,7 @@ if compute_quadrant_analysis:
                     markersize=2, label='Q3')
             ax.plot(varu_fluc[q4_ind], varv_fluc[q4_ind] ,'o', color='red',
                     markersize=2, label='Q4')
-            ax.grid(True)
+            ax.grid(True, 'both', 'both')
             ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                         borderaxespad = 0., ncol = 2, 
                         numpoints = 1, fontsize = 18)
@@ -861,7 +861,7 @@ if compute_quadrant_analysis:
                     linestyles='dashed')
             ax.hlines(0., umin, umax, colors='darkgray', 
                     linestyles='dashed')
-            ax.grid(True)
+            ax.grid(True, 'both', 'both')
             plt.colorbar(im1, label=r'$\rho (u^\prime_{q_i},  w^\prime{q_i})$ (-)')
             ax.set_xlabel(r'$u^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
             ax.set_ylabel(r'$w^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
@@ -946,7 +946,7 @@ if compute_quadrant_analysis:
                             markersize=2, label='Q3')
                     ax.plot(wt_varu_fluc[wt_q4_ind], wt_varv_fluc[wt_q4_ind] ,'o', color='red',
                             markersize=2, label='Q4')
-                    ax.grid(True)
+                    ax.grid(True, 'both', 'both')
                     ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                                 borderaxespad = 0., ncol = 2, 
                                 numpoints = 1, fontsize = 18)
@@ -984,7 +984,7 @@ if compute_quadrant_analysis:
                             linestyles='dashed')
                     ax.hlines(0., umin, umax, colors='darkgray', 
                             linestyles='dashed')
-                    ax.grid(True)
+                    ax.grid(True, 'both', 'both')
                     plt.colorbar(im1, 
                                 label=r'$\rho (u^\prime_{q_i},  w^\prime{q_i})$ (-)')
                     ax.set_xlabel(r'$u^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
@@ -1022,7 +1022,7 @@ if compute_quadrant_analysis:
     #             label=r'$5 \cdot h_{r}$')
     ax.vlines(0., 0.4, 140, colors='black', 
                 linestyles='dashed')
-    ax.grid(True)
+    ax.grid(True, 'both', 'both')
     ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                 borderaxespad = 0., ncol = 2, 
                 numpoints = 1, fontsize = 18)
