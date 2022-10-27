@@ -231,7 +231,7 @@ def plot_semilog_u(var, var_name, z, z_unit, wt_pr, wt_z, wt_u_ref, time):
         papy.globals.run_number = '.000'
 
     fig2, ax2 = plt.subplots()    
-    ax2.set_yscale("log", nonposy='clip')
+    ax2.set_yscale('log')
     jet= plt.get_cmap('viridis')
     colors = iter(jet(np.linspace(0,1,10)))
     for i in range(len(time)-1,len(time)):
@@ -327,11 +327,11 @@ def plot_ver_profile(var_plt, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_r
     if var_name == 'w"u"':
         ax.set_xlabel(r'$u^\prime w^\prime_{SGS}$' + r' (m$^2$/s$^2$)',
                 fontsize = 18)
-        ax.set_yscale('log', nonposy='clip')
+        ax.set_yscale('log')
     elif var_name == 'w*u*':
         ax.set_xlabel(r'$u^\prime w^\prime_{RES}$'+ r' (m$^2$/s$^2$)', 
                 fontsize = 18)
-        ax.set_yscale('log', nonposy='clip')
+        ax.set_yscale('log')
     elif var_name == 'u':
         ax.set_xlabel(r'$\overline{u}$' + r' (m s$^{-1}$)', 
                 fontsize = 18)
@@ -347,7 +347,7 @@ def plot_ver_profile(var_plt, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_r
     elif var_name == 'fluxes':     
         ax.set_xlabel(r'$u^\prime w^\prime$' + r' (m$^2$/s$^2$)', 
                 fontsize = 18)
-        ax.set_yscale('log', nonposy='clip')
+        ax.set_yscale('log')
         plt.ylim(0.5, 256.)
         plt.xlim(right=0.)
     else:     
