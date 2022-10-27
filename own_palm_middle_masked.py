@@ -939,7 +939,13 @@ if compute_quadrant_analysis:
             jpdf = np.reshape(kernel.evaluate(positions).T, u_jpdf.shape)        
             # plot
             fig, ax = plt.subplots()
-            fig.gca().set_aspect('equal', adjustable='box')        
+            fig.gca().set_aspect('equal', adjustable='box')
+            extent_val = 0.6
+            ax.set_xlim(-extent_val, extent_val)
+            ax.set_ylim(-extent_val, extent_val)
+            array = np.full((100,100), np.min(jpdf))
+            im0 = ax.contourf(array, colors='lemonchiffon',
+                                extent=[-extent_val, extent_val, -extent_val, extent_val], levels = 1)
             im1 = ax.contourf(jpdf.T, cmap='YlGnBu',
                     extent=[umin, umax, vmin, vmax], levels = 15)
             im2 = ax.contour(jpdf.T, extent=[umin, umax, vmin, vmax], levels = 15,
@@ -950,7 +956,7 @@ if compute_quadrant_analysis:
             ax.hlines(0., umin, umax, colors='darkgray', 
                     linestyles='dashed')
             ax.grid(True, 'both', 'both')
-            plt.colorbar(im1, label=r'$\rho (u^\prime_{q_i},  v^\prime{q_i})$ (-)')
+            plt.colorbar(im1, label=r'$\rho (u^\prime_{q_i},  v^\prime_{q_i})$ (-)')
             ax.set_xlabel(r'$u^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
             ax.set_ylabel(r'$v^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
             # save plots
@@ -1060,7 +1066,12 @@ if compute_quadrant_analysis:
                 jpdf = np.reshape(kernel.evaluate(positions).T, u_jpdf.shape)
                 # plot
                 fig, ax = plt.subplots()
-                fig.gca().set_aspect('equal', adjustable='box')        
+                fig.gca().set_aspect('equal', adjustable='box')
+                ax.set_xlim(-extent_val, extent_val)
+                ax.set_ylim(-extent_val, extent_val)
+                array = np.full((100,100), np.min(jpdf))
+                im0 = ax.contourf(array, colors='lemonchiffon',
+                                    extent=[-extent_val, extent_val, -extent_val, extent_val], levels = 1)
                 im1 = ax.contourf(jpdf.T, cmap='YlGnBu',
                         extent=[umin, umax, vmin, vmax], levels = 15)
                 im2 = ax.contour(jpdf.T, extent=[umin, umax, vmin, vmax], levels = 15,
@@ -1072,7 +1083,7 @@ if compute_quadrant_analysis:
                         linestyles='dashed')
                 ax.grid(True, 'both', 'both')
                 plt.colorbar(im1, 
-                            label=r'$\rho (u^\prime_{q_i},  v^\prime{q_i})$ (-)')
+                            label=r'$\rho (u^\prime_{q_i},  v^\prime_{q_i})$ (-)')
                 ax.set_xlabel(r'$u^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
                 ax.set_ylabel(r'$v^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
                 # save plots

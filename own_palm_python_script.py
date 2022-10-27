@@ -83,8 +83,8 @@ GLOBAL VARIABLES
 """
 ################
 # PALM input files
-papy.globals.run_name = 'SB_SI_back_yshift'
-papy.globals.run_number = '.017'
+papy.globals.run_name = 'single_building_ABL_1m_z03_yshift'
+papy.globals.run_number = '.030'
 papy.globals.run_numbers = ['.029', '.028']
 nc_file_grid = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
 nc_file_path = '../palm/current_version/JOBS/{}/OUTPUT/'.format(papy.globals.run_name)
@@ -331,7 +331,7 @@ if compute_turbint:
                 papy.globals.run_name, papy.globals.run_number[-3:],
                 papy.globals.run_name, papy.globals.run_number[-3:], 'variance'))
     #save logplot
-    ax.set_yscale('log', nonposy='clip')    
+    ax.set_yscale('log')    
     fig.savefig('../palm_results/{}/run_{}/profiles/{}_{}_{}_verpr_log.png'.format(
                 papy.globals.run_name, papy.globals.run_number[-3:],
                 papy.globals.run_name, papy.globals.run_number[-3:], 'variance'), 
@@ -354,7 +354,7 @@ if compute_vertprof:
 
     # call plot-functions
     var_name_list = ['w*u*', 'w"u"', 'e', 'u']
-    var_name_list = ['e', 'u']    
+    # var_name_list = ['e', 'u']    
     for i,var_name in enumerate(var_name_list):
         if var_name == 'u':
             # velocity profile
@@ -486,15 +486,15 @@ if compute_vertprof_flux:
     plt.figure(7)
     # papy.plot_ver_profile(var, var_unit1, 'fluxes', z, z_unit, wt_pr, wt_z, wt_u_ref, time)
     fig, ax = plt.subplots()
-    # ax.plot(var1[0,:-1], z[:-1],
-    #     label = r'$\overline{u^\prime w^\prime}_{RES}$',
-    #     color='darkviolet')
-    # ax.plot(var2[0,:-1], z[:-1],
-    #     label = r'$\overline{u^\prime w^\prime}_{SGS}$',
-    #     color = 'plum')
-    # ax.plot(var[0,:-1], z[:-1],
-    #     label = r'$\overline{u^\prime w^\prime}$',
-    #     color = 'darkmagenta')
+    ax.plot(var1[0,:-1], z[:-1],
+        label = r'$\overline{u^\prime w^\prime}_{RES}$',
+        color='darkviolet')
+    ax.plot(var2[0,:-1], z[:-1],
+        label = r'$\overline{u^\prime w^\prime}_{SGS}$',
+        color = 'plum')
+    ax.plot(var[0,:-1], z[:-1],
+        label = r'$\overline{u^\prime w^\prime}$',
+        color = 'darkmagenta')
     if wt_filename == 'BA_BL_UW_001':
         ax.errorbar(wt_flux, wt_z, xerr = 0.005,
             # label='wind tunnel: ' + wt_filename[0:2], 
@@ -522,7 +522,7 @@ if compute_vertprof_flux:
                 bbox_inches='tight')
     # log plot
     ax.set_ylim(5, 140)
-    ax.set_yscale('log', nonposy='clip')
+    ax.set_yscale('log')
     fig.savefig('../palm_results/{}/run_{}/profiles/{}_{}_{}_verpr_log.png'.format(
                 papy.globals.run_name,
                 papy.globals.run_number[-3:],
@@ -746,7 +746,12 @@ if compute_spectra:
 ################
 # plot crosssections
 if compute_crosssections:
-    nc_file = '{}_3d{}.nc'.format(papy.globals.run_name, papy.globals.run_number)
+    mode = 'averaged'
+    if mode =='averaged':
+        nc_file = '{}_av_3d{}.nc'.format(papy.globals.run_name, papy.globals.run_number)
+    else:
+        nc_file = '{}_3d{}.nc'.format(papy.globals.run_name, papy.globals.run_number)
+  
     nc_file_path = '../palm/current_version/JOBS/{}/OUTPUT/'.format(papy.globals.run_name)
 
     # get reference velocity
@@ -873,7 +878,7 @@ if compute_modelinput:
 # compute fluxes based on timeseries
 if compute_pure_fluxes:
     nc_file = '{}_masked_M02{}.nc'.format(papy.globals.run_name, papy.globals.run_number)
-
+    nc_file = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
     # palm_wtref = 5.51057969
     # palm_wtref = 0.
     flux13 = np.zeros(len(height_list))
@@ -898,12 +903,12 @@ if compute_pure_fluxes:
     plt.figure(12)
     fig, ax = plt.subplots()
     plt.style.use('classic')
-    ax.plot(var[4,:-1], z[:-1], label=r'$\overline{u^\prime w^\prime}$', color='darkviolet')
-    ax.plot(var1[4,:-1], z[:-1], label=r'$\widetilde{u^\prime w^\prime}$', color='plum')
-    ax.plot(var2[4,:-1], z[:-1], label=r'$(u^\prime w^\prime)^s$', color='magenta')
+    ax.plot(var[0,:-1], z[:-1], label=r'$\overline{u^\prime w^\prime}$', color='darkviolet')
+    ax.plot(var1[0,:-1], z[:-1], label=r'$\widetilde{u^\prime w^\prime}$', color='plum')
+    ax.plot(var2[0,:-1], z[:-1], label=r'$(u^\prime w^\prime)^s$', color='magenta')
     ax.set(xlabel=r'$\overline{u^\prime w^\prime} \cdot u_{ref}^2$' + ' $(-)$', 
             ylabel=r'$z$ $(m)$'.format(z_unit))
-    ax.set_yscale('log', nonposy='clip')
+    ax.set_yscale('log')
     plt.ylim(1.,300.)
     ax.legend(bbox_to_anchor=(0.5, 1.04),
                 loc=8, numpoints=1, ncol=2, fontsize = 18)
@@ -959,7 +964,7 @@ if compute_simrange:
         fig, ax = plt.subplots()
         ax.grid(True, 'both', 'both')
         plt.ylim(1.,max(z[:-1]))
-        ax.set_yscale('log', nonposy='clip')
+        ax.set_yscale('log')
         ax.set(xlabel= var_name, 
                 ylabel=r'$z$ (m)'.format(z_unit), title= r'Height profile of ${}$'.format(var_name))
         for i in range(len(time)-1,len(time)):

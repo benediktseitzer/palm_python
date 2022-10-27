@@ -20,6 +20,7 @@ import os
 import scipy.stats as stats
 
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 from matplotlib.ticker import FormatStrFormatter
 plt.style.use('classic')
 
@@ -54,15 +55,15 @@ papy.globals.run_numbers = ['.008', '.009', '.010', '.011', '.012',
                         '.049', '.050',]
 
 papy.globals.run_number = papy.globals.run_numbers[-1]       
-print('Analyze PALM-run up to: ' + papy.globals.run_number)             
+print('     Analyze PALM-run up to: ' + papy.globals.run_number)             
 nc_file_grid = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
 nc_file_path = '../palm/current_version/JOBS/{}/OUTPUT/'.format(papy.globals.run_name)
 building_height = '_mid'
 mask_name_list = ['M02', 'M03', 'M04', 'M05', 'M06', 'M07', 'M08',
                     'M09', 'M10', 'M11', 'M12']
-building_height = '_up'
-mask_name_list = ['M14', 'M15', 'M16', 'M17', 'M18', 'M19',
-                    'M20', 'M21', 'M22', 'M23', 'M24']
+# building_height = '_up'
+# mask_name_list = ['M14', 'M15', 'M16', 'M17', 'M18', 'M19',
+#                     'M20', 'M21', 'M22', 'M23', 'M24']
 
 # WIND TUNNEL INPIUT FILES
 experiment = 'single_building'
@@ -124,7 +125,7 @@ if data_nd == 1:
     palm_ref = np.mean(total_palm_u)
 else:
     palm_ref = 1.
-print('     PALM REFERENCE VELOCITY: {} m/s \n'.format(palm_ref))
+print('     PALM REFERENCE VELOCITY: {} m/s'.format(palm_ref))
 # palm_ref = 1.
 # wind tunnel data
 if building_height == '_mid':
@@ -967,6 +968,7 @@ if compute_quadrant_analysis:
             umax = varu_fluc.max()
             vmin = varv_fluc.min()
             vmax = varv_fluc.max()
+            extent_val = 0.6
             u_jpdf, v_jpdf = np.mgrid[umin:umax:100j, vmin:vmax:100j]
             positions = np.vstack([u_jpdf.ravel(), v_jpdf.ravel()])
             values = np.vstack([varu_fluc, varv_fluc])
@@ -974,23 +976,26 @@ if compute_quadrant_analysis:
             jpdf = np.reshape(kernel.evaluate(positions).T, u_jpdf.shape)        
             # plot
             fig, ax = plt.subplots()
-            fig.gca().set_aspect('equal', adjustable='box')        
+            fig.gca().set_aspect('equal', adjustable='box')
+            ax.set_xlim(-extent_val, extent_val)
+            ax.set_ylim(-extent_val, extent_val)            
+            array = np.full((100,100), np.min(jpdf))
+            im0 = ax.contourf(array, colors='lemonchiffon',
+                                extent=[-extent_val, extent_val, -extent_val, extent_val], levels = 1)
             im1 = ax.contourf(jpdf.T, cmap='YlGnBu',
-                    extent=[umin, umax, vmin, vmax], levels = 15)
-            im2 = ax.contour(jpdf.T, extent=[umin, umax, vmin, vmax], levels = 15,
-                    colors='gray')
+                                extent=[umin, umax, vmin, vmax], levels = 15)
+            im2 = ax.contour(jpdf.T, colors='gray', 
+                                extent=[umin, umax, vmin, vmax], levels = 15)
 
-            ax.vlines(0., vmin, vmax, colors='darkgray', 
+            ax.vlines(0., -extent_val, extent_val, colors='darkgray', 
                     linestyles='dashed')
-            ax.hlines(0., umin, umax, colors='darkgray', 
+            ax.hlines(0., -extent_val, extent_val, colors='darkgray', 
                     linestyles='dashed')
             ax.grid(True, 'both', 'both')
             plt.colorbar(im1, label=r'$\rho (u^\prime_{q_i},  w^\prime{q_i})$ (-)')
             ax.set_xlabel(r'$u^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
             ax.set_ylabel(r'$w^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
             ax.set_title(r'PALM - $\Delta y = {} m$'.format(wall_dist[0]))
-            ax.set_xlim(-0.5, 0.5)
-            ax.set_ylim(-0.5, 0.5)
             # save plots
             fig.savefig('../palm_results/{}/run_{}/quadrant_analysis/jpdf/{}_QA_jpdf_mask_{}.png'.format(papy.globals.run_name,
                         papy.globals.run_number[-3:],
@@ -1098,15 +1103,20 @@ if compute_quadrant_analysis:
                 jpdf = np.reshape(kernel.evaluate(positions).T, u_jpdf.shape)
                 # plot
                 fig, ax = plt.subplots()
-                fig.gca().set_aspect('equal', adjustable='box')        
+                fig.gca().set_aspect('equal', adjustable='box')
+                ax.set_xlim(-extent_val, extent_val)
+                ax.set_ylim(-extent_val, extent_val)            
+                array = np.full((100,100), np.min(jpdf))
+                im0 = ax.contourf(array, colors='lemonchiffon',
+                                    extent=[-extent_val, extent_val, -extent_val, extent_val], levels = 1)                
                 im1 = ax.contourf(jpdf.T, cmap='YlGnBu',
                         extent=[umin, umax, vmin, vmax], levels = 15)
-                im2 = ax.contour(jpdf.T, extent=[umin, umax, vmin, vmax], levels = 15,
-                        colors='gray')
+                im2 = ax.contour(jpdf.T, colors='gray', 
+                        extent=[umin, umax, vmin, vmax], levels = 15)
 
-                ax.vlines(0., vmin, vmax, colors='darkgray', 
+                ax.vlines(0., -extent_val, extent_val, colors='darkgray', 
                         linestyles='dashed')
-                ax.hlines(0., umin, umax, colors='darkgray', 
+                ax.hlines(0., -extent_val, extent_val, colors='darkgray', 
                         linestyles='dashed')
                 ax.grid(True, 'both', 'both')
                 if name[3:5] == 'FL':
@@ -1118,11 +1128,10 @@ if compute_quadrant_analysis:
                 else:
                     ax.set_title(r'Wind tunnel - $\Delta y = {} m$'.format(str(wt_wall_dist[0])[:5]))
                 plt.colorbar(im1, 
-                            label=r'$\rho (u^\prime_{q_i},  w^\prime{q_i})$ (-)')
+                            label=r'$\rho (u^\prime_{q_i},  w^\prime_{q_i})$ (-)')
                 ax.set_xlabel(r'$u^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
                 ax.set_ylabel(r'$w^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
-                ax.set_xlim(-0.5, 0.5)
-                ax.set_ylim(-0.5, 0.5)                
+
                 # save plots
                 fig.savefig('../palm_results/{}/run_{}/quadrant_analysis/jpdf/{}_QA_jpdf_WT_{}.png'.format(papy.globals.run_name,
                             papy.globals.run_number[-3:],

@@ -862,7 +862,7 @@ if compute_quadrant_analysis:
             ax.hlines(0., umin, umax, colors='darkgray', 
                     linestyles='dashed')
             ax.grid(True, 'both', 'both')
-            plt.colorbar(im1, label=r'$\rho (u^\prime_{q_i},  w^\prime{q_i})$ (-)')
+            plt.colorbar(im1, label=r'$\rho (u^\prime_{q_i},  w^\prime_{q_i})$ (-)')
             ax.set_xlabel(r'$u^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
             ax.set_ylabel(r'$w^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
             # save plots
@@ -986,7 +986,7 @@ if compute_quadrant_analysis:
                             linestyles='dashed')
                     ax.grid(True, 'both', 'both')
                     plt.colorbar(im1, 
-                                label=r'$\rho (u^\prime_{q_i},  w^\prime{q_i})$ (-)')
+                                label=r'$\rho (u^\prime_{q_i},  w^\prime_{q_i})$ (-)')
                     ax.set_xlabel(r'$u^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
                     ax.set_ylabel(r'$w^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
                     # save plots

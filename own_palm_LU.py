@@ -972,17 +972,21 @@ if compute_quadrant_analysis:
             # plot
             fig, ax = plt.subplots()
             fig.gca().set_aspect('equal', adjustable='box')
+            extent_val = 0.6
+            ax.set_xlim(-extent_val, extent_val)
+            ax.set_ylim(-extent_val, extent_val)            
+            array = np.full((100,100), np.min(jpdf))
+            im0 = ax.contourf(array, colors='lemonchiffon',
+                                extent=[-extent_val, extent_val, -extent_val, extent_val], levels = 1)
             im1 = ax.contourf(jpdf.T, cmap='YlGnBu',
                     extent=[umin, umax, vmin, vmax], levels = 15)
             im2 = ax.contour(jpdf.T, extent=[umin, umax, vmin, vmax], levels = 15,
                     colors='gray')
-            ax.vlines(0., vmin, vmax, colors='darkgray', 
+            ax.vlines(0., -extent_val, extent_val, colors='darkgray', 
                     linestyles='dashed')
-            ax.hlines(0., umin, umax, colors='darkgray', 
+            ax.hlines(0., -extent_val, extent_val, colors='darkgray', 
                     linestyles='dashed')
             ax.grid(True, 'both', 'both')
-            ax.set_xlim(-0.4, 0.4)
-            ax.set_ylim(-0.4, 0.4)
             plt.colorbar(im1, label=r'$\rho (u^\prime_{q_i},  w^\prime_{q_i})$ (-)')
             ax.set_xlabel(r'$u^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
             ax.set_ylabel(r'$w^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
@@ -1094,19 +1098,22 @@ if compute_quadrant_analysis:
                 jpdf = np.reshape(kernel.evaluate(positions).T, u_jpdf.shape)
                 # plot
                 fig, ax = plt.subplots()
-                fig.gca().set_aspect('equal', adjustable='box')        
+                fig.gca().set_aspect('equal', adjustable='box')
+                ax.set_xlim(-extent_val, extent_val)
+                ax.set_ylim(-extent_val, extent_val)
+                array = np.full((100,100), np.min(jpdf))
+                im0 = ax.contourf(array, colors='lemonchiffon',
+                                    extent=[-extent_val, extent_val, -extent_val, extent_val], levels = 1)                   
                 im1 = ax.contourf(jpdf.T, cmap='YlGnBu',
                         extent=[umin, umax, vmin, vmax], levels = 15)
                 im2 = ax.contour(jpdf.T, extent=[umin, umax, vmin, vmax], levels = 15,
                         colors='gray')
 
-                ax.vlines(0., vmin, vmax, colors='darkgray', 
+                ax.vlines(0., -extent_val, extent_val, colors='darkgray', 
                         linestyles='dashed')
-                ax.hlines(0., umin, umax, colors='darkgray', 
+                ax.hlines(0., -extent_val, extent_val, colors='darkgray', 
                         linestyles='dashed')
                 ax.grid(True, 'both', 'both')
-                ax.set_xlim(-0.4, 0.4)
-                ax.set_ylim(-0.4, 0.4)
                 if name[3:5] == 'FL':
                     ax.set_title(r'Flat - $\Delta y = {} m$'.format(str(wt_wall_dist[0])[:5]))
                 elif name[3:5] == 'WB':
@@ -1116,7 +1123,7 @@ if compute_quadrant_analysis:
                 else:
                     ax.set_title(r'Wind tunnel - $\Delta y = {} m$'.format(str(wt_wall_dist[0])[:5]))                
                 plt.colorbar(im1, 
-                            label=r'$\rho (u^\prime_{q_i},  w^\prime{q_i})$ (-)')
+                            label=r'$\rho (u^\prime_{q_i},  w^\prime_{q_i})$ (-)')
                 ax.set_xlabel(r'$u^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
                 ax.set_ylabel(r'$w^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
                 # save plots

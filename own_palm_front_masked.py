@@ -919,8 +919,8 @@ if compute_quadrant_analysis:
                                     s2[0]  + 
                                     s3[0]  + 
                                     s4[0])))
-
-        plot_QA_PALM = True
+        extent_val = 1.2
+        plot_QA_PALM = False
         if plot_QA_PALM:
             # PLOT SINGLE Quadrant-scatterplots
             fig, ax = plt.subplots()
@@ -961,18 +961,26 @@ if compute_quadrant_analysis:
             jpdf = np.reshape(kernel.evaluate(positions).T, u_jpdf.shape)        
             # plot
             fig, ax = plt.subplots()
-            fig.gca().set_aspect('equal', adjustable='box')        
+            fig.gca().set_aspect('equal', adjustable='box')
+            ax.set_xlim(-extent_val, extent_val)
+            ax.set_ylim(-extent_val, extent_val)
+            array = np.full((100,100), np.min(jpdf))
+            try:
+                im0 = ax.contourf(array, colors='lemonchiffon',
+                                extent=[-extent_val, extent_val, -extent_val, extent_val], levels = 1)            
+            except:
+                print('too many levels')
             im1 = ax.contourf(jpdf.T, cmap='YlGnBu',
                     extent=[umin, umax, vmin, vmax], levels = 15)
             im2 = ax.contour(jpdf.T, extent=[umin, umax, vmin, vmax], levels = 15,
                     colors='gray')
 
-            ax.vlines(0., vmin, vmax, colors='darkgray', 
+            ax.vlines(0., -extent_val, extent_val, colors='darkgray', 
                     linestyles='dashed')
-            ax.hlines(0., umin, umax, colors='darkgray', 
+            ax.hlines(0., -extent_val, extent_val, colors='darkgray', 
                     linestyles='dashed')
             ax.grid(True, 'both', 'both')
-            plt.colorbar(im1, label=r'$\rho (u^\prime_{q_i},  v^\prime{q_i})$ (-)')
+            plt.colorbar(im1, label=r'$\rho (u^\prime_{q_i},  v^\prime_{q_i})$ (-)')
             ax.set_xlabel(r'$u^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
             ax.set_ylabel(r'$v^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
             ax.set_title(r'PALM - $\Delta y = {} m$'.format(wall_dist[0]))
@@ -1083,15 +1091,25 @@ if compute_quadrant_analysis:
                 jpdf = np.reshape(kernel.evaluate(positions).T, u_jpdf.shape)
                 # plot
                 fig, ax = plt.subplots()
-                fig.gca().set_aspect('equal', adjustable='box')        
+                fig.gca().set_aspect('equal', adjustable='box')
+                ax.set_xlim(-extent_val, extent_val)
+                ax.set_ylim(-extent_val, extent_val)
+                array = np.full((100,100), np.min(jpdf))
+                try:
+                    im0 = ax.contourf(array, colors='lemonchiffon',
+                                    extent=[-extent_val, extent_val, -extent_val, extent_val], levels = 1)            
+                except:
+                    print('too many levels')                
+                    im0 = ax.contourf(array, colors='lemonchiffon',
+                                        extent=[-extent_val, extent_val, -extent_val, extent_val], levels = 2)                
                 im1 = ax.contourf(jpdf.T, cmap='YlGnBu',
                         extent=[umin, umax, vmin, vmax], levels = 15)
                 im2 = ax.contour(jpdf.T, extent=[umin, umax, vmin, vmax], levels = 15,
                         colors='gray')
 
-                ax.vlines(0., vmin, vmax, colors='darkgray', 
+                ax.vlines(0., -extent_val, extent_val, colors='darkgray', 
                         linestyles='dashed')
-                ax.hlines(0., umin, umax, colors='darkgray', 
+                ax.hlines(0., -extent_val, extent_val, colors='darkgray', 
                         linestyles='dashed')
                 ax.grid(True, 'both', 'both')
                 if name[3:5] == 'FL':
@@ -1103,7 +1121,7 @@ if compute_quadrant_analysis:
                 else:
                     ax.set_title(r'Wind tunnel - $\Delta y = {} m$'.format(str(wt_wall_dist[0])[:5]))
                 plt.colorbar(im1, 
-                            label=r'$\rho (u^\prime_{q_i},  v^\prime{q_i})$ (-)')
+                            label=r'$\rho (u^\prime_{q_i},  v^\prime_{q_i})$ (-)')
                 ax.set_xlabel(r'$u^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
                 ax.set_ylabel(r'$v^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
                 # save plots
