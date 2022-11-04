@@ -90,11 +90,10 @@ compute_LU_mean = False
 compute_LU_pdfs = False
 compute_LU_highermoments = False
 compute_LU_var = False
-compute_LU_covar = False
-compute_LU_spectra = False
+compute_LU_covar = True
 compute_LU_lux = False
 
-compute_quadrant_analysis = True
+compute_quadrant_analysis = False
 
 ################
 """
@@ -146,38 +145,38 @@ for name in namelist:
     wt_err[name] = {}
     wt_err[name].fromkeys(var_names)
     if name[3:5] == 'FL_later':
-        wt_err[name]['umean'] = [0.0395, 0.0395, 0.0395, 0.0395, 0.0395, 0.0395, 0.0395, 0.0395, 0.0395, 0.0395, 
-                                0.0395, 0.0395, 0.0395, 0.0217, 0.0217, 0.0217, 0.0167, 0.0167, 0.0229, 0.0229, 0.0229, 0.0173]
-        wt_err[name]['vmean'] = [0.0107, 0.0107, 0.0107, 0.0107, 0.0107, 0.0107, 0.0107, 0.0107, 0.0107, 0.0107, 
-                                0.0107, 0.0107, 0.0107, 0.0101, 0.0101, 0.0101, 0.0152, 0.0152, 0.0081, 0.0081, 0.0081, 0.008]
-        wt_err[name]['u_var'] = [0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 
-                                0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0039, 0.0039, 0.0047, 0.0047, 0.0047, 0.0006]
-        wt_err[name]['v_var'] = [0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 
-                                0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0039, 0.0039, 0.0047, 0.0047, 0.0047, 0.0006]
-        wt_err[name]['covar'] = [0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 
-                                0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0039, 0.0039, 0.0047, 0.0047, 0.0047, 0.0006]
-        wt_err[name]['lux'] =   [3.1814, 3.1814, 3.1814, 3.1814, 3.1814, 3.1814, 3.1814, 3.1814, 3.1814, 3.1814, 
-                                3.1814, 3.1814, 3.1814, 1.5144, 1.5144, 1.5144, 2.9411, 2.9411, 2.2647, 2.2647, 2.2647, 26.5786]
+        wt_err[name]['umean'] = 0.5 * np.asarray([0.0098, 0.0395, 0.0395, 0.0395, 0.0395, 0.0395, 0.0395, 0.0395, 0.0395, 0.0395, 
+                                0.0395, 0.0395, 0.0395, 0.0217, 0.0217, 0.0217, 0.0167, 0.0167, 0.0229, 0.0229, 0.0229, 0.0173])
+        wt_err[name]['vmean'] = 0.5 * np.asarray([0.0107, 0.0107, 0.0107, 0.0107, 0.0107, 0.0107, 0.0107, 0.0107, 0.0107, 0.0107, 
+                                0.0107, 0.0107, 0.0107, 0.0101, 0.0101, 0.0101, 0.0152, 0.0152, 0.0081, 0.0081, 0.0081, 0.008])
+        wt_err[name]['u_var'] = 0.5 * np.asarray([0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 
+                                0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0039, 0.0039, 0.0047, 0.0047, 0.0047, 0.0006])
+        wt_err[name]['v_var'] = 0.5 * np.asarray([0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 
+                                0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0039, 0.0039, 0.0047, 0.0047, 0.0047, 0.0006])
+        wt_err[name]['covar'] = 0.5 * np.asarray([0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 
+                                0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0039, 0.0039, 0.0047, 0.0047, 0.0047, 0.0006])
+        wt_err[name]['lux'] =   0.5 * np.asarray([3.1814, 3.1814, 3.1814, 3.1814, 3.1814, 3.1814, 3.1814, 3.1814, 3.1814, 3.1814, 
+                                3.1814, 3.1814, 3.1814, 1.5144, 1.5144, 1.5144, 2.9411, 2.9411, 2.2647, 2.2647, 2.2647, 26.5786])
     elif name[3:5] == 'BR_later':
-        wt_err[name]['umean'] = [0.0255, 0.0255, 0.0255, 0.0255, 0.0255, 0.0255, 0.0255, 0.0255, 0.0465, 0.0465, 
-                                0.0465, 0.0292, 0.0292, 0.0179, 0.0179, 0.0179, 0.0202]
-        wt_err[name]['vmean'] = [0.0156, 0.0156, 0.0156, 0.0156, 0.0156, 0.0156, 0.0156, 0.0156, 0.0116, 0.0116, 
-                                0.0116, 0.0101, 0.0101, 0.0114, 0.0114, 0.0114, 0.0073]
-        wt_err[name]['u_var'] = [0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 
-                                0.0029, 0.0048, 0.0048, 0.0037, 0.0037, 0.0037, 0.0007]
-        wt_err[name]['v_var'] = [0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 
-                                0.0029, 0.0048, 0.0048, 0.0037, 0.0037, 0.0037, 0.0007]
-        wt_err[name]['covar'] = [0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 
-                                0.0029, 0.0048, 0.0048, 0.0037, 0.0037, 0.0037, 0.0007]
-        wt_err[name]['lux'] =   [2.6852, 2.6852, 2.6852, 2.6852, 2.6852, 2.6852, 2.6852, 2.6852, 3.3587, 3.3587, 
-                                3.3587, 1.9594, 1.9594, 4.7631, 4.7631, 4.7631, 22.5726]
+        wt_err[name]['umean'] = 0.5 * np.asarray([0.0255, 0.0255, 0.0255, 0.0255, 0.0255, 0.0255, 0.0255, 0.0255, 0.0465, 0.0465, 
+                                0.0465, 0.0292, 0.0292, 0.0179, 0.0179, 0.0179, 0.0202])
+        wt_err[name]['vmean'] = 0.5 * np.asarray([0.0156, 0.0156, 0.0156, 0.0156, 0.0156, 0.0156, 0.0156, 0.0156, 0.0116, 0.0116, 
+                                0.0116, 0.0101, 0.0101, 0.0114, 0.0114, 0.0114, 0.0073])
+        wt_err[name]['u_var'] = 0.5 * np.asarray([0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 
+                                0.0029, 0.0048, 0.0048, 0.0037, 0.0037, 0.0037, 0.0007])
+        wt_err[name]['v_var'] = 0.5 * np.asarray([0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 
+                                0.0029, 0.0048, 0.0048, 0.0037, 0.0037, 0.0037, 0.0007])
+        wt_err[name]['covar'] = 0.5 * np.asarray([0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 
+                                0.0029, 0.0048, 0.0048, 0.0037, 0.0037, 0.0037, 0.0007])
+        wt_err[name]['lux'] =   0.5 * np.asarray([2.6852, 2.6852, 2.6852, 2.6852, 2.6852, 2.6852, 2.6852, 2.6852, 3.3587, 3.3587, 
+                                3.3587, 1.9594, 1.9594, 4.7631, 4.7631, 4.7631, 22.5726])
     else:
-        wt_err[name]['umean'] = 0.0171
-        wt_err[name]['vmean'] = 0.0133
-        wt_err[name]['u_var'] = 0.0029
-        wt_err[name]['v_var'] = 0.0029
-        wt_err[name]['covar'] = 0.0029
-        wt_err[name]['lux'] =   1.9007
+        wt_err[name]['umean'] = 0.5 * np.asarray(0.0098)
+        wt_err[name]['vmean'] = 0.5 * np.asarray(0.0171)
+        wt_err[name]['u_var'] = 0.5 * np.asarray(0.0011)
+        wt_err[name]['v_var'] = 0.5 * np.asarray(0.0011)
+        wt_err[name]['covar'] = 0.5 * np.asarray(0.0011)
+        wt_err[name]['lux'] = 0.5 * np.asarray(1.9619)
 
 data_nd = 1
 time_series = {}
@@ -246,7 +245,7 @@ if compute_LU_mean:
         err = np.mean(mean_vars/palm_ref)*0.05
         fig, ax = plt.subplots()
         # plot PALM masked output
-        ax.errorbar(wall_dists, mean_vars/palm_ref, yerr=err, 
+        ax.errorbar(wall_dists, mean_vars/palm_ref, yerr = 0.5 * err, 
                     label= r'PALM', 
                     fmt='o', c='darkmagenta')
         #plot wt_data
@@ -262,7 +261,7 @@ if compute_LU_mean:
             wt_z_plot = np.asarray(wt_z)-0.115*scale
             if var_name == 'u':
                 wt_var_plot = wt_var1
-                ax.errorbar(wt_z_plot, wt_var_plot, yerr = wt_err[name]['umean'],
+                ax.errorbar(wt_z_plot, wt_var_plot, yerr = 0.5 * wt_err[name]['umean'],
                             label=label_list[i], 
                             fmt=marker_list[i], color=c_list[i])
                 if i==1:
@@ -272,7 +271,7 @@ if compute_LU_mean:
                 ax.set_ylabel(r'$\overline{u}$ $u_{ref}^{-1}$ (-)', fontsize = 18)                            
             elif var_name == 'w':
                 wt_var_plot = wt_var2                
-                ax.errorbar(wt_z_plot, wt_var_plot, yerr = wt_err[name]['vmean'],
+                ax.errorbar(wt_z_plot, wt_var_plot, yerr = 0.5 * wt_err[name]['vmean'],
                             label=label_list[i], 
                             fmt=marker_list[i], color=c_list[i])
                 if i==1:                            
@@ -285,7 +284,7 @@ if compute_LU_mean:
         ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                     borderaxespad = 0., ncol = 2, 
                     numpoints = 1, fontsize = 18)
-        ax.set_xlabel(r'$\Delta y$ (m)', fontsize = 18)
+        ax.set_xlabel(r'$\Delta x$ (m)', fontsize = 18)
         # save plots
         ax.set_xscale('log')
         fig.savefig('../palm_results/{}/run_{}/maskprofiles/{}_mean_{}_mask_log.png'.format(papy.globals.run_name,
@@ -328,7 +327,7 @@ if compute_LU_pdfs:
             fig, ax = plt.subplots()
             # plot PALM masked output
             ax.hist(total_var/palm_ref, bins=100, density=True,
-                    label=r'${}$ at $\Delta y={}$ m'.format(var_name, wall_dist[0]))
+                    label=r'${}$ at $\Delta x={}$ m'.format(var_name, wall_dist[0]))
             if var_name == 'u':
                 ax.vlines(var_mean, 0., 2., colors='tab:red', 
                             linestyles='dashed', 
@@ -363,7 +362,7 @@ if compute_LU_pdfs:
             fig, ax = plt.subplots()
             # plot PALM masked output
             ax.hist(total_variance/palm_ref**2., bins=100, density=True,
-                    label=r'${}$ at $\Delta y={}$ m'.format(var_name, wall_dist[0]))
+                    label=r'${}$ at $\Delta x={}$ m'.format(var_name, wall_dist[0]))
             if var_name == 'u':
                 ax.vlines(np.mean(total_variance/palm_ref**2.), 0., 2., colors='tab:red', 
                             linestyles='dashed', 
@@ -419,7 +418,7 @@ if compute_LU_pdfs:
         fig, ax = plt.subplots()
         # plot PALM masked output
         ax.hist(var_flux, bins=100, density=True,
-                label=r'$u^\prime v^\prime$ at $\Delta y={}$ m'.format(wall_dist[0]))
+                label=r'$u^\prime v^\prime$ at $\Delta x={}$ m'.format(wall_dist[0]))
         ax.vlines(np.mean(var_flux), 0., 2., colors='tab:red', 
                         linestyles='dashed', 
                         label=r'$\overline{u^\prime v^\prime}$ ' + r'$u_{ref}^{-2}$')
@@ -482,7 +481,7 @@ if compute_LU_highermoments:
         #plot profiles
         fig, ax = plt.subplots()
         # plot PALM masked output
-        ax.errorbar(wall_dists, skew_vars, yerr=skew_errs, 
+        ax.errorbar(wall_dists, skew_vars, yerr = 0.5 * skew_errs, 
                     label= r'PALM', 
                     fmt='o', c='darkmagenta')                        
         #plot wt_data
@@ -502,7 +501,7 @@ if compute_LU_highermoments:
                 wt_z.append(abs(time_series[name][file].x))
             wt_z_plot = np.asarray(wt_z)-0.115*scale
             if var_name == 'u':
-                ax.errorbar(wt_z_plot, wt_skew, yerr = wt_skew_errs,
+                ax.errorbar(wt_z_plot, wt_skew, yerr = 0.5 * wt_skew_errs,
                             label=label_list[i], 
                             fmt=marker_list[i], color=c_list[i])
                 if i==1:
@@ -511,7 +510,7 @@ if compute_LU_highermoments:
                             label=r'$5 \cdot h_{r}$')
                 ax.set_ylabel(r'$\gamma_u$ (-)', fontsize = 18)
             elif var_name == 'w':             
-                ax.errorbar(wt_z_plot, wt_skew, yerr = wt_skew_errs,
+                ax.errorbar(wt_z_plot, wt_skew, yerr = 0.5 * wt_skew_errs,
                             label=label_list[i], 
                             fmt=marker_list[i], color=c_list[i])
                 if i==1:
@@ -523,7 +522,7 @@ if compute_LU_highermoments:
         ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                     borderaxespad = 0., ncol = 2, 
                     numpoints = 1, fontsize = 18)
-        ax.set_xlabel(r'$\Delta y$ (m)', fontsize = 18)
+        ax.set_xlabel(r'$\Delta x$ (m)', fontsize = 18)
         # save plots
         ax.set_xscale('log')
         fig.savefig('../palm_results/{}/run_{}/maskprofiles/{}_skewness_{}_mask_log.png'.format(papy.globals.run_name,
@@ -539,7 +538,7 @@ if compute_LU_highermoments:
         err = 0.1
         fig, ax = plt.subplots()
         # plot PALM masked output
-        ax.errorbar(wall_dists, kurt_vars, yerr=err, 
+        ax.errorbar(wall_dists, kurt_vars, yerr = 0.5 * err, 
                     label= r'PALM', 
                     fmt='o', c='darkmagenta')                        
         #plot wt_data
@@ -555,7 +554,7 @@ if compute_LU_highermoments:
                 wt_z.append(abs(time_series[name][file].x))
             wt_z_plot = np.asarray(wt_z)-0.115*scale
             if var_name == 'u':
-                ax.errorbar(wt_z_plot, wt_kurt, yerr = 0.1,
+                ax.errorbar(wt_z_plot, wt_kurt, yerr = 0.5 * 0.1,
                             label=label_list[i], 
                             fmt=marker_list[i], color=c_list[i])
                 if i==1:
@@ -564,7 +563,7 @@ if compute_LU_highermoments:
                             label=r'$5 \cdot h_{r}$')
                 ax.set_ylabel(r'$\beta_u$ (-)', fontsize = 18)
             elif var_name == 'w':             
-                ax.errorbar(wt_z_plot, wt_kurt, yerr = 0.1,
+                ax.errorbar(wt_z_plot, wt_kurt, yerr = 0.5 * 0.1,
                             label=label_list[i], 
                             fmt=marker_list[i], color=c_list[i])
                 if i==1:
@@ -576,7 +575,7 @@ if compute_LU_highermoments:
         ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                     borderaxespad = 0., ncol = 2, 
                     numpoints = 1, fontsize = 18)
-        ax.set_xlabel(r'$\Delta y$ (m)', fontsize = 18)
+        ax.set_xlabel(r'$\Delta x$ (m)', fontsize = 18)
         # save plots
         ax.set_xscale('log')
         fig.savefig('../palm_results/{}/run_{}/maskprofiles/{}_kurtosis_{}_mask_log.png'.format(papy.globals.run_name,
@@ -620,7 +619,7 @@ if compute_LU_var:
         err = np.mean(var_vars/palm_ref**2)*0.1
         fig, ax = plt.subplots()
         # plot PALM masked output
-        ax.errorbar(wall_dists, var_vars/palm_ref**2., yerr=err, 
+        ax.errorbar(wall_dists, var_vars/palm_ref**2., yerr = 0.5 * err, 
                     label= r'PALM', 
                     fmt='o', c='darkmagenta')
 
@@ -637,7 +636,7 @@ if compute_LU_var:
             wt_z_plot = np.asarray(wt_z)-0.115*scale
             if var_name == 'u':
                 wt_var_plot = wt_var1
-                ax.errorbar(wt_z_plot, wt_var_plot, yerr = wt_err[name]['u_var'],
+                ax.errorbar(wt_z_plot, wt_var_plot, yerr = 0.5 * wt_err[name]['u_var'],
                             label=label_list[i], 
                             fmt=marker_list[i], color=c_list[i])
                 if i==1:
@@ -647,7 +646,7 @@ if compute_LU_var:
                 ax.set_ylabel(r'$\overline{u^\prime u^\prime}$ $u_{ref}^{-2}$ (-)', fontsize = 18)
             elif var_name == 'w':
                 wt_var_plot = wt_var2                
-                ax.errorbar(wt_z_plot, wt_var_plot, yerr = wt_err[name]['v_var'],
+                ax.errorbar(wt_z_plot, wt_var_plot, yerr = 0.5 * wt_err[name]['v_var'],
                             label=label_list[i], 
                             fmt=marker_list[i], color=c_list[i])
                 if i==1:
@@ -659,7 +658,7 @@ if compute_LU_var:
         ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                     borderaxespad = 0., ncol = 2, 
                     numpoints = 1, fontsize = 18)
-        ax.set_xlabel(r'$\Delta y$ (m)', fontsize = 18)
+        ax.set_xlabel(r'$\Delta x$ (m)', fontsize = 18)
         ax.set_xscale('log')
         fig.savefig('../palm_results/{}/run_{}/maskprofiles/{}_variance_{}_mask_log.png'.format(papy.globals.run_name,
                     papy.globals.run_number[-3:],
@@ -672,7 +671,7 @@ if compute_LU_var:
 
 
 ######################################################
-# compute covariance in back of building
+# compute covariance in front of building
 ######################################################
 if compute_LU_covar:
     print('\n   compute co-variance')
@@ -702,10 +701,10 @@ if compute_LU_covar:
         wall_dists = np.concatenate([wall_dists, wall_dist])
 
     #plot profiles
-    err = np.mean(var_vars)*0.1
+    err = 0.001
     fig, ax = plt.subplots()
     # plot PALM masked output
-    ax.errorbar(wall_dists, var_vars, yerr=err, 
+    ax.errorbar(wall_dists, var_vars, yerr = 0.5 * err, 
                 label= r'PALM', fmt='o', c='darkmagenta')
     ax.vlines(0.0066*150.*5., -0.01, 0.01, colors='tab:red', 
                 linestyles='dashed', 
@@ -727,10 +726,11 @@ if compute_LU_covar:
                     label=label_list[i], 
                     fmt=marker_list[i], color=c_list[i])
     ax.grid(True, 'both')
-    ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
-                borderaxespad = 0., ncol = 2, 
-                numpoints = 1, fontsize = 18)
-    ax.set_xlabel(r'$\Delta y$ (m)', fontsize = 18)
+    # ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
+    #             borderaxespad = 0., ncol = 2, 
+    #             numpoints = 1, fontsize = 18)
+    ax.set_ylim(-0.005, 0.002)
+    ax.set_xlabel(r'$\Delta x$ (m)', fontsize = 18)
     ax.set_ylabel(r'$\overline{u^\prime w^\prime} u_{ref}^{-2}$ ' + r'(-)', fontsize = 18)
     ax.set_xscale('log')
     fig.savefig('../palm_results/{}/run_{}/maskprofiles/{}_covariance_{}_mask_log.png'.format(papy.globals.run_name,
@@ -742,42 +742,6 @@ if compute_LU_covar:
                 'LU', 'uv'))
     plt.close(12)
 
-
-######################################################
-# Compute spectra
-######################################################
-if compute_LU_spectra:
-    # heights mode
-    print('\n   Compute Spectra')
-    # grid_name = 'zu'
-    # z, z_unit = papy.read_nc_grid(nc_file_path,nc_file_grid,grid_name)
-
-    var_name_list = ['u', 'v']
-    for var_name in var_name_list:
-        for mask in mask_name_list:
-            total_var = np.array([])
-            total_time = np.array([])
-            for run_no in papy.globals.run_numbers:
-                nc_file = '{}_masked_{}{}.nc'.format(papy.globals.run_name, mask, run_no)
-                time, time_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'time')
-                var, var_unit = papy.read_nc_var_ms(nc_file_path, nc_file, var_name)
-                y, y_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'x')
-                total_time = np.concatenate([total_time, time])
-                total_var = np.concatenate([total_var, var])
-            # gather values
-            var_mean = np.asarray([np.mean(total_var)])
-            wall_dist = np.asarray([abs(y[0]-494.)])
-            print('\n HEIGHT = {} m'.format(wall_dist))
-            # equidistant timestepping
-            time_eq = np.linspace(total_time[0], total_time[-1], len(total_time))
-            var_eq = wt.equ_dist_ts(total_time, time_eq, total_var)
-            if var_name == 'u':
-                u_mean = var_mean[0]
-            # f_sm, S_uu_sm, u_aliasing = papy.calc_spectra(total_var, total_time, wall_dist, u_mean)
-            f_sm, S_uu_sm, u_aliasing = papy.calc_spectra(var_eq, time_eq, wall_dist, u_mean)
-            print('    calculated spectra for {}'.format(var_name))
-            papy.plot_spectra(f_sm, S_uu_sm, u_aliasing, u_mean, wall_dist[0], var_name, mask)
-            print('    plotted spectra for {} \n'.format(var_name))
 
 
 ######################################################
@@ -824,13 +788,13 @@ if compute_LU_lux:
     err = lux*0.1
     fig, ax = plt.subplots()
     # plot PALM-LUX
-    ax.errorbar(wall_dists, lux, yerr=err, 
+    ax.errorbar(wall_dists, lux, yerr = 0.5 * err, 
                 label= r'PALM', 
                 fmt='o', c='darkmagenta')
     # plot wt-LUX
     for j,name in enumerate(namelist):
         ax.errorbar(np.asarray(wt_z[name]), np.asarray(wt_lux[name]), 
-                yerr=0.1*np.asarray(wt_lux[name]), label=label_list[j], 
+                yerr = 0.5 * 0.1*np.asarray(wt_lux[name]), label=label_list[j], 
                 fmt=marker_list[j], color=c_list[j])
     ax.vlines(0.0066*150.*5., 0, 80, colors='tab:red', 
             linestyles='dashed', 
@@ -841,7 +805,7 @@ if compute_LU_lux:
                 borderaxespad = 0., ncol = 2, 
                 numpoints = 1, fontsize = 18)
     ax.set_ylabel(r'$L_{u}^x$ (m)', fontsize = 18)
-    ax.set_xlabel(r'$\Delta y$ (m)', fontsize = 18)
+    ax.set_xlabel(r'$\Delta x$ (m)', fontsize = 18)
     # save plots
     ax.set_xscale('log')
     fig.savefig('../palm_results/{}/run_{}/maskprofiles/{}_lux_{}_mask_log.png'.format(papy.globals.run_name,
@@ -930,7 +894,7 @@ if compute_quadrant_analysis:
                                     s3[0]  + 
                                     s4[0])))
 
-        plot_QA_PALM = True
+        plot_QA_PALM = False
         if plot_QA_PALM:
             # PLOT SINGLE Quadrant-scatterplots
             fig, ax = plt.subplots()
@@ -990,7 +954,7 @@ if compute_quadrant_analysis:
             plt.colorbar(im1, label=r'$\rho (u^\prime_{q_i},  w^\prime_{q_i})$ (-)')
             ax.set_xlabel(r'$u^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
             ax.set_ylabel(r'$w^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
-            ax.set_title(r'PALM - $\Delta y = {} m$'.format(wall_dist[0]))            
+            ax.set_title(r'PALM - $\Delta x = {} m$'.format(wall_dist[0]))            
             # save plots
             fig.savefig('../palm_results/{}/run_{}/quadrant_analysis/jpdf/{}_QA_jpdf_mask_{}.png'.format(papy.globals.run_name,
                         papy.globals.run_number[-3:],
@@ -1058,7 +1022,7 @@ if compute_quadrant_analysis:
                                         wt_s4[0])))
 
             # PLOT SINGLE Quadrant-scatterplots
-            plot_WT_QA = True
+            plot_WT_QA = False
             if plot_WT_QA:
                 fig, ax = plt.subplots()
                 fig.gca().set_aspect('equal', adjustable='box')
@@ -1115,13 +1079,13 @@ if compute_quadrant_analysis:
                         linestyles='dashed')
                 ax.grid(True, 'both', 'both')
                 if name[3:5] == 'FL':
-                    ax.set_title(r'Flat - $\Delta y = {} m$'.format(str(wt_wall_dist[0])[:5]))
+                    ax.set_title(r'Flat - $\Delta x = {} m$'.format(str(wt_wall_dist[0])[:5]))
                 elif name[3:5] == 'WB':
-                    ax.set_title(r'Medium Rough - $\Delta y = {} m$'.format(str(wt_wall_dist[0])[:5]))
+                    ax.set_title(r'Medium Rough - $\Delta x = {} m$'.format(str(wt_wall_dist[0])[:5]))
                 elif name[3:5] == 'BR':
-                    ax.set_title(r'Rough - $\Delta y = {} m$'.format(str(wt_wall_dist[0])[:5]))
+                    ax.set_title(r'Rough - $\Delta x = {} m$'.format(str(wt_wall_dist[0])[:5]))
                 else:
-                    ax.set_title(r'Wind tunnel - $\Delta y = {} m$'.format(str(wt_wall_dist[0])[:5]))                
+                    ax.set_title(r'Wind tunnel - $\Delta x = {} m$'.format(str(wt_wall_dist[0])[:5]))                
                 plt.colorbar(im1, 
                             label=r'$\rho (u^\prime_{q_i},  w^\prime_{q_i})$ (-)')
                 ax.set_xlabel(r'$u^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
@@ -1138,13 +1102,13 @@ if compute_quadrant_analysis:
 
         # quadrant contributions
         fig, ax = plt.subplots()
-        ax.errorbar(wt_wall_dists, wt_s1_all, yerr=0.1,
+        ax.errorbar(wt_wall_dists, wt_s1_all, yerr = 0.5 * 0.1,
                 label = 'Q1', fmt='o', c='blue')
-        ax.errorbar(wt_wall_dists, wt_s2_all, yerr=0.1,
+        ax.errorbar(wt_wall_dists, wt_s2_all, yerr = 0.5 * 0.1,
                 label = 'Q2', fmt='o', c='darkorange')
-        ax.errorbar(wt_wall_dists, wt_s3_all, yerr=0.1,
+        ax.errorbar(wt_wall_dists, wt_s3_all, yerr = 0.5 * 0.1,
                 label = 'Q3', fmt='o', c='cyan')
-        ax.errorbar(wt_wall_dists, wt_s4_all, yerr=0.1,
+        ax.errorbar(wt_wall_dists, wt_s4_all, yerr = 0.5 * 0.1,
                 label = 'Q4', fmt='o', c='red')
         ax.vlines(0.0066*150.*5., -5., 5., colors='tab:red', 
                     linestyles='dashed', 
@@ -1157,7 +1121,7 @@ if compute_quadrant_analysis:
                     numpoints = 1, fontsize = 18)
         ax.set_ylim(-5., 5.)
         ax.set_ylabel(r'$\overline{u^\prime w^\prime_{q_i}}$ $\overline{u^\prime w^\prime}^{-1}$ (-)', fontsize = 18)
-        ax.set_xlabel(r'$\Delta y$ (m)', fontsize = 18)
+        ax.set_xlabel(r'$\Delta x$ (m)', fontsize = 18)
         ax.set_xscale('log')
         # save plots
         fig.savefig('../palm_results/{}/run_{}/quadrant_analysis/{}_quadrantcontribution_profile_{}.png'.format(papy.globals.run_name,
@@ -1170,13 +1134,13 @@ if compute_quadrant_analysis:
 
     # quadrant contributions
     fig, ax = plt.subplots()
-    ax.errorbar(wall_dists, s1_all, yerr=0.1,
+    ax.errorbar(wall_dists, s1_all, yerr = 0.5 * 0.1,
             label = 'Q1', fmt='o', c='blue')
-    ax.errorbar(wall_dists, s2_all, yerr=0.1,
+    ax.errorbar(wall_dists, s2_all, yerr = 0.5 * 0.1,
             label = 'Q2', fmt='o', c='darkorange')
-    ax.errorbar(wall_dists, s3_all, yerr=0.1,
+    ax.errorbar(wall_dists, s3_all, yerr = 0.5 * 0.1,
             label = 'Q3', fmt='o', c='cyan')
-    ax.errorbar(wall_dists, s4_all, yerr=0.1,
+    ax.errorbar(wall_dists, s4_all, yerr = 0.5 * 0.1,
             label = 'Q4', fmt='o', c='red')
     ax.vlines(0.0066*150.*5., -5., 5., colors='tab:red', 
                 linestyles='dashed', 
@@ -1189,7 +1153,7 @@ if compute_quadrant_analysis:
                 numpoints = 1, fontsize = 18)
     ax.set_ylim(-5., 5.)
     ax.set_ylabel(r'$\overline{u^\prime w^\prime_{q_i}}$ $\overline{u^\prime w^\prime}^{-1}$ (-)', fontsize = 18)
-    ax.set_xlabel(r'$\Delta y$ (m)', fontsize = 18)
+    ax.set_xlabel(r'$\Delta x$ (m)', fontsize = 18)
     ax.set_xscale('log')
     # save plots
     fig.savefig('../palm_results/{}/run_{}/quadrant_analysis/{}_quadrantcontribution_profile_PALM.png'.format(papy.globals.run_name,

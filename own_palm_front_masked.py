@@ -52,6 +52,10 @@ papy.globals.run_numbers = ['.007', '.008', '.009', '.010', '.011', '.012',
                         '.031', '.032', '.033', '.034', '.035', '.036',
                         '.037', '.038', '.039', '.040', '.041', '.042',
                         '.043', '.044', '.045', '.046']
+papy.globals.run_name = 'yshift_SB_SI'
+papy.globals.run_numbers = ['.008', '.009', '.010', '.011', '.012', 
+                        '.013', '.014', '.015', '.016', '.017', '.018',
+                        '.019', '.020', '.021', '.022', '.023']
 papy.globals.run_number = papy.globals.run_numbers[-1]
 print('Analyze PALM-run up to: ' + papy.globals.run_number)
 nc_file_grid = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
@@ -60,6 +64,9 @@ if papy.globals.run_name == 'SB_SI_front':
     mask_name_list = ['M01', 'M02', 'M03', 'M04', 'M05', 'M06', 'M07', 'M08',
                     'M09', 'M10', 'M11', 'M12']
 elif papy.globals.run_name == 'SB_SI':
+    mask_name_list = ['M13', 'M14', 'M15', 'M16', 'M17', 'M18', 'M19', 'M20',
+                    'M21', 'M22', 'M23', 'M24']
+elif papy.globals.run_name == 'yshift_SB_SI':
     mask_name_list = ['M13', 'M14', 'M15', 'M16', 'M17', 'M18', 'M19', 'M20',
                     'M21', 'M22', 'M23', 'M24']
 
@@ -81,14 +88,12 @@ papy.globals.ny = 1024
 papy.globals.dx = 1.
 
 # Steeringflags
-compute_front_mean = False
+compute_front_mean = True
 compute_front_pdfs = False
-compute_front_highermoments = False
-compute_front_var = False
-compute_front_covar = False
-compute_front_spectra = False
-compute_front_lux = False
-
+compute_front_highermoments = True
+compute_front_var = True
+compute_front_covar = True
+compute_front_lux = True
 compute_quadrant_analysis = True
 ################
 """
@@ -137,44 +142,44 @@ for name in namelist:
     wt_err[name] = {}
     wt_err[name].fromkeys(var_names)
     if name[3:5] == 'FL':
-        wt_err[name]['umean'] = [0.0395, 0.0395, 0.0395, 0.0395, 0.0395, 0.0395, 0.0395, 0.0395, 0.0395, 0.0395, 
-                                0.0395, 0.0395, 0.0395, 0.0217, 0.0217, 0.0217, 0.0167, 0.0167, 0.0229, 0.0229, 0.0229, 0.0173]
-        wt_err[name]['vmean'] = [0.0107, 0.0107, 0.0107, 0.0107, 0.0107, 0.0107, 0.0107, 0.0107, 0.0107, 0.0107, 
-                                0.0107, 0.0107, 0.0107, 0.0101, 0.0101, 0.0101, 0.0152, 0.0152, 0.0081, 0.0081, 0.0081, 0.008]
-        wt_err[name]['u_var'] = [0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 
-                                0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0039, 0.0039, 0.0047, 0.0047, 0.0047, 0.0006]
-        wt_err[name]['v_var'] = [0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 
-                                0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0039, 0.0039, 0.0047, 0.0047, 0.0047, 0.0006]
-        wt_err[name]['covar'] = [0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 
-                                0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0039, 0.0039, 0.0047, 0.0047, 0.0047, 0.0006]
-        wt_err[name]['lux'] =   [3.1814, 3.1814, 3.1814, 3.1814, 3.1814, 3.1814, 3.1814, 3.1814, 3.1814, 3.1814, 
-                                3.1814, 3.1814, 3.1814, 1.5144, 1.5144, 1.5144, 2.9411, 2.9411, 2.2647, 2.2647, 2.2647, 26.5786]
+        wt_err[name]['umean'] = 0.5 * np.asarray([0.0395, 0.0395, 0.0395, 0.0395, 0.0395, 0.0395, 0.0395, 0.0395, 0.0395, 0.0395, 
+                                0.0395, 0.0395, 0.0395, 0.0217, 0.0217, 0.0217, 0.0167, 0.0167, 0.0229, 0.0229, 0.0229, 0.0173])
+        wt_err[name]['vmean'] = 0.5 * np.asarray([0.0107, 0.0107, 0.0107, 0.0107, 0.0107, 0.0107, 0.0107, 0.0107, 0.0107, 0.0107, 
+                                0.0107, 0.0107, 0.0107, 0.0101, 0.0101, 0.0101, 0.0152, 0.0152, 0.0081, 0.0081, 0.0081, 0.008])
+        wt_err[name]['u_var'] = 0.5 * np.asarray([0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 
+                                0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0039, 0.0039, 0.0047, 0.0047, 0.0047, 0.0006])
+        wt_err[name]['v_var'] = 0.5 * np.asarray([0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 
+                                0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0039, 0.0039, 0.0047, 0.0047, 0.0047, 0.0006])
+        wt_err[name]['covar'] = 0.5 * np.asarray([0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 
+                                0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0039, 0.0039, 0.0047, 0.0047, 0.0047, 0.0006])
+        wt_err[name]['lux'] =   0.5 * np.asarray([3.1814, 3.1814, 3.1814, 3.1814, 3.1814, 3.1814, 3.1814, 3.1814, 3.1814, 3.1814, 
+                                3.1814, 3.1814, 3.1814, 1.5144, 1.5144, 1.5144, 2.9411, 2.9411, 2.2647, 2.2647, 2.2647, 26.5786])
     if name[3:5] == 'BR':
-        wt_err[name]['umean'] = [0.0255, 0.0255, 0.0255, 0.0255, 0.0255, 0.0255, 0.0255, 0.0255, 0.0465, 0.0465, 
-                                0.0465, 0.0292, 0.0292, 0.0179, 0.0179, 0.0179, 0.0202]
-        wt_err[name]['vmean'] = [0.0156, 0.0156, 0.0156, 0.0156, 0.0156, 0.0156, 0.0156, 0.0156, 0.0116, 0.0116, 
-                                0.0116, 0.0101, 0.0101, 0.0114, 0.0114, 0.0114, 0.0073]
-        wt_err[name]['u_var'] = [0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 
-                                0.0029, 0.0048, 0.0048, 0.0037, 0.0037, 0.0037, 0.0007]
-        wt_err[name]['v_var'] = [0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 
-                                0.0029, 0.0048, 0.0048, 0.0037, 0.0037, 0.0037, 0.0007]
-        wt_err[name]['covar'] = [0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 
-                                0.0029, 0.0048, 0.0048, 0.0037, 0.0037, 0.0037, 0.0007]
-        wt_err[name]['lux'] =   [2.6852, 2.6852, 2.6852, 2.6852, 2.6852, 2.6852, 2.6852, 2.6852, 3.3587, 3.3587, 
-                                3.3587, 1.9594, 1.9594, 4.7631, 4.7631, 4.7631, 22.5726]
+        wt_err[name]['umean'] = 0.5 * np.asarray([0.0255, 0.0255, 0.0255, 0.0255, 0.0255, 0.0255, 0.0255, 0.0255, 0.0465, 0.0465, 
+                                0.0465, 0.0292, 0.0292, 0.0179, 0.0179, 0.0179, 0.0202])
+        wt_err[name]['vmean'] = 0.5 * np.asarray([0.0156, 0.0156, 0.0156, 0.0156, 0.0156, 0.0156, 0.0156, 0.0156, 0.0116, 0.0116, 
+                                0.0116, 0.0101, 0.0101, 0.0114, 0.0114, 0.0114, 0.0073])
+        wt_err[name]['u_var'] = 0.5 * np.asarray([0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 
+                                0.0029, 0.0048, 0.0048, 0.0037, 0.0037, 0.0037, 0.0007])
+        wt_err[name]['v_var'] = 0.5 * np.asarray([0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 
+                                0.0029, 0.0048, 0.0048, 0.0037, 0.0037, 0.0037, 0.0007])
+        wt_err[name]['covar'] = 0.5 * np.asarray([0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 
+                                0.0029, 0.0048, 0.0048, 0.0037, 0.0037, 0.0037, 0.0007])
+        wt_err[name]['lux'] =   0.5 * np.asarray([2.6852, 2.6852, 2.6852, 2.6852, 2.6852, 2.6852, 2.6852, 2.6852, 3.3587, 3.3587, 
+                                3.3587, 1.9594, 1.9594, 4.7631, 4.7631, 4.7631, 22.5726])
     if name[3:5] == 'WB':
-        wt_err[name]['umean'] = [0.0171, 0.0171, 0.0171, 0.0171, 0.0171, 0.0171, 0.0171, 0.0171, 0.0245, 0.0245, 
-                                0.0245, 0.0335, 0.0335, 0.0175, 0.0175, 0.0175, 0.0202]
-        wt_err[name]['vmean'] = [0.0133, 0.0133, 0.0133, 0.0133, 0.0133, 0.0133, 0.0133, 0.0133, 0.016, 0.016, 
-                                0.016, 0.0106, 0.0106, 0.007, 0.007, 0.007, 0.0006]
-        wt_err[name]['u_var'] = [0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0028, 0.0028, 
-                                0.0028, 0.004, 0.004, 0.0029, 0.0029, 0.0029, 0.0008]
-        wt_err[name]['v_var'] = [0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0028, 0.0028, 
-                                0.0028, 0.004, 0.004, 0.0029, 0.0029, 0.0029, 0.0008]
-        wt_err[name]['covar'] = [0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0028, 0.0028, 
-                                0.0028, 0.004, 0.004, 0.0029, 0.0029, 0.0029, 0.0008]
-        wt_err[name]['lux'] =   [1.9007, 1.9007, 1.9007, 1.9007, 1.9007, 1.9007, 1.9007, 1.9007, 2.2369, 2.2369, 
-                                2.2369, 4.4863, 4.4863, 2.6004, 2.6004, 2.6004, 33.5205]
+        wt_err[name]['umean'] = 0.5 * np.asarray([0.0171, 0.0171, 0.0171, 0.0171, 0.0171, 0.0171, 0.0171, 0.0171, 0.0245, 0.0245, 
+                                0.0245, 0.0335, 0.0335, 0.0175, 0.0175, 0.0175, 0.0202])
+        wt_err[name]['vmean'] = 0.5 * np.asarray([0.0133, 0.0133, 0.0133, 0.0133, 0.0133, 0.0133, 0.0133, 0.0133, 0.016, 0.016, 
+                                0.016, 0.0106, 0.0106, 0.007, 0.007, 0.007, 0.0006])
+        wt_err[name]['u_var'] = 0.5 * np.asarray([0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0028, 0.0028, 
+                                0.0028, 0.004, 0.004, 0.0029, 0.0029, 0.0029, 0.0008])
+        wt_err[name]['v_var'] = 0.5 * np.asarray([0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0028, 0.0028, 
+                                0.0028, 0.004, 0.004, 0.0029, 0.0029, 0.0029, 0.0008])
+        wt_err[name]['covar'] = 0.5 * np.asarray([0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0028, 0.0028, 
+                                0.0028, 0.004, 0.004, 0.0029, 0.0029, 0.0029, 0.0008])
+        wt_err[name]['lux'] =   0.5 * np.asarray([1.9007, 1.9007, 1.9007, 1.9007, 1.9007, 1.9007, 1.9007, 1.9007, 2.2369, 2.2369, 
+                                2.2369, 4.4863, 4.4863, 2.6004, 2.6004, 2.6004, 33.5205])
 
 # get wind tunnel data
 time_series = {}
@@ -694,7 +699,7 @@ if compute_front_covar:
         wall_dists = np.concatenate([wall_dists, wall_dist])
 
     #plot profiles
-    err = np.mean(var_vars)*0.1
+    err = 0.001
     fig, ax = plt.subplots()
     # plot PALM masked output
     ax.errorbar(wall_dists, var_vars, yerr=err, 
@@ -720,9 +725,9 @@ if compute_front_covar:
                     label=label_list[i], 
                     fmt=marker_list[i], color=c_list[i])
     ax.grid(True, 'both')
-    ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
-                borderaxespad = 0., ncol = 2, 
-                numpoints = 1, fontsize = 18)
+    # ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
+    #             borderaxespad = 0., ncol = 2, 
+    #             numpoints = 1, fontsize = 18)
     ax.set_xlabel(r'$\Delta y$ (m)', fontsize = 18)
     ax.set_ylabel(r'$\overline{u^\prime v^\prime} u_{ref}^{-2}$ ' + r'(-)', fontsize = 18)
     ax.set_xscale('log')
@@ -734,40 +739,6 @@ if compute_front_covar:
                 papy.globals.run_number[-3:],
                 'front', 'uv'))
     plt.close(12)
-
-
-######################################################
-# Copmute spectra
-######################################################
-if compute_front_spectra:
-    # heights mode
-    print('\n Compute at different heights: \n')
-
-    var_name_list = ['u', 'v']
-    for var_name in var_name_list:
-        mean_vars = np.array([])
-        wall_dists = np.array([])
-        for mask in mask_name_list:
-            total_var = np.array([])
-            total_time = np.array([])
-            for run_no in papy.globals.run_numbers:
-                nc_file = '{}_masked_{}{}.nc'.format(papy.globals.run_name, mask, run_no)
-                time, time_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'time')
-                var, var_unit = papy.read_nc_var_ms(nc_file_path, nc_file, var_name)
-                y, y_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'y')
-                total_time = np.concatenate([total_time, time])
-                total_var = np.concatenate([total_var, var])
-            # gather values
-            var_mean = np.asarray([np.mean(total_var)])
-            wall_dist = np.asarray([abs(y[0]-530.)])
-            mean_vars = np.concatenate([mean_vars, var_mean])
-            wall_dists = np.concatenate([wall_dists, wall_dist])
-            print('\n HEIGHT = {} m'.format(wall_dist))
-            u_mean  = np.mean(total_var)      
-            f_sm, S_uu_sm, u_aliasing = papy.calc_spectra(total_var, total_time, wall_dist, u_mean)
-            print('    calculated spectra for {}'.format(var_name))
-            papy.plot_spectra(f_sm, S_uu_sm, u_aliasing, u_mean, wall_dist, var_name, mask)
-            print('    plotted spectra for {} \n'.format(var_name))
 
 
 ######################################################
@@ -828,13 +799,14 @@ if compute_front_lux:
             linestyles='dashed', 
             label=r'$5 \cdot h_{r}$')
 
-    ax.grid(True, 'both', 'both')
+    ax.grid(True)
     ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                 borderaxespad = 0., ncol = 2, 
                 numpoints = 1, fontsize = 18)
     ax.set_ylabel(r'$L_{u}^x$ (m)', fontsize = 18)
     ax.set_xlabel(r'$\Delta y$ (m)', fontsize = 18)
     # save plots
+    ax.set_ylim(10.**-2., 150.)
     ax.set_xscale('log')
     fig.savefig('../palm_results/{}/run_{}/maskprofiles/{}_lux_{}_mask_log.png'.format(papy.globals.run_name,
                 papy.globals.run_number[-3:],
@@ -1051,7 +1023,7 @@ if compute_quadrant_analysis:
                                         wt_s4[0])))
 
             # PLOT SINGLE Quadrant-scatterplots
-            plot_WT_QA = True
+            plot_WT_QA = False
             if plot_WT_QA:
                 fig, ax = plt.subplots()
                 fig.gca().set_aspect('equal', adjustable='box')

@@ -85,7 +85,6 @@ compute_middle_pdfs = False
 compute_middle_highermoments = True
 compute_middle_var = True
 compute_middle_covar = True
-compute_middle_spectra = False
 compute_middle_lux = True
 compute_quadrant_analysis = True
 ################
@@ -671,7 +670,7 @@ if compute_middle_covar:
         wall_dists = np.concatenate([wall_dists, wall_dist])
 
     #plot profiles
-    err = np.mean(var_vars)*0.1
+    err = 0.001
     fig, ax = plt.subplots()
     # plot PALM masked output
     ax.errorbar(wall_dists, var_vars, yerr=err, 
@@ -710,43 +709,6 @@ if compute_middle_covar:
                 papy.globals.run_number[-3:],
                 'middle', 'uv'))
     plt.close(12)
-
-
-######################################################
-# Compute spectra
-######################################################
-if compute_middle_spectra:
-    # heights mode
-    print('\n Compute at different heights: \n')
-    # grid_name = 'zu'
-    # z, z_unit = papy.read_nc_grid(nc_file_path,nc_file_grid,grid_name)
-
-    var_name_list = ['u', 'v']
-    for var_name in var_name_list:
-        for mask in mask_name_list:
-            total_var = np.array([])
-            total_time = np.array([])
-            for run_no in papy.globals.run_numbers:
-                nc_file = '{}_masked_{}{}.nc'.format(papy.globals.run_name, mask, run_no)
-                time, time_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'time')
-                var, var_unit = papy.read_nc_var_ms(nc_file_path, nc_file, var_name)
-                y, y_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'y')
-                total_time = np.concatenate([total_time, time])
-                total_var = np.concatenate([total_var, var])
-            # gather values
-            var_mean = np.asarray([np.mean(total_var)])
-            wall_dist = np.asarray([abs(y[0]-530.)])
-            print('\n HEIGHT = {} m'.format(wall_dist))
-            # equidistant timestepping
-            time_eq = np.linspace(total_time[0], total_time[-1], len(total_time))
-            var_eq = wt.equ_dist_ts(total_time, time_eq, total_var)
-            if var_name == 'u':
-                u_mean = var_mean[0]
-            # f_sm, S_uu_sm, u_aliasing = papy.calc_spectra(total_var, total_time, wall_dist, u_mean)
-            f_sm, S_uu_sm, u_aliasing = papy.calc_spectra(var_eq, time_eq, wall_dist, u_mean)
-            print('    calculated spectra for {}'.format(var_name))
-            papy.plot_spectra(f_sm, S_uu_sm, u_aliasing, u_mean, wall_dist[0], var_name, mask)
-            print('    plotted spectra for {} \n'.format(var_name))
 
 
 ######################################################
