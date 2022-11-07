@@ -48,7 +48,9 @@ papy.globals.run_name = 'yshift_SB_BL_corr'
 papy.globals.run_numbers = ['.008', '.009', '.010', '.011', '.012', 
                             '.013', '.014', '.015', '.016', '.017', '.018',
                             '.019', '.020', '.021', '.022', '.023', '.024',
-                            '.025', '.026']
+                            '.025', '.026', '.027', '.028', '.029', '.030',
+                            '.031', '.032', '.033', '.034', '.035', '.036',
+                            '.037']
 papy.globals.run_number = papy.globals.run_numbers[-1]
 print('Analyze PALM-run up to: ' + papy.globals.run_number)
 nc_file_grid = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
@@ -113,14 +115,13 @@ mode_list = ['testing', 'heights', 'compare', 'filtercheck']
 mode = mode_list[1]
 
 # Steeringflags
-compute_BL_mean = False
-compute_BL_var = False
-compute_BL_covar = False
-compute_spectra = False
-compute_BL_lux = False
-compute_quadrant_analysis = False
+compute_BL_mean = True
+compute_BL_var = True
+compute_BL_covar = True
+compute_BL_lux = True
+compute_quadrant_analysis = True
 
-compute_BL_correlation = True
+compute_BL_correlation = False
 ################
 """
 MAIN
@@ -646,44 +647,6 @@ if compute_BL_covar:
 
 
 ######################################################
-# Copmute spectra
-######################################################
-if compute_spectra:
-    print('\n Compute at different heights: \n')
-    var_name_list = ['u', 'v', 'w']
-    for var_name in var_name_list:
-        mean_vars = np.array([])
-        wall_dists = np.array([])
-        for mask in mask_name_list:
-            total_var = np.array([])
-            total_time = np.array([])
-            for run_no in papy.globals.run_numbers:
-                nc_file = '{}_masked_{}{}.nc'.format(papy.globals.run_name, mask, run_no)
-                time, time_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'time')
-                var, var_unit = papy.read_nc_var_ms(nc_file_path, nc_file, var_name)
-                if var_name == 'w':
-                    y, y_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'zw_3d')
-                else:
-                    y, y_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'zu_3d')
-                total_time = np.concatenate([total_time, time])
-                total_var = np.concatenate([total_var, var])
-            # gather values
-            var_mean = np.asarray([np.mean(total_var)])
-            wall_dist = np.asarray([abs(y[0])])
-            print('\n HEIGHT = {} m'.format(wall_dist))
-            # # equidistant timestepping
-            time_eq = np.linspace(total_time[0], total_time[-1], len(total_time))
-            var_eq = wt.equ_dist_ts(total_time, time_eq, total_var)
-            if var_name == 'u':
-                u_mean = var_mean[0]
-            # f_sm, S_uu_sm, u_aliasing = papy.calc_spectra(total_var, total_time, wall_dist, u_mean)
-            f_sm, S_uu_sm, u_aliasing = papy.calc_spectra(var_eq, time_eq, wall_dist, u_mean)
-            print('    calculated spectra for {}'.format(var_name))
-            papy.plot_spectra(f_sm, S_uu_sm, u_aliasing, u_mean, wall_dist[0], var_name, mask)
-            print('    plotted spectra for {} \n'.format(var_name))
-
-
-######################################################
 # Intergral length scale Lux
 ######################################################
 if compute_BL_lux:
@@ -1065,20 +1028,38 @@ if compute_BL_correlation:
                 total_var[mask] = np.concatenate([total_var[mask], var])
             # gather values
         print('\n     VARIABLE = ', var_name)
-        corr1 = np.corrcoef(total_var[mask_name_list[0]], total_var[mask_name_list[0]])[0][1]
-        print('         Autocorr = ', corr1)
-
-        corr2 = np.corrcoef(total_var[mask_name_list[0]], total_var[mask_name_list[1]])[0][1]
-        print('         Correlation Behind 1 = ', corr2)
-
-        corr3 = np.corrcoef(total_var[mask_name_list[0]], total_var[mask_name_list[2]])[0][1]
-        print('         Correlation Behind 2 = ', corr3)
-
-        corr4 = np.corrcoef(total_var[mask_name_list[0]], total_var[mask_name_list[3]])[0][1]
-        print('         Correlation Side = ', corr4)
-
-# np.asarray([1. if x == 0 else np.corrcoef(timeseries[x:], 
-#                         timeseries[:-x])[0][1] for x in range(maxlags)])
-
+        # corr1_onepoint = np.corrcoef(total_var[mask_name_list[0]], total_var[mask_name_list[0]])[0][1]
+        timelags = np.arange(0.,round(len(total_var[mask_name_list[0]])/2), 1)
+        corr1 = np.asarray([1. if x == 0 else np.corrcoef(total_var[mask_name_list[0]][x:], 
+                                total_var[mask_name_list[0]][:-x])[0][1] for x in range(round(len(total_var[mask_name_list[0]])/2))])        
+        corr2 = np.asarray([1. if x == 0 else np.corrcoef(total_var[mask_name_list[0]][x:], 
+                                total_var[mask_name_list[1]][:-x])[0][1] for x in range(round(len(total_var[mask_name_list[0]])/2))])
+        corr3 = np.asarray([1. if x == 0 else np.corrcoef(total_var[mask_name_list[0]][x:], 
+                                total_var[mask_name_list[2]][:-x])[0][1] for x in range(round(len(total_var[mask_name_list[0]])/2))])
+        corr4 = np.asarray([1. if x == 0 else np.corrcoef(total_var[mask_name_list[0]][x:], 
+                                total_var[mask_name_list[3]][:-x])[0][1] for x in range(round(len(total_var[mask_name_list[0]])/2))])
+        fig, ax = plt.subplots()
+        ax.plot(timelags*max(total_time)*0.5/max(timelags), 
+                corr1,
+                label=r'$R(BL, BL)$')
+        ax.plot(timelags*max(total_time)*0.5/max(timelags), 
+                corr2,
+                label=r'$R(BL, B1)$')
+        ax.plot(timelags*max(total_time)*0.5/max(timelags), 
+                corr3,
+                label=r'$R(BL, B2)$')
+        ax.plot(timelags*max(total_time)*0.5/max(timelags),     
+                corr4,
+                label=r'$R(BL, S1)$')
+        ax.grid()
+        ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
+                    borderaxespad = 0., ncol = 2, 
+                    numpoints = 1, fontsize = 18)
+        ax.set_xlabel(r'timelag (s)', fontsize = 18)
+        ax.set_ylabel(r'Correlation', fontsize = 18)
+        # ax.set_yscale('log')
+        fig.savefig('../palm_results/{}/run_{}/{}_correlations_{}.png'.format(papy.globals.run_name,
+                    papy.globals.run_number[-3:], 'BL', var_name), bbox_inches='tight', dpi=500)
+        plt.close(12)
 
 print('\n Finished processing of: {}{}'.format(papy.globals.run_name, papy.globals.run_number))
