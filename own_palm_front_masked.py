@@ -54,8 +54,11 @@ papy.globals.run_numbers = ['.007', '.008', '.009', '.010', '.011', '.012',
                         '.043', '.044', '.045', '.046']
 papy.globals.run_name = 'yshift_SB_SI'
 papy.globals.run_numbers = ['.008', '.009', '.010', '.011', '.012', 
-                        '.013', '.014', '.015', '.016', '.017', '.018',
-                        '.019', '.020', '.021', '.022', '.023']
+                            '.013', '.014', '.015', '.016', '.017', '.018',
+                            '.019', '.020', '.021', '.022', '.023', '.024',
+                            '.025', '.026', '.027', '.028', '.029', '.030',
+                            '.031', '.032', '.033', '.034', '.035', '.036',
+                            '.037']
 papy.globals.run_number = papy.globals.run_numbers[-1]
 print('Analyze PALM-run up to: ' + papy.globals.run_number)
 nc_file_grid = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)

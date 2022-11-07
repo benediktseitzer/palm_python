@@ -53,7 +53,13 @@ papy.globals.run_numbers = ['.008', '.009', '.010', '.011', '.012',
                         '.037', '.038', '.039', '.040', '.041', '.042',
                         '.043', '.044', '.045', '.046', '.047', '.048',
                         '.049', '.050',]
-
+papy.globals.run_name = 'yshift_SB_LE'
+papy.globals.run_numbers = ['.008', '.009', '.010', '.011', '.012', 
+                            '.013', '.014', '.015', '.016', '.017', '.018',
+                            '.019', '.020', '.021', '.022', '.023', '.024',
+                            '.025', '.026', '.027', '.028', '.029', '.030', 
+                            '.031', '.032', '.033', '.034', '.035', '.036',
+                            '.037']
 papy.globals.run_number = papy.globals.run_numbers[-1]       
 print('     Analyze PALM-run up to: ' + papy.globals.run_number)             
 nc_file_grid = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
@@ -87,12 +93,12 @@ papy.globals.dx = 1.
 Steeringflags
 """
 ################
-compute_LE_mean = False
+compute_LE_mean = True
 compute_LE_pdfs = False
-compute_LE_highermoments = False
-compute_LE_var = False
-compute_LE_covar = False
-compute_LE_lux = False
+compute_LE_highermoments = True
+compute_LE_var = True
+compute_LE_covar = True
+compute_LE_lux = True
 compute_quadrant_analysis = True
 
 ################

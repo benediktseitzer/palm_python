@@ -52,6 +52,14 @@ papy.globals.run_numbers = ['.008', '.009', '.010', '.011', '.012',
                             '.031', '.032', '.033', '.034', '.035', '.036',
                             '.037', '.038', '.039', '.040', '.041', '.042',
                             '.043', '.044', '.045', '.046', '.047']
+papy.globals.run_name = 'yshift_SB_LU'
+papy.globals.run_numbers = ['.008', '.009', '.010', '.011', '.012', 
+                            '.013', '.014', '.015', '.016', '.017', '.018',
+                            '.019', '.020', '.021', '.022', '.023', '.024',
+                            '.025', '.026', '.027', '.028', '.029', '.030', 
+                            '.031', '.032', '.033', '.034', '.035', '.036',
+                            '.037']
+
 
 papy.globals.run_number = papy.globals.run_numbers[-1]       
 print('Analyze PALM-run up to: ' + papy.globals.run_number)
@@ -86,14 +94,13 @@ papy.globals.dx = 1.
 Steeringflags
 """
 ################
-compute_LU_mean = False
+compute_LU_mean = True
 compute_LU_pdfs = False
-compute_LU_highermoments = False
-compute_LU_var = False
+compute_LU_highermoments = True
+compute_LU_var = True
 compute_LU_covar = True
-compute_LU_lux = False
-
-compute_quadrant_analysis = False
+compute_LU_lux = True
+compute_quadrant_analysis = True
 
 ################
 """
