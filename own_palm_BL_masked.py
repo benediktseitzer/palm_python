@@ -1077,7 +1077,8 @@ if compute_BL_correlation:
         corr4 = np.corrcoef(total_var[mask_name_list[0]], total_var[mask_name_list[3]])[0][1]
         print('         Correlation Side = ', corr4)
 
-
+# np.asarray([1. if x == 0 else np.corrcoef(timeseries[x:], 
+#                         timeseries[:-x])[0][1] for x in range(maxlags)])
 
 
 print('\n Finished processing of: {}{}'.format(papy.globals.run_name, papy.globals.run_number))
