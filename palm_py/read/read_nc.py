@@ -272,10 +272,11 @@ def read_nc_var_ms(nc_file_path, nc_file, var_name):
         print('\n Exception occured: {} not found \n'.format(nc_file))
         
 
+    possible_coordinates = ['x', 'xu', 'y', 'yv', 'zu_3d', 'zw_3d']
     try:    
         if var_name == 'time':
             var = fh.variables[var_name][:]
-        elif var_name == 'y' or var_name == 'x' or var_name == 'zu_3d' or var_name == 'zw_3d':
+        elif var_name in possible_coordinates:
             var = fh.variables[var_name][:]
         else:    
             var = fh.variables[var_name][:,0,0,0]
