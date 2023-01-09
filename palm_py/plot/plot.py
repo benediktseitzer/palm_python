@@ -52,7 +52,6 @@ def plot_lux_profile(lux, height_list):
     Lux_10,Lux_1,Lux_01,Lux_001,Lux_obs_smooth,Lux_obs_rough = \
     papy.get_lux_referencedata(ref_path)
 
-    plt.style.use('classic')
     fig, ax = plt.subplots()
 
     err = 0.1 * lux
@@ -112,7 +111,6 @@ def plot_timeseries(var, var_unit, var_name, time, time_unit):
     if papy.globals.run_number == '':
         papy.globals.run_number = '.000'
 
-    plt.style.use('classic')
     fig, ax = plt.subplots()
     ax.plot(time, var, color='darkviolet')
     ax.set_xlabel(r'$t$ $({})$'.format('s'), fontsize = 18)
@@ -166,7 +164,6 @@ def plot_turbint_profile(turbint, height_list, var_name):
     ref_path = None
     I_slight, I_moderate, I_rough, I_very = papy.get_turbint_referencedata(var_name, ref_path)
 
-    plt.style.use('classic')
     fig, ax = plt.subplots()
 
     err = 0.1 * turbint
@@ -220,8 +217,6 @@ def plot_semilog_u(var, var_name, z, z_unit, wt_pr, wt_z, wt_u_ref, time):
     wt_u_ref: float
     time: array-like
     """    
-
-    plt.style.use('classic')
 
     # calculate theoretical wind profile
     u_pr, u_pw, u_fric = papy.calc_theoretical_profile(wt_pr, wt_u_ref, wt_z,z)
@@ -297,7 +292,6 @@ def plot_ver_profile(var_plt, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_r
     if papy.globals.run_number == '':
         papy.globals.run_number = '.000'
 
-    plt.style.use('classic')
     fig, ax = plt.subplots()
     jet= plt.get_cmap('viridis')
     colors = iter(jet(np.linspace(0,1,10)))
@@ -548,7 +542,6 @@ def plot_contour_crosssection(x, y, var, var_name, o_grid, o_level, vert_gridnam
     if papy.globals.run_number == '':
         papy.globals.run_number = '.000'
 
-    plt.style.use('classic')
     fig, ax = plt.subplots()
 
     # estimate bounds of colorbar
