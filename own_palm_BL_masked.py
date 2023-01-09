@@ -21,7 +21,6 @@ import scipy.stats as stats
 
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FormatStrFormatter
-plt.style.use('classic')
 
 import palm_py as papy
 
@@ -30,6 +29,31 @@ import windtunnel as wt
 
 import warnings
 warnings.simplefilter("ignore")
+
+import matplotlib
+plotformat = 'pgf'
+plotformat = 'png'
+plotformat = 'pdf'
+if plotformat == 'pgf':
+    plt.style.use('default')
+    matplotlib.use('pgf')
+    matplotlib.rcParams.update({
+        'pgf.texsystem': 'pdflatex',
+        'font.family': 'sans-serif',
+        'text.usetex': True,
+        'pgf.rcfonts': False,
+        'xtick.labelsize' : 16,
+        'ytick.labelsize' : 16,
+    })
+else:
+    plt.style.use('default')
+    matplotlib.rcParams.update({
+        'font.family': 'sans-serif',
+        'text.usetex': True,
+        'pgf.rcfonts': False,
+        'xtick.labelsize' : 16,
+        'ytick.labelsize' : 16,
+    })
 
 ################
 """
@@ -44,13 +68,14 @@ GLOBAL VARIABLES
 ################
 # PALM input files
 papy.globals.run_name = 'SB_SI_BL'
-papy.globals.run_name = 'yshift_SB_BL_corr'
+# papy.globals.run_name = 'yshift_SB_BL_corr'
 papy.globals.run_numbers = ['.008', '.009', '.010', '.011', '.012', 
                             '.013', '.014', '.015', '.016', '.017', '.018',
                             '.019', '.020', '.021', '.022', '.023', '.024',
                             '.025', '.026', '.027', '.028', '.029', '.030',
                             '.031', '.032', '.033', '.034', '.035', '.036',
-                            '.037']
+                            '.037', '.038', '.039', '.040', '.041', '.042',
+                            '.043', '.044', '.045', '.046', '.047']
 papy.globals.run_number = papy.globals.run_numbers[-1]
 print('Analyze PALM-run up to: ' + papy.globals.run_number)
 nc_file_grid = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
@@ -130,8 +155,6 @@ MAIN
 
 # prepare the outputfolders
 papy.prepare_plotfolder(papy.globals.run_name,papy.globals.run_number)
-# plt.style.use('classic')
-
 
 namelist = [wt_filename]
 path = '{}/coincidence/timeseries/'.format(wt_path) # path to timeseries folder

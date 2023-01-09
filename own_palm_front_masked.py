@@ -21,7 +21,6 @@ import scipy.stats as stats
 
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FormatStrFormatter
-plt.style.use('classic')
 
 import palm_py as papy
 
@@ -31,11 +30,37 @@ import windtunnel as wt
 import warnings
 warnings.simplefilter("ignore")
 
+import matplotlib
+plotformat = 'pgf'
+plotformat = 'png'
+plotformat = 'pdf'
+if plotformat == 'pgf':
+    plt.style.use('default')
+    matplotlib.use('pgf')
+    matplotlib.rcParams.update({
+        'pgf.texsystem': 'pdflatex',
+        'font.family': 'sans-serif',
+        'text.usetex': True,
+        'pgf.rcfonts': False,
+        'xtick.labelsize' : 16,
+        'ytick.labelsize' : 16,
+    })
+else:
+    plt.style.use('default')
+    matplotlib.rcParams.update({
+        'font.family': 'sans-serif',
+        'text.usetex': True,
+        'pgf.rcfonts': False,
+        'xtick.labelsize' : 16,
+        'ytick.labelsize' : 16,
+    })
+
 ################
 """
 FUNCTIONS
 """
 ################
+
 
 ################
 """
@@ -52,13 +77,13 @@ papy.globals.run_numbers = ['.007', '.008', '.009', '.010', '.011', '.012',
                         '.031', '.032', '.033', '.034', '.035', '.036',
                         '.037', '.038', '.039', '.040', '.041', '.042',
                         '.043', '.044', '.045', '.046']
-papy.globals.run_name = 'yshift_SB_SI'
-papy.globals.run_numbers = ['.008', '.009', '.010', '.011', '.012', 
-                            '.013', '.014', '.015', '.016', '.017', '.018',
-                            '.019', '.020', '.021', '.022', '.023', '.024',
-                            '.025', '.026', '.027', '.028', '.029', '.030',
-                            '.031', '.032', '.033', '.034', '.035', '.036',
-                            '.037']
+# papy.globals.run_name = 'yshift_SB_SI'
+# papy.globals.run_numbers = ['.008', '.009', '.010', '.011', '.012', 
+#                             '.013', '.014', '.015', '.016', '.017', '.018',
+#                             '.019', '.020', '.021', '.022', '.023', '.024',
+#                             '.025', '.026', '.027', '.028', '.029', '.030',
+#                             '.031', '.032', '.033', '.034', '.035', '.036',
+#                             '.037']
 papy.globals.run_number = papy.globals.run_numbers[-1]
 print('Analyze PALM-run up to: ' + papy.globals.run_number)
 nc_file_grid = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
@@ -93,11 +118,11 @@ papy.globals.dx = 1.
 # Steeringflags
 compute_front_mean = True
 compute_front_pdfs = False
-compute_front_highermoments = True
-compute_front_var = True
-compute_front_covar = True
-compute_front_lux = True
-compute_quadrant_analysis = True
+compute_front_highermoments = False
+compute_front_var = False
+compute_front_covar = False
+compute_front_lux = False
+compute_quadrant_analysis = False
 ################
 """
 MAIN
@@ -238,7 +263,10 @@ if compute_front_mean:
                 nc_file = '{}_masked_{}{}.nc'.format(papy.globals.run_name, mask, run_no)
                 time, time_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'time')
                 var, var_unit = papy.read_nc_var_ms(nc_file_path, nc_file, var_name)
-                y, y_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'y')
+                if var_name == 'u':
+                    y, y_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'y')
+                elif var_name == 'v':
+                    y, y_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'yv')
                 total_time = np.concatenate([total_time, time])
                 total_var = np.concatenate([total_var, var])
             # gather values
@@ -293,13 +321,13 @@ if compute_front_mean:
         ax.set_xlabel(r'$\Delta y$ (m)', fontsize = 18)
         # save plots
         ax.set_xscale('log')
-        fig.savefig('../palm_results/{}/run_{}/maskprofiles/{}_mean_{}_mask_log.png'.format(papy.globals.run_name,
+        fig.savefig('../palm_results/{}/run_{}/maskprofiles/{}_mean_{}_mask_log.{}'.format(papy.globals.run_name,
                     papy.globals.run_number[-3:],
-                    'front', var_name), bbox_inches='tight', dpi=500)
+                    'front', var_name, plotformat), bbox_inches='tight', dpi=500)
         print('     SAVED TO: ' 
-                + '../palm_results/{}/run_{}/maskprofiles/{}_mean_{}_mask_log.png'.format(papy.globals.run_name,
+                + '../palm_results/{}/run_{}/maskprofiles/{}_mean_{}_mask_log.{}'.format(papy.globals.run_name,
                 papy.globals.run_number[-3:],
-                'front', var_name))                    
+                'front', var_name, plotformat))                    
         plt.close(12)
 
 
@@ -357,13 +385,13 @@ if compute_front_pdfs:
             else:
                 ax.set_xlim(-abs(min(total_var/palm_ref)), abs(min(total_var/palm_ref)))
             # save plots
-            fig.savefig('../palm_results/{}/run_{}/histogram/{}_hist_{}_{}.png'.format(papy.globals.run_name,
+            fig.savefig('../palm_results/{}/run_{}/histogram/{}_hist_{}_{}.{}'.format(papy.globals.run_name,
                         papy.globals.run_number[-3:],
-                        'front', var_name, mask), bbox_inches='tight', dpi=500)
+                        'front', var_name, mask, plotformat), bbox_inches='tight', dpi=500)
             print('     SAVED TO: ' 
-                    + '../palm_results/{}/run_{}/histogram/{}_hist_{}_{}.png'.format(papy.globals.run_name,
+                    + '../palm_results/{}/run_{}/histogram/{}_hist_{}_{}.{}'.format(papy.globals.run_name,
                     papy.globals.run_number[-3:],
-                    'front', var_name, mask))
+                    'front', var_name, mask, plotformat))
             plt.close(12)
             fig, ax = plt.subplots()
             # plot PALM masked output
@@ -390,13 +418,13 @@ if compute_front_pdfs:
                         numpoints = 1, fontsize = 18)
             ax.set_ylabel(r'relative frequency', fontsize = 18)
             # save plots
-            fig.savefig('../palm_results/{}/run_{}/histogram/{}_hist_{}{}_{}.png'.format(papy.globals.run_name,
+            fig.savefig('../palm_results/{}/run_{}/histogram/{}_hist_{}{}_{}.{}'.format(papy.globals.run_name,
                         papy.globals.run_number[-3:],
-                        'front', var_name, var_name, mask), bbox_inches='tight', dpi=500)
+                        'front', var_name, var_name, mask, plotformat), bbox_inches='tight', dpi=500)
             print('     SAVED TO: ' 
-                    + '../palm_results/{}/run_{}/histogram/{}_hist_{}{}_{}.png'.format(papy.globals.run_name,
+                    + '../palm_results/{}/run_{}/histogram/{}_hist_{}{}_{}.{}'.format(papy.globals.run_name,
                     papy.globals.run_number[-3:],
-                    'front', var_name, var_name, mask))
+                    'front', var_name, var_name, mask, plotformat))
             plt.close(13)
     # flux PDFs
     var_vars = np.array([])
@@ -439,13 +467,13 @@ if compute_front_pdfs:
         else:
             ax.set_xlim(-abs(min(var_flux)), abs(min(var_flux)))        
         # save plots
-        fig.savefig('../palm_results/{}/run_{}/histogram/{}_hist_flux_{}.png'.format(papy.globals.run_name,
+        fig.savefig('../palm_results/{}/run_{}/histogram/{}_hist_flux_{}.{}'.format(papy.globals.run_name,
                     papy.globals.run_number[-3:],
-                    papy.globals.run_name, mask), bbox_inches='tight', dpi=500)
+                    papy.globals.run_name, mask, plotformat), bbox_inches='tight', dpi=500)
         print('     SAVED TO: ' 
-                + '../palm_results/{}/run_{}/histogram/{}_hist_flux_{}.png'.format(papy.globals.run_name,
+                + '../palm_results/{}/run_{}/histogram/{}_hist_flux_{}.{}'.format(papy.globals.run_name,
                 papy.globals.run_number[-3:],
-                papy.globals.run_name, mask))
+                papy.globals.run_name, mask, plotformat))
         plt.close(13)        
 
 
@@ -525,13 +553,13 @@ if compute_front_highermoments:
         ax.set_xlabel(r'$\Delta y$ (m)', fontsize = 18)
         # save plots
         ax.set_xscale('log')
-        fig.savefig('../palm_results/{}/run_{}/maskprofiles/{}_skewness_{}_mask_log.png'.format(papy.globals.run_name,
+        fig.savefig('../palm_results/{}/run_{}/maskprofiles/{}_skewness_{}_mask_log.{}'.format(papy.globals.run_name,
                     papy.globals.run_number[-3:],
-                    'front', var_name), bbox_inches='tight', dpi=500)
+                    'front', var_name, plotformat), bbox_inches='tight', dpi=500)
         print('     SAVED TO: ' 
-                + '../palm_results/{}/run_{}/maskprofiles/{}_skewness_{}_mask_log.png'.format(papy.globals.run_name,
+                + '../palm_results/{}/run_{}/maskprofiles/{}_skewness_{}_mask_log.{}'.format(papy.globals.run_name,
                 papy.globals.run_number[-3:],
-                'front', var_name))                    
+                'front', var_name, plotformat))                    
         plt.close(12)
 
         #plot profiles
@@ -578,13 +606,13 @@ if compute_front_highermoments:
         ax.set_xlabel(r'$\Delta y$ (m)', fontsize = 18)
         # save plots
         ax.set_xscale('log')
-        fig.savefig('../palm_results/{}/run_{}/maskprofiles/{}_kurtosis_{}_mask_log.png'.format(papy.globals.run_name,
+        fig.savefig('../palm_results/{}/run_{}/maskprofiles/{}_kurtosis_{}_mask_log.{}'.format(papy.globals.run_name,
                     papy.globals.run_number[-3:],
-                    'front', var_name), bbox_inches='tight', dpi=600)
+                    'front', var_name, plotformat), bbox_inches='tight', dpi=600)
         print('     SAVED TO: ' 
-                + '../palm_results/{}/run_{}/maskprofiles/{}_kurtosis_{}_mask_log.png'.format(papy.globals.run_name,
+                + '../palm_results/{}/run_{}/maskprofiles/{}_kurtosis_{}_mask_log.{}'.format(papy.globals.run_name,
                 papy.globals.run_number[-3:],
-                'front', var_name))                    
+                'front', var_name, plotformat))                    
         plt.close(12)
 
 
@@ -661,13 +689,13 @@ if compute_front_var:
                     numpoints = 1, fontsize = 18)
         ax.set_xlabel(r'$\Delta y$ (m)', fontsize = 18)
         ax.set_xscale('log')
-        fig.savefig('../palm_results/{}/run_{}/maskprofiles/{}_variance_{}_mask_log.png'.format(papy.globals.run_name,
+        fig.savefig('../palm_results/{}/run_{}/maskprofiles/{}_variance_{}_mask_log.{}'.format(papy.globals.run_name,
                     papy.globals.run_number[-3:],
-                    'front', var_name), bbox_inches='tight', dpi=500)
+                    'front', var_name, plotformat), bbox_inches='tight', dpi=500)
         print('     SAVED TO: ' 
-                    + '../palm_results/{}/run_{}/maskprofiles/{}_variance_{}_mask_log.png'.format(papy.globals.run_name,
+                    + '../palm_results/{}/run_{}/maskprofiles/{}_variance_{}_mask_log.{}'.format(papy.globals.run_name,
                     papy.globals.run_number[-3:],
-                    'front', var_name))
+                    'front', var_name, plotformat))
         plt.close(12)
 
 
@@ -728,19 +756,19 @@ if compute_front_covar:
                     label=label_list[i], 
                     fmt=marker_list[i], color=c_list[i])
     ax.grid(True, 'both')
-    # ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
-    #             borderaxespad = 0., ncol = 2, 
-    #             numpoints = 1, fontsize = 18)
+    ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
+                borderaxespad = 0., ncol = 2, 
+                numpoints = 1, fontsize = 18)
     ax.set_xlabel(r'$\Delta y$ (m)', fontsize = 18)
     ax.set_ylabel(r'$\overline{u^\prime v^\prime} u_{ref}^{-2}$ ' + r'(-)', fontsize = 18)
     ax.set_xscale('log')
-    fig.savefig('../palm_results/{}/run_{}/maskprofiles/{}_covariance_{}_mask_log.png'.format(papy.globals.run_name,
+    fig.savefig('../palm_results/{}/run_{}/maskprofiles/{}_covariance_{}_mask_log.{}'.format(papy.globals.run_name,
                 papy.globals.run_number[-3:],
-                'front', 'uv'), bbox_inches='tight', dpi=500)
+                'front', 'uv', plotformat), bbox_inches='tight', dpi=500)
     print('     SAVED TO: ' 
-                + '../palm_results/{}/run_{}/maskprofiles/{}_covariance_{}_mask_log.png'.format(papy.globals.run_name,
+                + '../palm_results/{}/run_{}/maskprofiles/{}_covariance_{}_mask_log.{}'.format(papy.globals.run_name,
                 papy.globals.run_number[-3:],
-                'front', 'uv'))
+                'front', 'uv', plotformat))
     plt.close(12)
 
 
@@ -811,21 +839,21 @@ if compute_front_lux:
     # save plots
     ax.set_ylim(10.**-2., 150.)
     ax.set_xscale('log')
-    fig.savefig('../palm_results/{}/run_{}/maskprofiles/{}_lux_{}_mask_log.png'.format(papy.globals.run_name,
+    fig.savefig('../palm_results/{}/run_{}/maskprofiles/{}_lux_{}_mask_log.{}'.format(papy.globals.run_name,
                 papy.globals.run_number[-3:],
-                'front', var_name), bbox_inches='tight', dpi=500)
+                'front', var_name, plotformat), bbox_inches='tight', dpi=500)
     print('     SAVED TO: ' 
-            + '../palm_results/{}/run_{}/maskprofiles/{}_lux_{}_mask_log.png'.format(papy.globals.run_name,
+            + '../palm_results/{}/run_{}/maskprofiles/{}_lux_{}_mask_log.{}'.format(papy.globals.run_name,
             papy.globals.run_number[-3:],
-            'front', var_name))
+            'front', var_name, plotformat))
     ax.set_yscale('log')
-    fig.savefig('../palm_results/{}/run_{}/maskprofiles/{}_lux_{}_mask_loglog.png'.format(papy.globals.run_name,
+    fig.savefig('../palm_results/{}/run_{}/maskprofiles/{}_lux_{}_mask_loglog.{}'.format(papy.globals.run_name,
                 papy.globals.run_number[-3:],
-                'front', var_name), bbox_inches='tight', dpi=500)
+                'front', var_name, plotformat), bbox_inches='tight', dpi=500)
     print('     SAVED TO: ' 
-            + '../palm_results/{}/run_{}/maskprofiles/{}_lux_{}_mask_loglog.png'.format(papy.globals.run_name,
+            + '../palm_results/{}/run_{}/maskprofiles/{}_lux_{}_mask_loglog.{}'.format(papy.globals.run_name,
             papy.globals.run_number[-3:],
-            'front', var_name))    
+            'front', var_name, plotformat))    
 
 
 ######################################################
@@ -879,6 +907,10 @@ if compute_quadrant_analysis:
         s2 = np.asarray([q2_flux[0]/np.mean(total_flux) * len(q2_ind[0])/len(total_flux)])
         s3 = np.asarray([q3_flux[0]/np.mean(total_flux) * len(q3_ind[0])/len(total_flux)])
         s4 = np.asarray([q4_flux[0]/np.mean(total_flux) * len(q4_ind[0])/len(total_flux)])
+        # s1 = np.asarray([q1_flux[0]/(abs(np.mean(total_flux))*-1.) * len(q1_ind[0])/len(total_flux)])
+        # s2 = np.asarray([q2_flux[0]/(abs(np.mean(total_flux))*-1.) * len(q2_ind[0])/len(total_flux)])
+        # s3 = np.asarray([q3_flux[0]/(abs(np.mean(total_flux))*-1.) * len(q3_ind[0])/len(total_flux)])
+        # s4 = np.asarray([q4_flux[0]/(abs(np.mean(total_flux))*-1.) * len(q4_ind[0])/len(total_flux)])
 
         s1_all = np.concatenate([s1_all, s1])
         s2_all = np.concatenate([s2_all, s2])
@@ -915,13 +947,13 @@ if compute_quadrant_analysis:
             ax.set_xlabel(r'$u^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
             ax.set_ylabel(r'$v^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
             # save plots
-            fig.savefig('../palm_results/{}/run_{}/quadrant_analysis/scatter/{}_QA_scatter_mask_{}.png'.format(papy.globals.run_name,
+            fig.savefig('../palm_results/{}/run_{}/quadrant_analysis/scatter/{}_QA_scatter_mask_{}.{}'.format(papy.globals.run_name,
                         papy.globals.run_number[-3:],
-                        'front', mask), bbox_inches='tight', dpi=500)
+                        'front', mask, plotformat), bbox_inches='tight', dpi=500)
             print('     SAVED TO: ' 
-                        + '../palm_results/{}/run_{}/quadrant_analysis/scatter/{}_QA_scatter_mask_{}.png'.format(papy.globals.run_name,
+                        + '../palm_results/{}/run_{}/quadrant_analysis/scatter/{}_QA_scatter_mask_{}.{}'.format(papy.globals.run_name,
                         papy.globals.run_number[-3:],
-                        'front', mask))
+                        'front', mask, plotformat))
             plt.close()
 
             # PLOT JOINT PROBABILITY DENSITY FUNCTIONS
@@ -960,13 +992,13 @@ if compute_quadrant_analysis:
             ax.set_ylabel(r'$v^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
             ax.set_title(r'PALM - $\Delta y = {} m$'.format(wall_dist[0]))
             # save plots
-            fig.savefig('../palm_results/{}/run_{}/quadrant_analysis/jpdf/{}_QA_jpdf_mask_{}.png'.format(papy.globals.run_name,
+            fig.savefig('../palm_results/{}/run_{}/quadrant_analysis/jpdf/{}_QA_jpdf_mask_{}.{}'.format(papy.globals.run_name,
                         papy.globals.run_number[-3:],
-                        'front', mask), bbox_inches='tight', dpi=500)
+                        'front', mask, plotformat), bbox_inches='tight', dpi=500)
             print('     SAVED TO: ' 
-                        + '../palm_results/{}/run_{}/quadrant_analysis/jpdf/{}_QA_jpdf_mask_{}.png'.format(papy.globals.run_name,
+                        + '../palm_results/{}/run_{}/quadrant_analysis/jpdf/{}_QA_jpdf_mask_{}.{}'.format(papy.globals.run_name,
                         papy.globals.run_number[-3:],
-                        'front', mask))
+                        'front', mask, plotformat))
             plt.close()
 
     # plot wind tunnel data
@@ -1010,6 +1042,11 @@ if compute_quadrant_analysis:
             wt_s3 = np.asarray([wt_q3_flux[0]/np.mean(wt_flux) * len(wt_q3_ind[0])/len(wt_flux)])
             wt_s4 = np.asarray([wt_q4_flux[0]/np.mean(wt_flux) * len(wt_q4_ind[0])/len(wt_flux)])
 
+            # wt_s1 = np.asarray([wt_q1_flux[0]/(abs(np.mean(wt_flux))*-1.) * len(wt_q1_ind[0])/len(wt_flux)])
+            # wt_s2 = np.asarray([wt_q2_flux[0]/(abs(np.mean(wt_flux))*-1.) * len(wt_q2_ind[0])/len(wt_flux)])
+            # wt_s3 = np.asarray([wt_q3_flux[0]/(abs(np.mean(wt_flux))*-1.) * len(wt_q3_ind[0])/len(wt_flux)])
+            # wt_s4 = np.asarray([wt_q4_flux[0]/(abs(np.mean(wt_flux))*-1.) * len(wt_q4_ind[0])/len(wt_flux)])
+
             wt_s1_all = np.concatenate([wt_s1_all, wt_s1])
             wt_s2_all = np.concatenate([wt_s2_all, wt_s2])
             wt_s3_all = np.concatenate([wt_s3_all, wt_s3])
@@ -1038,20 +1075,20 @@ if compute_quadrant_analysis:
                         markersize=2, label='Q3')
                 ax.plot(wt_varu_fluc[wt_q4_ind], wt_varv_fluc[wt_q4_ind] ,'o', color='red',
                         markersize=2, label='Q4')
-                ax.grid(True, 'both', 'both')
+                ax.grid(True, 'both', 'both')   
                 ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                             borderaxespad = 0., ncol = 2, 
                             numpoints = 1, fontsize = 18)
                 ax.set_xlabel(r'$u^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
                 ax.set_ylabel(r'$v^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
                 # save plots
-                fig.savefig('../palm_results/{}/run_{}/quadrant_analysis/scatter/{}_QA_scatter_WT_{}.png'.format(papy.globals.run_name,
+                fig.savefig('../palm_results/{}/run_{}/quadrant_analysis/scatter/{}_QA_scatter_WT_{}.{}'.format(papy.globals.run_name,
                             papy.globals.run_number[-3:],
-                            'front', file), bbox_inches='tight', dpi=500)
+                            'front', file, plotformat), bbox_inches='tight', dpi=500)
                 print('     SAVED TO: ' 
-                            + '../palm_results/{}/run_{}/quadrant_analysis/scatter/{}_QA_scatter_WT_{}.png'.format(papy.globals.run_name,
+                            + '../palm_results/{}/run_{}/quadrant_analysis/scatter/{}_QA_scatter_WT_{}.{}'.format(papy.globals.run_name,
                             papy.globals.run_number[-3:],
-                            'front', file))
+                            'front', file, plotformat))
                 plt.close()
 
                 # PLOT JOINT PROBABILITY DENSITY FUNCTIONS
@@ -1100,25 +1137,25 @@ if compute_quadrant_analysis:
                 ax.set_xlabel(r'$u^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
                 ax.set_ylabel(r'$v^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
                 # save plots
-                fig.savefig('../palm_results/{}/run_{}/quadrant_analysis/jpdf/{}_QA_jpdf_WT_{}.png'.format(papy.globals.run_name,
+                fig.savefig('../palm_results/{}/run_{}/quadrant_analysis/jpdf/{}_QA_jpdf_WT_{}.{}'.format(papy.globals.run_name,
                             papy.globals.run_number[-3:],
-                            'front', file), bbox_inches='tight', dpi=500)
+                            'front', file, plotformat), bbox_inches='tight', dpi=500)
                 print('     SAVED TO: ' 
-                            + '../palm_results/{}/run_{}/quadrant_analysis/jpdf/{}_QA_jpdf_WT_{}.png'.format(papy.globals.run_name,
+                            + '../palm_results/{}/run_{}/quadrant_analysis/jpdf/{}_QA_jpdf_WT_{}.{}'.format(papy.globals.run_name,
                             papy.globals.run_number[-3:],
-                            'front', file))
+                            'front', file, plotformat))
                 plt.close()
 
         # quadrant contributions
         fig, ax = plt.subplots()
         ax.errorbar(wt_wall_dists, wt_s1_all, yerr=0.1,
-                label = 'Q1', fmt='o', c='blue')
+                label = '{}: Q1'.format(name[3:5]), fmt='d', c='blue')
         ax.errorbar(wt_wall_dists, wt_s2_all, yerr=0.1,
-                label = 'Q2', fmt='o', c='darkorange')
+                label = '{}: Q2'.format(name[3:5]), fmt='o', c='darkorange')
         ax.errorbar(wt_wall_dists, wt_s3_all, yerr=0.1,
-                label = 'Q3', fmt='o', c='cyan')
+                label = '{}: Q3'.format(name[3:5]), fmt='o', c='cyan')
         ax.errorbar(wt_wall_dists, wt_s4_all, yerr=0.1,
-                label = 'Q4', fmt='o', c='red')
+                label = '{}: Q4'.format(name[3:5]), fmt='d', c='red')
         ax.vlines(0.0066*150.*5., -5., 5., colors='tab:red', 
                     linestyles='dashed', 
                     label=r'$5 \cdot h_{r}$')
@@ -1133,24 +1170,24 @@ if compute_quadrant_analysis:
         ax.set_xlabel(r'$\Delta y$ (m)', fontsize = 18)
         ax.set_xscale('log')
         # save plots
-        fig.savefig('../palm_results/{}/run_{}/quadrant_analysis/{}_quadrantcontribution_profile_{}.png'.format(papy.globals.run_name,
+        fig.savefig('../palm_results/{}/run_{}/quadrant_analysis/{}_quadrantcontribution_profile_{}.{}'.format(papy.globals.run_name,
                     papy.globals.run_number[-3:],
-                    'front', name), bbox_inches='tight', dpi=500)
+                    'front', name, plotformat), bbox_inches='tight', dpi=500)
         print('     SAVED TO: ' 
-                    + '../palm_results/{}/run_{}/quadrant_analysis/{}_quadrantcontribution_profile_{}.png'.format(papy.globals.run_name,
+                    + '../palm_results/{}/run_{}/quadrant_analysis/{}_quadrantcontribution_profile_{}.{}'.format(papy.globals.run_name,
                     papy.globals.run_number[-3:],
-                    'front', name))
+                    'front', name, plotformat))
 
     # quadrant contributions
     fig, ax = plt.subplots()
     ax.errorbar(wall_dists, s1_all, yerr=0.1,
-            label = 'Q1', fmt='o', c='blue')
+            label = 'PALM: Q1', fmt='d', c='blue')
     ax.errorbar(wall_dists, s2_all, yerr=0.1,
-            label = 'Q2', fmt='o', c='darkorange')
+            label = 'PALM: Q2', fmt='o', c='darkorange')
     ax.errorbar(wall_dists, s3_all, yerr=0.1,
-            label = 'Q3', fmt='o', c='cyan')
+            label = 'PALM: Q3', fmt='o', c='cyan')
     ax.errorbar(wall_dists, s4_all, yerr=0.1,
-            label = 'Q4', fmt='o', c='red')
+            label = 'PALM: Q4', fmt='d', c='red')
     ax.vlines(0.0066*150.*5., -5., 5., colors='tab:red', 
                 linestyles='dashed', 
                 label=r'$5 \cdot h_{r}$')
@@ -1165,13 +1202,13 @@ if compute_quadrant_analysis:
     ax.set_xlabel(r'$\Delta y$ (m)', fontsize = 18)
     ax.set_xscale('log')
     # save plots
-    fig.savefig('../palm_results/{}/run_{}/quadrant_analysis/{}_quadrantcontribution_profile_PALM.png'.format(papy.globals.run_name,
+    fig.savefig('../palm_results/{}/run_{}/quadrant_analysis/{}_quadrantcontribution_profile_PALM.{}'.format(papy.globals.run_name,
                 papy.globals.run_number[-3:],
-                'front'), bbox_inches='tight', dpi=500)
+                'front', plotformat), bbox_inches='tight', dpi=500)
     print('     SAVED TO: ' 
-                + '../palm_results/{}/run_{}/quadrant_analysis/{}_quadrantcontribution_profile_PALM.png'.format(papy.globals.run_name,
+                + '../palm_results/{}/run_{}/quadrant_analysis/{}_quadrantcontribution_profile_PALM.{}'.format(papy.globals.run_name,
                 papy.globals.run_number[-3:],
-                'front'))
+                'front', plotformat))
 
 
 print('\n Finished processing of: {}{}'.format(papy.globals.run_name, papy.globals.run_number))

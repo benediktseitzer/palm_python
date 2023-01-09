@@ -22,7 +22,6 @@ import scipy.stats as stats
 
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FormatStrFormatter
-plt.style.use('classic')
 
 import palm_py as papy
 
@@ -31,6 +30,31 @@ import windtunnel as wt
 
 import warnings
 warnings.simplefilter("ignore")
+
+import matplotlib
+plotformat = 'pgf'
+plotformat = 'png'
+plotformat = 'pdf'
+if plotformat == 'pgf':
+    plt.style.use('default')
+    matplotlib.use('pgf')
+    matplotlib.rcParams.update({
+        'pgf.texsystem': 'pdflatex',
+        'font.family': 'sans-serif',
+        'text.usetex': True,
+        'pgf.rcfonts': False,
+        'xtick.labelsize' : 16,
+        'ytick.labelsize' : 16,
+    })
+else:
+    plt.style.use('default')
+    matplotlib.rcParams.update({
+        'font.family': 'sans-serif',
+        'text.usetex': True,
+        'pgf.rcfonts': False,
+        'xtick.labelsize' : 16,
+        'ytick.labelsize' : 16,
+    })
 
 ################
 """

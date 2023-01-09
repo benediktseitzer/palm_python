@@ -17,6 +17,7 @@ import pandas as pd
 import sys
 import os
 
+import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FormatStrFormatter
 
@@ -28,20 +29,43 @@ import windtunnel as wt
 import warnings
 warnings.simplefilter("ignore")
 
+plotformat = 'pgf'
+plotformat = 'png'
+plotformat = 'pdf'
+if plotformat == 'pgf':
+    plt.style.use('default')
+    matplotlib.use('pgf')
+    matplotlib.rcParams.update({
+        'pgf.texsystem': 'pdflatex',
+        'font.family': 'sans-serif',
+        'text.usetex': True,
+        'pgf.rcfonts': False,
+        'xtick.labelsize' : 16,
+        'ytick.labelsize' : 16,
+        'legend.fontsize' : 18,
+    })
+else:
+    plt.style.use('default')
+    matplotlib.rcParams.update({
+        'font.family': 'sans-serif',
+        'text.usetex': True,
+        'pgf.rcfonts': False,
+        'xtick.labelsize' : 16,
+        'ytick.labelsize' : 16,
+        'legend.fontsize' : 18,
+    })
+
 ################
 """
 GLOBAL VARIABLES
 """
 ################
 # PALM input files
-papy.globals.run_name = 'yshift_SB_BL_corr'
-# papy.globals.run_numbers = ['.029', '.028']
-papy.globals.jobchain_numbers = ['.001', '.002', '.003', '.004', '.005', '.006',
-                                '.007', '.008', '.009', '.010', '.011', '.012', 
-                                '.013', '.014', '.015', '.016', '.017', '.018',
-                                '.019', '.020', '.021', '.022', '.023', '.024',
-                                '.025', '.026']
-papy.globals.run_number = papy.globals.jobchain_numbers[-1]
+papy.globals.run_name = 'BA_BL_z0_021_wtprof'
+papy.globals.run_numbers = ['.000', '.001', '.002', 
+                            '.003', '.004', '.005']
+                    
+papy.globals.run_number = papy.globals.run_numbers[-1]
 nc_file_grid = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
 nc_file_path = '../palm/current_version/JOBS/{}/OUTPUT/'.format(papy.globals.run_name)
 
@@ -60,7 +84,7 @@ papy.globals.z0_wt = 0.071
 papy.globals.alpha = 0.18
 papy.globals.ka = 0.41
 papy.globals.d0 = 0.
-if papy.globals.run_name == 'single_building_ABL_2m':
+if papy.globals.run_name in ['single_building_ABL_2m', 'BA_BL_z0_z02', 'BA_BL_z0_z021', 'BA_BL_z0_z06']:
     papy.globals.nx = 512
     papy.globals.ny = 512
     papy.globals.dx = 2.
@@ -90,7 +114,6 @@ MAIN
 
 # prepare the outputfolders
 papy.prepare_plotfolder(papy.globals.run_name,papy.globals.run_number)
-plt.style.use('classic')
 
 ################
 # Timeseries of several measures
@@ -102,9 +125,8 @@ if compute_timeseries:
     for var_name in var_name_list:
         time_total = np.zeros(1)
         var_total = np.zeros(1)
-        plt.style.use('classic')
         fig, ax = plt.subplots()
-        for run in papy.globals.jobchain_numbers:
+        for run in papy.globals.run_numbers:
             nc_file = '{}_ts{}.nc'.format(papy.globals.run_name, run)
             time, time_unit = papy.read_nc_time(nc_file_path,nc_file)
             var, var_unit = papy.read_nc_var_ts(nc_file_path,nc_file,var_name)

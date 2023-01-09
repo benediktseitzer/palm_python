@@ -29,6 +29,31 @@ import windtunnel as wt
 import warnings
 warnings.simplefilter("ignore")
 
+import matplotlib
+plotformat = 'pgf'
+plotformat = 'png'
+plotformat = 'pdf'
+if plotformat == 'pgf':
+    plt.style.use('default')
+    matplotlib.use('pgf')
+    matplotlib.rcParams.update({
+        'pgf.texsystem': 'pdflatex',
+        'font.family': 'sans-serif',
+        'text.usetex': True,
+        'pgf.rcfonts': False,
+        'xtick.labelsize' : 16,
+        'ytick.labelsize' : 16,
+    })
+else:
+    plt.style.use('default')
+    matplotlib.rcParams.update({
+        'font.family': 'sans-serif',
+        'text.usetex': True,
+        'pgf.rcfonts': False,
+        'xtick.labelsize' : 16,
+        'ytick.labelsize' : 16,
+    })
+
 ################
 """
 FUNCTIONS
@@ -83,37 +108,30 @@ GLOBAL VARIABLES
 """
 ################
 # PALM input files
-papy.globals.run_name = 'SB_SI_back_yshift'
-papy.globals.run_number = '.102'
-papy.globals.run_numbers = ['.008', '.009', '.010', '.011', '.012', 
-                        '.013', '.014', '.015', '.016', '.017', '.018',
-                        '.019', '.020', '.021', '.022', '.023', '.024',
-                        '.025', '.026', '.027', '.028', '.029', '.030', 
-                        '.031', '.032', '.033', '.034', '.035', '.036',
-                        '.037', '.038', '.039', '.040', '.041', '.042',
-                        '.043', '.044', '.045', '.046', '.047', '.048',
-                        '.049', '.050', '.051', '.052', '.053', '.054',
-                        '.055', '.056', '.057', '.058', '.059', '.060',
-                        '.061', '.062', '.063', '.064', '.065', '.066',
-                        '.067', '.068', '.069', '.070', '.071', '.072',
-                        '.073', '.074', '.075', '.076', '.077', '.078',
-                        '.079', '.080', '.081', '.082', '.083', '.084',
-                        '.085', '.086', '.087', '.088', '.089', '.090',
-                        '.091', '.092', '.093', '.094', '.095', '.096',
-                        '.097', '.098', '.099', '.100', '.101', '.102']
+# papy.globals.run_name = 'Germano_BA_BL_z0_021'
+# papy.globals.run_numbers = ['.001', '.002', '.003', 
+#                             '.004', '.005', '.006']
+# papy.globals.run_name = 'BA_BL_z0_021'
+# papy.globals.run_numbers = ['.000', '.001', '.002', 
+#                             '.003', '.004', '.005']
+papy.globals.run_name = 'single_building_ABL_1m_RE_z03'
+papy.globals.run_numbers = ['.000', '.001', '.002', '.003', '.004', '.005',
+                            '.007', '.008', '.009', '.010', '.011', '.012',
+                            '.013', '.014', '.015',]
+papy.globals.run_number = papy.globals.run_numbers[-1]
+# papy.globals.run_number = '.002'
 nc_file_grid = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
 nc_file_path = '../palm/current_version/JOBS/{}/OUTPUT/'.format(papy.globals.run_name)
 mask_name_list = ['M01', 'M02', 'M03', 'M04', 'M05', 'M06', 'M07', 'M08', 'M09', 
                     'M10','M11', 'M12', 'M13', 'M14', 'M15', 'M16', 'M17', 'M18', 'M19']
-mask_name_list = ['M02', 'M08', 'M12']
 height_list = [2., 4., 5., 7.5, 10., 15.,  20., 25., 30., 35., 40., 45., 50., 60.,
                      70., 80., 90., 100., 125.]
 
 # WIND TUNNEL INPIUT FILES
-experiment = 'single_building'
-wt_filename = 'SB_BL_UV_001'
-# experiment = 'balcony'
-# wt_filename = 'BA_BL_UW_001'
+# experiment = 'single_building'
+# wt_filename = 'SB_BL_UV_001'
+experiment = 'balcony'
+wt_filename = 'BA_BL_UW_001'
 wt_path = '../../Documents/phd/experiments/{}/{}'.format(experiment, wt_filename[3:5])
 wt_file = '{}/coincidence/timeseries/{}.txt'.format(wt_path, wt_filename)
 wt_file_pr = '{}/coincidence/mean/{}.000001.txt'.format(wt_path, wt_filename)
@@ -122,11 +140,14 @@ wt_scale = 150.
 
 # PHYSICS
 papy.globals.z0 = 0.03
-papy.globals.z0_wt = 0.071
+papy.globals.z0_wt = 0.021
+# papy.globals.z0_wt = 0.071 
 papy.globals.alpha = 0.18
 papy.globals.ka = 0.41
 papy.globals.d0 = 0.
-if papy.globals.run_name == 'single_building_ABL_2m':
+balcony_run_list = ['single_building_ABL_2m', 'BA_BL_z0_02', 'BA_BL_z0_021', 'BA_BL_z0_06',
+                    'BA_BL_z0_021_wtprof', 'BA_BL_z0_02_wtprof', 'BA_BL_z0_06_wtprof', 'Germano_BA_BL_z0_021',]
+if papy.globals.run_name in balcony_run_list:
     papy.globals.nx = 512
     papy.globals.ny = 512
     papy.globals.dx = 2.
@@ -150,12 +171,12 @@ mode = mode_list[1]
 compute_lux = False
 compute_timeseries = False
 compute_turbint_masked = False
-compute_turbint = False
-compute_vertprof = False
-compute_vertprof_flux = False
+compute_turbint = True
+compute_vertprof = True
+compute_vertprof_flux = True
 compute_spectra = False
-compute_crosssections = True
-compute_pure_fluxes = False
+compute_crosssections = False
+compute_pure_fluxes = True
 compute_simrange = False
 compute_modelinput = False
 
@@ -169,7 +190,6 @@ MAIN
 
 # prepare the outputfolders
 papy.prepare_plotfolder(papy.globals.run_name,papy.globals.run_number)
-plt.style.use('classic')
 
 ################
 # Intergral length scale Lux
@@ -307,7 +327,6 @@ if compute_turbint:
 
     # plot quantities
     plt.figure(11)   
-    plt.style.use('classic')
     fig, ax = plt.subplots()
     for i in range(len(time)-1,len(time)):
         try:
@@ -341,7 +360,7 @@ if compute_turbint:
     ax.set_xlim(0., 0.6)    
     ax.legend(bbox_to_anchor=(0.5, 1.04),
                 loc=8, numpoints=1, ncol=2, fontsize = 18)
-    ax.grid(True, 'both', 'both')
+    ax.grid(True)
     # save plot
     fig.savefig('../palm_results/{}/run_{}/profiles/{}_{}_{}_verpr.png'.format(
                 papy.globals.run_name, papy.globals.run_number[-3:],
@@ -368,6 +387,8 @@ if compute_vertprof:
     nc_file = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
     # read variables for plot
     time, time_unit = papy.read_nc_time(nc_file_path, nc_file)
+    time_show = time.nonzero()[0][0]
+    print('     Show time-slice {} of {}'.format(time_show, len(time)))    
     # read wind tunnel profile
     wt_pr, wt_u_ref, wt_z = papy.read_wt_ver_pr(wt_file_pr, wt_file_ref ,wt_scale)
     print('\n wind tunnel profile loaded \n') 
@@ -401,18 +422,17 @@ if compute_vertprof:
             z, z_unit = papy.read_nc_grid(nc_file_path,nc_file,grid_name)
             print('\n       wt_u_ref = {} \n'.format(wt_u_ref))
             plt.figure(8)
-            plt.style.use('classic')
             fig, ax = plt.subplots()
             jet= plt.get_cmap('viridis')
             colors = iter(jet(np.linspace(0,1,10)))
             # try:
-            ax.plot(var_e[0,:-1], z[:-1],
+            ax.plot(var_e[time_show,:-1], z[:-1],
                 label = r'$e_{RES}$',
                 color='darkviolet')
-            ax.plot(var[0,:-1], z[:-1],
+            ax.plot(var[time_show,:-1], z[:-1],
                 label = r'$e_{SGS}$',
                 color = 'plum')
-            ax.plot(var[0,:-1]+var_e[0,:-1], z[:-1],
+            ax.plot(var[time_show,:-1]+var_e[0,:-1], z[:-1],
                 label = r'$e$',
                 color = 'darkmagenta')                
             ax.grid(True, 'both')
@@ -499,6 +519,9 @@ if compute_vertprof_flux:
 
     grid_name = 'zw*u*'
     nc_file = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
+    time, time_unit = papy.read_nc_time(nc_file_path,nc_file)
+    time_show = time.nonzero()[0][0]
+    print('     Show time-slice {} of {}'.format(time_show, len(time)))
     var1, var_max1, var_unit1 = papy.read_nc_var_ver_pr(nc_file_path, nc_file, 'w*u*')
     var2, var_max2, var_unit2 = papy.read_nc_var_ver_pr(nc_file_path, nc_file, 'w"u"')
     var = var1 + var2
@@ -506,13 +529,13 @@ if compute_vertprof_flux:
     plt.figure(7)
     # papy.plot_ver_profile(var, var_unit1, 'fluxes', z, z_unit, wt_pr, wt_z, wt_u_ref, time)
     fig, ax = plt.subplots()
-    ax.plot(var1[0,:-1], z[:-1],
+    ax.plot(var1[time_show,:-1], z[:-1],
         label = r'$\overline{u^\prime w^\prime}_{RES}$',
         color='darkviolet')
-    ax.plot(var2[0,:-1], z[:-1],
+    ax.plot(var2[time_show,:-1], z[:-1],
         label = r'$\overline{u^\prime w^\prime}_{SGS}$',
         color = 'plum')
-    ax.plot(var[0,:-1], z[:-1],
+    ax.plot(var[time_show,:-1], z[:-1],
         label = r'$\overline{u^\prime w^\prime}$',
         color = 'darkmagenta')
     if wt_filename == 'BA_BL_UW_001':
@@ -635,7 +658,6 @@ if compute_spectra:
         f_sm_wt = [f_sm_wt][np.argmin([np.nanmax(f_sm_wt)])]
         f_sm_wt = f_sm_wt[:len(S_wt_sm)]
 
-        plt.style.use('classic')
         fig, ax = plt.subplots()
 
         h1 = ax.loglog(f_sm[:comp1_aliasing], S_uu_sm[:comp1_aliasing], 'r', markersize=3,
@@ -676,8 +698,6 @@ if compute_spectra:
 
         filter_sigs = [ 1., 10, 100.,0.00001]
 
-
-        plt.style.use('classic')
         fig, ax = plt.subplots()
 
 
@@ -731,7 +751,6 @@ if compute_spectra:
         colors = ['c:', 'y-.', 'b--', 'r-']
         filter_sigs = [0.00001, 1., 10, 100.]
 
-        plt.style.use('classic')
         fig, ax = plt.subplots()
 
         i = 0
@@ -906,7 +925,8 @@ if compute_pure_fluxes:
     grid_name = 'zu'
     z, z_unit = papy.read_nc_grid(nc_file_path, nc_file_grid, grid_name)
     time, time_unit = papy.read_nc_time(nc_file_path,nc_file)
-    nc_file = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
+    time_show = time.nonzero()[0][0]
+    print('     Show time-slice {} of {}'.format(time_show, len(time)))
     grid_name = 'zw*u*'
     var1, var_max1, var_unit1 = papy.read_nc_var_ver_pr(nc_file_path, nc_file, 'w*u*')
     var2, var_max2, var_unit2 = papy.read_nc_var_ver_pr(nc_file_path, nc_file, 'w"u"')
@@ -923,10 +943,9 @@ if compute_pure_fluxes:
     # plot
     plt.figure(12)
     fig, ax = plt.subplots()
-    plt.style.use('classic')
-    ax.plot(var[0,:-1], z[:-1], label=r'$\overline{u^\prime w^\prime}$', color='darkviolet')
-    ax.plot(var1[0,:-1], z[:-1], label=r'$\widetilde{u^\prime w^\prime}$', color='plum')
-    ax.plot(var2[0,:-1], z[:-1], label=r'$(u^\prime w^\prime)^s$', color='magenta')
+    ax.plot(var[time_show,:-1], z[:-1], label=r'$\overline{u^\prime w^\prime}$', color='darkviolet')
+    ax.plot(var1[time_show,:-1], z[:-1], label=r'$\widetilde{u^\prime w^\prime}$', color='plum')
+    ax.plot(var2[time_show,:-1], z[:-1], label=r'$(u^\prime w^\prime)^s$', color='magenta')
     ax.set(xlabel=r'$\overline{u^\prime w^\prime} \cdot u_{ref}^2$' + ' $(-)$', 
             ylabel=r'$z$ $(m)$'.format(z_unit))
     ax.set_yscale('log')
@@ -981,9 +1000,8 @@ if compute_simrange:
 
     print(' Start plotting of palm-runs of {}'.format(papy.globals.run_name))
     for i,var_name in enumerate(var_name_list):
-        plt.style.use('classic')
         fig, ax = plt.subplots()
-        ax.grid(True, 'both', 'both')
+        ax.grid(True)
         plt.ylim(1.,max(z[:-1]))
         ax.set_yscale('log')
         ax.set(xlabel= var_name, 

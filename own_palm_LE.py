@@ -22,7 +22,6 @@ import scipy.stats as stats
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 from matplotlib.ticker import FormatStrFormatter
-plt.style.use('classic')
 
 import palm_py as papy
 
@@ -31,6 +30,31 @@ import windtunnel as wt
 
 import warnings
 warnings.simplefilter("ignore")
+
+import matplotlib
+plotformat = 'pgf'
+plotformat = 'png'
+plotformat = 'pdf'
+if plotformat == 'pgf':
+    plt.style.use('default')
+    matplotlib.use('pgf')
+    matplotlib.rcParams.update({
+        'pgf.texsystem': 'pdflatex',
+        'font.family': 'sans-serif',
+        'text.usetex': True,
+        'pgf.rcfonts': False,
+        'xtick.labelsize' : 16,
+        'ytick.labelsize' : 16,
+    })
+else:
+    plt.style.use('default')
+    matplotlib.rcParams.update({
+        'font.family': 'sans-serif',
+        'text.usetex': True,
+        'pgf.rcfonts': False,
+        'xtick.labelsize' : 16,
+        'ytick.labelsize' : 16,
+    })
 
 ################
 """
@@ -242,7 +266,10 @@ if compute_LE_mean:
                 nc_file = '{}_masked_{}{}.nc'.format(papy.globals.run_name, mask, run_no)
                 time, time_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'time')
                 var, var_unit = papy.read_nc_var_ms(nc_file_path, nc_file, var_name)
-                y, y_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'x')
+                if var_name == 'u':
+                    y, y_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'xu')
+                elif var_name == 'w':
+                    y, y_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'x')     
                 total_time = np.concatenate([total_time, time])
                 total_var = np.concatenate([total_var, var])
             # gather values
