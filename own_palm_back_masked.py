@@ -22,7 +22,6 @@ import scipy.stats as stats
 
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FormatStrFormatter
-plt.style.use('classic')
 
 import palm_py as papy
 
@@ -31,6 +30,31 @@ import windtunnel as wt
 
 import warnings
 warnings.simplefilter("ignore")
+
+import matplotlib
+plotformat = 'pgf'
+plotformat = 'png'
+plotformat = 'pdf'
+if plotformat == 'pgf':
+    plt.style.use('default')
+    matplotlib.use('pgf')
+    matplotlib.rcParams.update({
+        'pgf.texsystem': 'pdflatex',
+        'font.family': 'sans-serif',
+        'text.usetex': True,
+        'pgf.rcfonts': False,
+        'xtick.labelsize' : 16,
+        'ytick.labelsize' : 16,
+    })
+else:
+    plt.style.use('default')
+    matplotlib.rcParams.update({
+        'font.family': 'sans-serif',
+        'text.usetex': True,
+        'pgf.rcfonts': False,
+        'xtick.labelsize' : 16,
+        'ytick.labelsize' : 16,
+    })
 
 ################
 """
@@ -52,13 +76,13 @@ papy.globals.run_numbers = ['.007', '.008', '.009', '.010', '.011', '.012',
                         '.031', '.032', '.033', '.034', '.035', '.036',
                         '.037', '.038', '.039', '.040', '.041', '.042',
                         '.043', '.044', '.045', '.046']
-papy.globals.run_name = 'yshift_SB_SI'
-papy.globals.run_numbers = ['.008', '.009', '.010', '.011', '.012', 
-                            '.013', '.014', '.015', '.016', '.017', '.018',
-                            '.019', '.020', '.021', '.022', '.023', '.024',
-                            '.025', '.026', '.027', '.028', '.029', '.030',
-                            '.031', '.032', '.033', '.034', '.035', '.036',
-                            '.037']
+# papy.globals.run_name = 'yshift_SB_SI'
+# papy.globals.run_numbers = ['.008', '.009', '.010', '.011', '.012', 
+#                             '.013', '.014', '.015', '.016', '.017', '.018',
+#                             '.019', '.020', '.021', '.022', '.023', '.024',
+#                             '.025', '.026', '.027', '.028', '.029', '.030',
+#                             '.031', '.032', '.033', '.034', '.035', '.036',
+#                             '.037']
 mask_name_list = ['M01', 'M02', 'M03', 'M04', 'M05', 'M06', 'M07', 'M08',
                     'M09', 'M10', 'M11', 'M12']
 papy.globals.run_number = papy.globals.run_numbers[-1]
@@ -91,11 +115,11 @@ Steeringflags
 ################
 compute_back_mean = True
 compute_back_pdfs = False
-compute_back_highermoments = True
-compute_back_var = True
-compute_back_covar = True
-compute_back_lux = True
-compute_quadrant_analysis = True
+compute_back_highermoments = False
+compute_back_var = False
+compute_back_covar = False
+compute_back_lux = False
+compute_quadrant_analysis = False
 
 ################
 """
@@ -247,7 +271,10 @@ if compute_back_mean:
                 nc_file = '{}_masked_{}{}.nc'.format(papy.globals.run_name, mask, run_no)
                 time, time_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'time')
                 var, var_unit = papy.read_nc_var_ms(nc_file_path, nc_file, var_name)
-                y, y_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'y')
+                if var_name == 'u':
+                    y, y_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'y')
+                elif var_name == 'v':
+                    y, y_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'yv')
                 total_time = np.concatenate([total_time, time])
                 total_var = np.concatenate([total_var, var])
             # gather values
@@ -295,7 +322,7 @@ if compute_back_mean:
                             label=r'$5 \cdot h_{r}$')
                 ax.set_ylabel(r'$\overline{v}$ $u_{ref}^{-1}$ (-)', fontsize = 18)                            
                 
-        ax.grid(True, 'both', 'both')
+        ax.grid(True)
         ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                     borderaxespad = 0., ncol = 2, 
                     numpoints = 1, fontsize = 18)
@@ -1118,21 +1145,13 @@ if compute_quadrant_analysis:
             # quadrant contributions
             fig, ax = plt.subplots()
             ax.errorbar(wt_wall_dists, wt_s1_all, yerr = 0.1,
-                    label = 'WT - Q1', fmt='o', c='blue')
+                    label = '{}: Q1'.format(name[3:5]), fmt='d', c='blue')
             ax.errorbar(wt_wall_dists, wt_s2_all, yerr = 0.1,
-                    label = 'WT - Q2', fmt='o', c='darkorange')
+                    label = '{}: Q2'.format(name[3:5]), fmt='o', c='darkorange')
             ax.errorbar(wt_wall_dists, wt_s3_all, yerr = 0.1,
-                    label = 'WT - Q3', fmt='o', c='cyan')
+                    label = '{}: Q3'.format(name[3:5]), fmt='o', c='cyan')
             ax.errorbar(wt_wall_dists, wt_s4_all, yerr = 0.1,
-                    label = 'WT - Q4', fmt='o', c='red')
-            # ax.errorbar(wall_dists, s1_all, yerr = 0.1,
-            #         label = 'PALM - Q1', fmt='d', c='navy')
-            # ax.errorbar(wall_dists, s2_all, yerr = 0.1,
-            #         label = 'PALM - Q2', fmt='d', c='orange')
-            # ax.errorbar(wall_dists, s3_all, yerr = 0.1,
-            #         label = 'PALM - Q3', fmt='d', c='turquoise')
-            # ax.errorbar(wall_dists, s4_all, yerr = 0.1,
-            #         label = 'PALM - Q4', fmt='d', c='tomato')
+                    label = '{}: Q4'.format(name[3:5]), fmt='d', c='red')
             ax.vlines(0.0066*150.*5., -5., 5., colors='tab:red', 
                         linestyles='dashed', 
                         label=r'$5 \cdot h_{r}$')
@@ -1158,13 +1177,13 @@ if compute_quadrant_analysis:
     # quadrant contributions
     fig, ax = plt.subplots()
     ax.errorbar(wall_dists, s1_all, yerr = 0.1,
-            label = 'PALM-4U - Q1', fmt='o', c='blue')
+            label = 'PALM: Q1', fmt='d', c='blue')
     ax.errorbar(wall_dists, s2_all, yerr = 0.1,
-            label = 'PALM-4U - Q2', fmt='o', c='darkorange')
+            label = 'PALM: Q2', fmt='o', c='darkorange')
     ax.errorbar(wall_dists, s3_all, yerr = 0.1,
-            label = 'PALM-4U - Q3', fmt='o', c='cyan')
+            label = 'PALM: Q3', fmt='o', c='cyan')
     ax.errorbar(wall_dists, s4_all, yerr = 0.1,
-            label = 'PALM-4U - Q4', fmt='o', c='red')
+            label = 'PALM: Q4', fmt='d', c='red')
     ax.vlines(0.0066*150.*5., -5., 5., colors='tab:red', 
                 linestyles='dashed', 
                 label=r'$5 \cdot h_{r}$')
