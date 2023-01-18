@@ -116,24 +116,24 @@ def plot_timeseries(var, var_unit, var_name, time, time_unit):
     ax.set_xlabel(r'$t$ $({})$'.format('s'), fontsize = 18)
     if var_name == 'dt':
         ax.set_ylabel(r'$\Delta t$  $(s)$', fontsize = 18)
-        ax.set_ylim()
+        # ax.set_ylim()
     elif var_name == 'E':
         ax.set_ylabel(r'$E$  $(m^2/s^2)$', fontsize = 18)
         ax.set_yscale('log')
-        ax.set_ylim(ymin=0.1, ymax=100)
+        # ax.set_ylim(ymin=0.1, ymax=100)
     elif var_name == 'E*':
         ax.set_ylabel(r'$E^*$  $(m^2/s^2)$', fontsize = 18)
         ax.set_yscale('log')
-        ax.set_ylim(ymin=0.1, ymax=100)
+        # ax.set_ylim(ymin=0.1, ymax=100)
     elif var_name == 'umax':
         ax.set_ylabel(r'$u_{max}$  $(m/s)$')
     elif var_name == 'div_new':
         ax.set_ylabel(r'$(\nabla \cdot \vec u)_{new}$  $(1/s)$', fontsize = 18)
-        ax.set_ylim(10**-6., 10**-3.)
+        # ax.set_ylim(10**-6., 10**-3.)
         # ax.set_yscale('log', nonposy='clip')
     elif var_name == 'div_old':
         ax.set_ylabel(r'$(\nabla \cdot \vec u)_{old}$  $(1/s)$', fontsize = 18) 
-        ax.set_ylim(10**-6., 10**-3.)
+        # ax.set_ylim(10**-6., 10**-3.)
         # ax.set_yscale('log', nonposy='clip')
     elif var_name == 'us*':
         ax.set_ylabel(r'$u_s^*$  $(m/s)$', fontsize = 18) 
