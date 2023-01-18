@@ -61,9 +61,15 @@ GLOBAL VARIABLES
 """
 ################
 # PALM input files
-papy.globals.run_name = 'BA_BL_z0_021_wtprof'
-papy.globals.run_numbers = ['.000', '.001', '.002', 
-                            '.003', '.004', '.005']
+papy.globals.run_name = 'SB_SI_back'
+papy.globals.run_numbers = ['.000', '.001', '.002', '.003', '.004', '.005', '.006',
+                        '.007', '.008', '.009', '.010', '.011', '.012', 
+                        '.013', '.014', '.015', '.016', '.017', '.018',
+                        '.019', '.020', '.021', '.022', '.023', '.024',
+                        '.025', '.026', '.027', '.028', '.029', '.030', 
+                        '.031', '.032', '.033', '.034', '.035', '.036',
+                        '.037', '.038', '.039', '.040', '.041', '.042',
+                        '.043', '.044', '.045', '.046']
                     
 papy.globals.run_number = papy.globals.run_numbers[-1]
 nc_file_grid = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
@@ -79,7 +85,7 @@ wt_file_ref = '{}/wtref/{}_wtref.txt'.format(wt_path, wt_filename)
 wt_scale = 150.
 
 # PHYSICS
-papy.globals.z0 = 0.03
+papy.globals.z0 = 0.021
 papy.globals.z0_wt = 0.071
 papy.globals.alpha = 0.18
 papy.globals.ka = 0.41
@@ -138,7 +144,7 @@ if compute_timeseries:
                 ax.set_ylabel(r'{} ({})'.format(var_name,var_unit), fontsize = 18)
         if var_name == 'umax':
             ax.grid()
-            ax.yaxis.set_major_formatter(FormatStrFormatter('%.2e'))
+            # ax.yaxis.set_major_formatter(FormatStrFormatter('%.2e'))
             plt.xlim(250., max(time_total))
             fig.savefig('../palm_results/{}/run_{}/timeseries/{}_{}_colour_ts.png'.format(papy.globals.run_name,papy.globals.run_number[-3:],
                         papy.globals.run_name,var_name), bbox_inches='tight',dpi=500)

@@ -44,7 +44,7 @@ if plotformat == 'pgf':
         'pgf.rcfonts': False,
         'xtick.labelsize' : 16,
         'ytick.labelsize' : 16,
-    })
+    })    
 else:
     plt.style.use('default')
     matplotlib.rcParams.update({
@@ -162,7 +162,8 @@ wtref_path = '{}/wtref/'.format(wt_path)
 if wt_filename == 'SB_BL_UV_001':
     wtref_factor = 0.738
 elif wt_filename == 'BA_BL_UW_001':
-    wtref_factor = 1.    
+    wtref_factor = 0.731 
+    wtref_factor = 1.
 scale = wt_scale
 data_nd = 1
 if not compute_BL_correlation:
