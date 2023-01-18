@@ -116,9 +116,9 @@ papy.globals.ny = 1024
 papy.globals.dx = 1.
 
 # Steeringflags
-compute_front_mean = True
+compute_front_mean = False
 compute_front_pdfs = False
-compute_front_highermoments = False
+compute_front_highermoments = True
 compute_front_var = False
 compute_front_covar = False
 compute_front_lux = False
@@ -512,26 +512,44 @@ if compute_front_highermoments:
         #plot profiles
         err = 0.05
         fig, ax = plt.subplots()
+        ax.xaxis.get_major_formatter()._usetex = False
+        ax.yaxis.get_major_formatter()._usetex = False        
         # plot PALM masked output
         ax.errorbar(wall_dists, skew_vars, yerr=err, 
                     label= r'PALM', 
                     fmt='o', c='darkmagenta')                        
         #plot wt_data
         for i,name in enumerate(namelist):
-            wt_skew = []        
+            wt_skew = []   
+            wt_skew_weight = []     
             wt_z = []
             files = wt.get_files(path,name)            
             for file in files:
                 if var_name == 'u':
                     wt_skew.append(stats.skew(time_series[name][file].u.dropna()))
+                    component = time_series[name][file].u.dropna()
+                    transit_time = time_series[name][file].t_transit
+                    transit_sum = np.sum(transit_time[~np.isnan(transit_time)])
+                    tmp = (( (( component-wt.transit_time_weighted_mean(transit_time,component))/wt.transit_time_weighted_var(transit_time, component) )** 3) * (transit_time[~np.isnan(transit_time)])) / transit_sum
+                    weighted_skew = np.sum(tmp)
+                    wt_skew_weight.append(weighted_skew)
                 elif var_name == 'v':
                     wt_skew.append(stats.skew(time_series[name][file].v.dropna()))
+                    component = time_series[name][file].v.dropna()
+                    transit_time = time_series[name][file].t_transit
+                    transit_sum = np.sum(transit_time[~np.isnan(transit_time)])
+                    tmp = (( (( component[~np.isnan(transit_time)]-wt.transit_time_weighted_mean(transit_time,component))/wt.transit_time_weighted_var(transit_time, component) )** 3) * (transit_time[~np.isnan(transit_time)])) / transit_sum
+                    weighted_skew = np.sum(tmp)
+                    wt_skew_weight.append(weighted_skew)
                 wt_z.append(time_series[name][file].y)
             wt_z_plot = np.asarray(wt_z)-0.115*scale
             if var_name == 'u':
                 ax.errorbar(wt_z_plot, wt_skew, yerr = 0.05,
                             label=label_list[i], 
                             fmt=marker_list[i], color=c_list[i])
+                ax.errorbar(wt_z_plot, wt_skew_weight, yerr = 0.05,
+                            label='{}'.format(name), 
+                            fmt=marker_list[i], color='red')
                 if i==1:
                     ax.vlines(0.0066*150.*5., -1.5, 1.5, colors='tab:red', 
                             linestyles='dashed', 
@@ -541,6 +559,9 @@ if compute_front_highermoments:
                 ax.errorbar(wt_z_plot, wt_skew, yerr = 0.05,
                             label=label_list[i], 
                             fmt=marker_list[i], color=c_list[i])
+                ax.errorbar(wt_z_plot, wt_skew_weight, yerr = 0.05,
+                            label='{}'.format(name), 
+                            fmt=marker_list[i], color='red')
                 if i==1:
                     ax.vlines(0.0066*150.*5., -0.8, 1., colors='tab:red', 
                             linestyles='dashed', 
