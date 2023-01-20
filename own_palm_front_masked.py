@@ -49,8 +49,8 @@ else:
     plt.style.use('default')
     matplotlib.rcParams.update({
         'font.family': 'sans-serif',
-        'text.usetex': True,
-        'pgf.rcfonts': False,
+        'text.usetex': False,
+        'mathtext.fontset': 'cm',
         'xtick.labelsize' : 16,
         'ytick.labelsize' : 16,
     })
@@ -153,9 +153,10 @@ else:
     palm_ref = 1.
 print('     PALM REFERENCE VELOCITY: {} m/s \n'.format(palm_ref))
 # wind tunnel data
-namelist = ['SB_FL_SI_UV_023',
-            'SB_BR_SI_UV_012',
-            'SB_WB_SI_UV_013']
+namelist = ['SB_FL_SI_UV_023',]
+            # 'SB_BR_SI_UV_012',
+            # 'SB_WB_SI_UV_013']
+
 config = 'CO_REF'
 path = '{}/coincidence/timeseries/'.format(wt_path) # path to timeseries folder
 wtref_path = '{}/wtref/'.format(wt_path)
@@ -480,6 +481,7 @@ if compute_front_pdfs:
 ######################################################
 # compute skewness and kurtosis profiles
 ######################################################
+
 if compute_front_highermoments:
     print('\n     compute higher statistical moments')    
     # velocity and variance PDFs
@@ -513,7 +515,7 @@ if compute_front_highermoments:
         err = 0.05
         fig, ax = plt.subplots()
         ax.xaxis.get_major_formatter()._usetex = False
-        ax.yaxis.get_major_formatter()._usetex = False        
+        ax.yaxis.get_major_formatter()._usetex = False
         # plot PALM masked output
         ax.errorbar(wall_dists, skew_vars, yerr=err, 
                     label= r'PALM', 
@@ -527,41 +529,27 @@ if compute_front_highermoments:
             for file in files:
                 if var_name == 'u':
                     wt_skew.append(stats.skew(time_series[name][file].u.dropna()))
-                    component = time_series[name][file].u.dropna()
-                    transit_time = time_series[name][file].t_transit
-                    transit_sum = np.sum(transit_time[~np.isnan(transit_time)])
-                    tmp = (( (( component-wt.transit_time_weighted_mean(transit_time,component))/wt.transit_time_weighted_var(transit_time, component) )** 3) * (transit_time[~np.isnan(transit_time)])) / transit_sum
-                    weighted_skew = np.sum(tmp)
+                    weighted_skew, weighted_kurtosis = wt.transit_time_weighted_moments(time_series[name][file].t_transit, time_series[name][file].u.dropna())
                     wt_skew_weight.append(weighted_skew)
                 elif var_name == 'v':
                     wt_skew.append(stats.skew(time_series[name][file].v.dropna()))
-                    component = time_series[name][file].v.dropna()
-                    transit_time = time_series[name][file].t_transit
-                    transit_sum = np.sum(transit_time[~np.isnan(transit_time)])
-                    tmp = (( (( component[~np.isnan(transit_time)]-wt.transit_time_weighted_mean(transit_time,component))/wt.transit_time_weighted_var(transit_time, component) )** 3) * (transit_time[~np.isnan(transit_time)])) / transit_sum
-                    weighted_skew = np.sum(tmp)
+                    weighted_skew, weighted_kurtosis = wt.transit_time_weighted_moments(time_series[name][file].t_transit, time_series[name][file].v.dropna())
                     wt_skew_weight.append(weighted_skew)
                 wt_z.append(time_series[name][file].y)
             wt_z_plot = np.asarray(wt_z)-0.115*scale
             if var_name == 'u':
-                ax.errorbar(wt_z_plot, wt_skew, yerr = 0.05,
+                ax.errorbar(wt_z_plot, wt_skew_weight, yerr = 0.05,
                             label=label_list[i], 
                             fmt=marker_list[i], color=c_list[i])
-                ax.errorbar(wt_z_plot, wt_skew_weight, yerr = 0.05,
-                            label='{}'.format(name), 
-                            fmt=marker_list[i], color='red')
                 if i==1:
                     ax.vlines(0.0066*150.*5., -1.5, 1.5, colors='tab:red', 
                             linestyles='dashed', 
                             label=r'$5 \cdot h_{r}$')
                 ax.set_ylabel(r'$\gamma_u$ (-)', fontsize = 18)
             elif var_name == 'v':             
-                ax.errorbar(wt_z_plot, wt_skew, yerr = 0.05,
+                ax.errorbar(wt_z_plot, wt_skew_weight, yerr = 0.05,
                             label=label_list[i], 
                             fmt=marker_list[i], color=c_list[i])
-                ax.errorbar(wt_z_plot, wt_skew_weight, yerr = 0.05,
-                            label='{}'.format(name), 
-                            fmt=marker_list[i], color='red')
                 if i==1:
                     ax.vlines(0.0066*150.*5., -0.8, 1., colors='tab:red', 
                             linestyles='dashed', 
@@ -592,18 +580,24 @@ if compute_front_highermoments:
                     fmt='o', c='darkmagenta')                        
         #plot wt_data
         for i,name in enumerate(namelist):
+            print(name)
             wt_kurt = []
+            wt_kurt_weight = []    
             wt_z = []
             files = wt.get_files(path,name)            
             for file in files:
                 if var_name == 'u':
                     wt_kurt.append(stats.kurtosis(time_series[name][file].u.dropna(), fisher=False))
+                    weighted_skew, weighted_kurtosis = wt.transit_time_weighted_moments(time_series[name][file].t_transit, time_series[name][file].u.dropna())
+                    wt_kurt_weight.append(weighted_kurtosis)
                 elif var_name == 'v':
                     wt_kurt.append(stats.kurtosis(time_series[name][file].v.dropna(), fisher=False))
+                    weighted_skew, weighted_kurtosis = wt.transit_time_weighted_moments(time_series[name][file].t_transit, time_series[name][file].v.dropna())
+                    wt_kurt_weight.append(weighted_kurtosis)
                 wt_z.append(time_series[name][file].y)
             wt_z_plot = np.asarray(wt_z)-0.115*scale
             if var_name == 'u':
-                ax.errorbar(wt_z_plot, wt_kurt, yerr = 0.1,
+                ax.errorbar(wt_z_plot, wt_kurt_weight, yerr = 0.1,
                             label=label_list[i], 
                             fmt=marker_list[i], color=c_list[i])
                 if i==1:
@@ -612,7 +606,7 @@ if compute_front_highermoments:
                             label=r'$5 \cdot h_{r}$')
                 ax.set_ylabel(r'$\beta_u$ (-)', fontsize = 18)
             elif var_name == 'v':             
-                ax.errorbar(wt_z_plot, wt_kurt, yerr = 0.1,
+                ax.errorbar(wt_z_plot, wt_kurt_weight, yerr = 0.1,
                             label=label_list[i], 
                             fmt=marker_list[i], color=c_list[i])
                 if i==1:
@@ -1038,7 +1032,7 @@ if compute_quadrant_analysis:
         for j,file in enumerate(files):
             wt_varu_fluc = (time_series[name][file].weighted_component_mean[0] - time_series[name][file].u.dropna().values)/time_series[name][file].wtref
             wt_varv_fluc = (time_series[name][file].weighted_component_mean[1] - time_series[name][file].v.dropna().values)/time_series[name][file].wtref
-            wt_flux = np.asarray(wt_varu_fluc * wt_varv_fluc)
+            wt_flux = np.asarray(wt_varu_fluc * wt_varv_fluc) # check weighting of fluxes! 
 
             wt_q1_ind = np.where(np.logical_and(wt_varu_fluc>0, wt_varv_fluc>0))
             wt_q2_ind = np.where(np.logical_and(wt_varu_fluc<0, wt_varv_fluc>0))
@@ -1154,7 +1148,7 @@ if compute_quadrant_analysis:
                 else:
                     ax.set_title(r'Wind tunnel - $\Delta y = {} m$'.format(str(wt_wall_dist[0])[:5]))
                 plt.colorbar(im1, 
-                            label=r'$\rho (u^\prime_{q_i},  v^\prime_{q_i})$ (-)')
+                            label=r'$P(u^\prime_{q_i},  v^\prime_{q_i})$ (-)')
                 ax.set_xlabel(r'$u^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
                 ax.set_ylabel(r'$v^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
                 # save plots

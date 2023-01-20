@@ -51,8 +51,8 @@ else:
     plt.style.use('default')
     matplotlib.rcParams.update({
         'font.family': 'sans-serif',
-        'text.usetex': True,
-        'pgf.rcfonts': False,
+        'text.usetex': False,
+        'mathtext.fontset': 'cm',
         'xtick.labelsize' : 16,
         'ytick.labelsize' : 16,
     })
@@ -527,13 +527,15 @@ if compute_LU_highermoments:
             files = wt.get_files(path,name)            
             for file in files:
                 if var_name == 'u':
+                    weighted_skew, weighted_kurtosis = wt.transit_time_weighted_moments(time_series[name][file].t_transit, time_series[name][file].u.dropna()) 
+                    wt_skew.append(weighted_skew)                   
                     N_wt_samp = len(time_series[name][file].u.dropna())
                     wt_skew_errs = np.sqrt((6.*N_wt_samp*(N_wt_samp-1.))/((N_wt_samp-2.)*(N_wt_samp+1.)*(N_wt_samp+3.)))                    
-                    wt_skew.append(stats.skew(time_series[name][file].u.dropna()))
                 elif var_name == 'w':
                     N_wt_samp = len(time_series[name][file].v.dropna())
                     wt_skew_errs = np.sqrt((6.*N_wt_samp*(N_wt_samp-1.))/((N_wt_samp-2.)*(N_wt_samp+1.)*(N_wt_samp+3.)))                    
-                    wt_skew.append(stats.skew(time_series[name][file].v.dropna()))
+                    weighted_skew, weighted_kurtosis = wt.transit_time_weighted_moments(time_series[name][file].t_transit, time_series[name][file].v.dropna()) 
+                    wt_skew.append(weighted_skew)                   
                 wt_z.append(abs(time_series[name][file].x))
             wt_z_plot = np.asarray(wt_z)-0.115*scale
             if var_name == 'u':
@@ -584,9 +586,11 @@ if compute_LU_highermoments:
             files = wt.get_files(path,name)            
             for file in files:
                 if var_name == 'u':
-                    wt_kurt.append(stats.kurtosis(time_series[name][file].u.dropna(), fisher=False))
+                    weighted_skew, weighted_kurtosis = wt.transit_time_weighted_moments(time_series[name][file].t_transit, time_series[name][file].u.dropna()) 
+                    wt_skew.append(weighted_kurtosis)                                       
                 elif var_name == 'w':
-                    wt_kurt.append(stats.kurtosis(time_series[name][file].v.dropna(), fisher=False))
+                    weighted_skew, weighted_kurtosis = wt.transit_time_weighted_moments(time_series[name][file].t_transit, time_series[name][file].v.dropna()) 
+                    wt_skew.append(weighted_kurtosis)                                       
                 wt_z.append(abs(time_series[name][file].x))
             wt_z_plot = np.asarray(wt_z)-0.115*scale
             if var_name == 'u':

@@ -48,12 +48,11 @@ else:
     plt.style.use('default')
     matplotlib.rcParams.update({
         'font.family': 'sans-serif',
-        'text.usetex': True,
-        'pgf.rcfonts': False,
+        'text.usetex': False,
+        'mathtext.fontset': 'cm',
         'xtick.labelsize' : 16,
         'ytick.labelsize' : 16,
     })
-
 ################
 """
 FUNCTIONS
