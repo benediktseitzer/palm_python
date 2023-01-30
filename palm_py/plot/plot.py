@@ -84,7 +84,7 @@ def plot_lux_profile(lux, height_list):
     ax.set_ylabel(r"$z$ (m)" )
     ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
             borderaxespad = 0., ncol = 2, 
-            numpoints = 1, fontsize = 18)
+            numpoints = 1, fontsize=11)
     ax.grid(True,'both','both')
 
     if papy.globals.testing:
@@ -93,7 +93,7 @@ def plot_lux_profile(lux, height_list):
         plt.savefig('../palm_results/{}/run_{}/lux/{}_lux.png'.format(papy.globals.run_name,papy.globals.run_number[-3:],
                     papy.globals.run_name), bbox_inches='tight')
 
-def plot_timeseries(var, var_unit, var_name, time, time_unit):
+def plot_timeseries(var, var_unit, var_name, time, time_unit, file_type):
     """
     Plot the height profile for all available times.
 
@@ -113,40 +113,35 @@ def plot_timeseries(var, var_unit, var_name, time, time_unit):
 
     fig, ax = plt.subplots()
     ax.plot(time, var, color='darkviolet')
-    ax.set_xlabel(r'$t$ $({})$'.format('s'), fontsize = 18)
+    ax.set_xlabel(r'$t$ ({})'.format('s'), fontsize=11)
     if var_name == 'dt':
-        ax.set_ylabel(r'$\Delta t$  $(s)$', fontsize = 18)
-        # ax.set_ylim()
+        ax.set_ylabel(r'$\Delta t$  (s)', fontsize=11)
     elif var_name == 'E':
-        ax.set_ylabel(r'$E$  $(m^2/s^2)$', fontsize = 18)
+        ax.set_ylabel(r'$E$  (m$^2$ s$^{-2}$)', fontsize=11)
         ax.set_yscale('log')
-        # ax.set_ylim(ymin=0.1, ymax=100)
     elif var_name == 'E*':
-        ax.set_ylabel(r'$E^*$  $(m^2/s^2)$', fontsize = 18)
+        ax.set_ylabel(r'$E^*$  (m$^2$ s$^{-2}$)', fontsize=11)
         ax.set_yscale('log')
-        # ax.set_ylim(ymin=0.1, ymax=100)
     elif var_name == 'umax':
-        ax.set_ylabel(r'$u_{max}$  $(m/s)$')
+        ax.set_ylabel(r'$u_{max}$  (ms$^{-1}$)')
     elif var_name == 'div_new':
-        ax.set_ylabel(r'$(\nabla \cdot \vec u)_{new}$  $(1/s)$', fontsize = 18)
-        # ax.set_ylim(10**-6., 10**-3.)
-        # ax.set_yscale('log', nonposy='clip')
+        ax.set_ylabel(r'$(\nabla \cdot \vec u)_{new}$  (s$^{-1}$)', fontsize=11)
     elif var_name == 'div_old':
-        ax.set_ylabel(r'$(\nabla \cdot \vec u)_{old}$  $(1/s)$', fontsize = 18) 
-        # ax.set_ylim(10**-6., 10**-3.)
-        # ax.set_yscale('log', nonposy='clip')
+        ax.set_ylabel(r'$(\nabla \cdot \vec u)_{old}$  (s$^{-1}$)', fontsize=11) 
     elif var_name == 'us*':
-        ax.set_ylabel(r'$u_s^*$  $(m/s)$', fontsize = 18) 
+        ax.set_ylabel(r'$u_s^*$ (m s$^{-1}$)', fontsize=11) 
     elif var_name == 'w"u"0':
-        ax.set_ylabel(r'$w^\prime u^\prime_0$  $(m^2/s^2)$', fontsize = 18) 
+        ax.set_ylabel(r'$w^\prime u^\prime_0$  (m$^2$ s$^{-2}$)', fontsize=11) 
     else:
-        ax.set_ylabel(r'{} $({})$'.format(var_name,var_unit), fontsize = 18)
-
-    ax.grid()
+        ax.set_ylabel(r'{} ({})'.format(var_name,var_unit), fontsize=11)
+    ax.vlines(5400., min(var), max(var), 
+                color='tab:red', linestyles='--',
+                label='onset of data output')
+    # ax.grid()
     # ax.yaxis.set_major_formatter(FormatStrFormatter('%.2e'))
     plt.xlim(250., max(time))
-    fig.savefig('../palm_results/{}/run_{}/timeseries/{}_{}_ts.png'.format(papy.globals.run_name,papy.globals.run_number[-3:],
-                papy.globals.run_name,var_name), bbox_inches='tight', dpi=500)
+    fig.savefig('../palm_results/{}/run_{}/timeseries/{}_{}_ts.{}'.format(papy.globals.run_name,papy.globals.run_number[-3:],
+                papy.globals.run_name,var_name, file_type), bbox_inches='tight', dpi=300)
 
 def plot_turbint_profile(turbint, height_list, var_name):
     """
@@ -187,11 +182,11 @@ def plot_turbint_profile(turbint, height_list, var_name):
         ax.set_xlim(0,0.3)
         ax.set_ylim(0,300)
 
-    ax.set_xlabel(r"$I _{}$ (-)".format(var_name), fontsize = 18)
-    ax.set_ylabel(r"$z$ (m)", fontsize = 18)
+    ax.set_xlabel(r"$I _{}$ (-)".format(var_name), fontsize=11)
+    ax.set_ylabel(r"$z$ (m)", fontsize=11)
     ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
             borderaxespad = 0., ncol = 3, 
-            numpoints = 1, fontsize = 18)
+            numpoints = 1, fontsize=11)
     ax.grid()
 
     if papy.globals.testing:
@@ -251,9 +246,9 @@ def plot_semilog_u(var, var_name, z, z_unit, wt_pr, wt_z, wt_u_ref, time):
     ax2.set_xlim(0.8, 5.6)
     ax2.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
             borderaxespad = 0., ncol = 2, 
-            numpoints = 1, fontsize = 18)
-    ax2.set_xlabel(r'$\overline{u}$ (m s$^{-1}$)', fontsize = 18)
-    ax2.set_ylabel(r'$z$ (m)', fontsize = 18)
+            numpoints = 1, fontsize=11)
+    ax2.set_xlabel(r'$\overline{u}$ (m s$^{-1}$)', fontsize=11)
+    ax2.set_ylabel(r'$z$ (m)', fontsize=11)
     ax2.grid()
     ax2.grid(which='minor', alpha=0.2)
     ax2.grid(which='major', alpha=0.2)
@@ -317,44 +312,44 @@ def plot_ver_profile(var_plt, var_unit, var_name, z, z_unit, wt_pr, wt_z, wt_u_r
         except:
             print('Exception has occurred: Stop wt-plotting - plot_ver_profile')
 
-    ax.set_ylabel(r'$z$ (m)', fontsize = 18)
+    ax.set_ylabel(r'$z$ (m)', fontsize=11)
     if var_name == 'w"u"':
         ax.set_xlabel(r'$u^\prime w^\prime_{SGS}$' + r' (m$^2$/s$^2$)',
-                fontsize = 18)
+                fontsize=11)
         ax.set_yscale('log')
     elif var_name == 'w*u*':
         ax.set_xlabel(r'$u^\prime w^\prime_{RES}$'+ r' (m$^2$/s$^2$)', 
-                fontsize = 18)
+                fontsize=11)
         ax.set_yscale('log')
     elif var_name == 'u':
         ax.set_xlabel(r'$\overline{u}$' + r' (m s$^{-1}$)', 
-                fontsize = 18)
+                fontsize=11)
     elif var_name == 'e*':
         ax.set_xlabel(r'$e_{RES}$' + r' (m$^2$/s$^2$)', 
-                fontsize = 18)
+                fontsize=11)
     elif var_name == 'u*2':
         ax.set_xlabel(r'$u^\prime u^\prime_{RES}$' + r' (m$^2$/s$^2$)', 
-                fontsize = 18)
+                fontsize=11)
     elif var_name == 'e':
         ax.set_xlabel(r'$e_{SGS}$' + r' (m$^2$/s$^2$)', 
-                fontsize = 18)
+                fontsize=11)
     elif var_name == 'fluxes':     
         ax.set_xlabel(r'$u^\prime w^\prime$' + r' (m$^2$/s$^2$)', 
-                fontsize = 18)
+                fontsize=11)
         ax.set_yscale('log')
         plt.ylim(0.5, 256.)
         plt.xlim(right=0.)
     else:     
         ax.set_xlabel(r'${}$ ({})'.format(var_name,var_unit), 
-                fontsize = 18) 
+                fontsize=11) 
         ax.set_ylabel(r'$z$ (m)'.format(z_unit), 
-                fontsize = 18)
+                fontsize=11)
         # ax.set_yscale('log', nonposy='clip')
         plt.ylim(min(z),80.)
 
     ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
             borderaxespad = 0., ncol = 2, 
-            numpoints = 1, fontsize = 18)
+            numpoints = 1, fontsize=11)
     fig.savefig('../palm_results/{}/run_{}/profiles/{}_{}_{}_verpr.png'.format(
                                             papy.globals.run_name,
                                             papy.globals.run_number[-3:],
@@ -503,16 +498,16 @@ def plot_spectra(f_comp1_sm, S_comp1_sm,
         ysmax = np.nanmax(S_comp1_sm)
         ax.set_ylim(ysmin,ysmax)
 
-    ax.set_xlabel(r"$f\cdot z\cdot \overline{u}^{-1}$", fontsize = 18)
+    ax.set_xlabel(r"$f\cdot z\cdot \overline{u}^{-1}$", fontsize=11)
     if var_name == 'u':
-        ax.set_ylabel(r"$f\cdot S_{uu}\cdot (\sigma_u\sigma_u)^{-1}$", fontsize = 18)
+        ax.set_ylabel(r"$f\cdot S_{uu}\cdot (\sigma_u\sigma_u)^{-1}$", fontsize=11)
     elif var_name == 'v':
-        ax.set_ylabel(r"$f\cdot S_{vv}\cdot (\sigma_v\sigma_v)^{-1}$", fontsize = 18)
+        ax.set_ylabel(r"$f\cdot S_{vv}\cdot (\sigma_v\sigma_v)^{-1}$", fontsize=11)
     else:
-        ax.set_ylabel(r"$f\cdot S_{ij}\cdot (\sigma_i\sigma_j)^{-1}$", fontsize = 18)
+        ax.set_ylabel(r"$f\cdot S_{ij}\cdot (\sigma_i\sigma_j)^{-1}$", fontsize=11)
     ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
             borderaxespad = 0., ncol = 2, 
-            numpoints = 1, fontsize = 18)
+            numpoints = 1, fontsize=11)
     ax.grid(True)
 
     if papy.globals.testing:
@@ -588,9 +583,9 @@ def plot_contour_crosssection(x, y, var, var_name, o_grid, o_level, vert_gridnam
         ax.set_xlim(0., 1024.)
 
     ax.set_xlabel(r'${}$  (m)'.format(x_grid_name), 
-                    fontsize = 18)
+                    fontsize=11)
     ax.set_ylabel(r'${}$  (m)'.format(vert_gridname), 
-                    fontsize = 18)
+                    fontsize=11)
     ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                 borderaxespad = 0., ncol = 2, 
                 numpoints = 1)                    
