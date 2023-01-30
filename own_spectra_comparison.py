@@ -19,7 +19,7 @@ import pandas as pd
 import sys
 import os
 import scipy.stats as stats
-
+import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FormatStrFormatter
 
@@ -31,10 +31,9 @@ import windtunnel as wt
 import warnings
 warnings.simplefilter("ignore")
 
-import matplotlib
 plotformat = 'pgf'
-plotformat = 'png'
-plotformat = 'pdf'
+# plotformat = 'png'
+# plotformat = 'pdf'
 if plotformat == 'pgf':
     plt.style.use('default')
     matplotlib.use('pgf')
@@ -43,9 +42,17 @@ if plotformat == 'pgf':
         'font.family': 'sans-serif',
         'text.usetex': True,
         'pgf.rcfonts': False,
-        'xtick.labelsize' : 16,
-        'ytick.labelsize' : 16,
+        'xtick.labelsize' : 11,
+        'ytick.labelsize' : 11,
+        'legend.fontsize' : 11,
+        'lines.linewidth' : 0.5,
+        'lines.markersize' : 2.5,
+        'figure.dpi' : 300,
     })
+    print('Textwidth in inch = ' + str(426/72.27))
+    # 5.89 inch
+    textwidth = 5
+    textwidth_half = 0.5*textwidth
 else:
     plt.style.use('default')
     matplotlib.rcParams.update({

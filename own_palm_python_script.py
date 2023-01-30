@@ -17,7 +17,7 @@ import math as m
 import pandas as pd
 import sys
 import os
-
+import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FormatStrFormatter
 
@@ -29,10 +29,9 @@ import windtunnel as wt
 import warnings
 warnings.simplefilter("ignore")
 
-import matplotlib
 plotformat = 'pgf'
-plotformat = 'png'
-plotformat = 'pdf'
+# plotformat = 'png'
+# plotformat = 'pdf'
 if plotformat == 'pgf':
     plt.style.use('default')
     matplotlib.use('pgf')
@@ -41,9 +40,17 @@ if plotformat == 'pgf':
         'font.family': 'sans-serif',
         'text.usetex': True,
         'pgf.rcfonts': False,
-        'xtick.labelsize' : 16,
-        'ytick.labelsize' : 16,
+        'xtick.labelsize' : 11,
+        'ytick.labelsize' : 11,
+        'legend.fontsize' : 11,
+        'lines.linewidth' : 0.5,
+        'lines.markersize' : 2.5,
+        'figure.dpi' : 300,
     })
+    print('Textwidth in inch = ' + str(426/72.27))
+    # 5.89 inch
+    textwidth = 5
+    textwidth_half = 0.5*textwidth
 else:
     plt.style.use('default')
     matplotlib.rcParams.update({
@@ -117,6 +124,8 @@ papy.globals.run_name = 'single_building_ABL_1m_RE_z03'
 papy.globals.run_numbers = ['.000', '.001', '.002', '.003', '.004', '.005',
                             '.007', '.008', '.009', '.010', '.011', '.012',
                             '.013', '.014', '.015',]
+papy.globals.run_name = 'single_building_ABL_2m'
+papy.globals.run_numbers = ['.010']
 papy.globals.run_number = papy.globals.run_numbers[-1]
 # papy.globals.run_number = '.002'
 nc_file_grid = '{}_pr{}.nc'.format(papy.globals.run_name,papy.globals.run_number)
@@ -170,12 +179,12 @@ mode = mode_list[1]
 compute_lux = False
 compute_timeseries = False
 compute_turbint_masked = False
-compute_turbint = True
+compute_turbint = False
 compute_vertprof = True
-compute_vertprof_flux = True
+compute_vertprof_flux = False
 compute_spectra = False
 compute_crosssections = False
-compute_pure_fluxes = True
+compute_pure_fluxes = False
 compute_simrange = False
 compute_modelinput = False
 

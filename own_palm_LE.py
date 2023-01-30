@@ -19,8 +19,8 @@ import sys
 import os
 import scipy.stats as stats
 
+import matplotlib
 import matplotlib.pyplot as plt
-import matplotlib as mpl
 from matplotlib.ticker import FormatStrFormatter
 
 import palm_py as papy
@@ -31,10 +31,9 @@ import windtunnel as wt
 import warnings
 warnings.simplefilter("ignore")
 
-import matplotlib
 plotformat = 'pgf'
-plotformat = 'png'
-plotformat = 'pdf'
+# plotformat = 'png'
+# plotformat = 'pdf'
 if plotformat == 'pgf':
     plt.style.use('default')
     matplotlib.use('pgf')
@@ -43,9 +42,17 @@ if plotformat == 'pgf':
         'font.family': 'sans-serif',
         'text.usetex': True,
         'pgf.rcfonts': False,
-        'xtick.labelsize' : 16,
-        'ytick.labelsize' : 16,
+        'xtick.labelsize' : 11,
+        'ytick.labelsize' : 11,
+        'legend.fontsize' : 11,
+        'lines.linewidth' : 0.5,
+        'lines.markersize' : 2.5,
+        'figure.dpi' : 300,
     })
+    print('Textwidth in inch = ' + str(426/72.27))
+    # 5.89 inch
+    textwidth = 5
+    textwidth_half = 0.5*textwidth
 else:
     plt.style.use('default')
     matplotlib.rcParams.update({
@@ -178,39 +185,27 @@ for name in namelist:
     var_names = ['umean', 'vmean', 'u_var', 'v_var', 'covar', 'lux']    
     wt_err[name] = {}
     wt_err[name].fromkeys(var_names)
-    if name[3:5] == 'FL_later':
-        wt_err[name]['umean'] = 0.5 * np.asarray([0.0395, 0.0395, 0.0395, 0.0395, 0.0395, 0.0395, 0.0395, 0.0395, 0.0395, 0.0395, 
-                                0.0395, 0.0395, 0.0395, 0.0217, 0.0217, 0.0217, 0.0167, 0.0167, 0.0229, 0.0229, 0.0229, 0.0173])
-        wt_err[name]['vmean'] = 0.5 * np.asarray([0.0107, 0.0107, 0.0107, 0.0107, 0.0107, 0.0107, 0.0107, 0.0107, 0.0107, 0.0107, 
-                                0.0107, 0.0107, 0.0107, 0.0101, 0.0101, 0.0101, 0.0152, 0.0152, 0.0081, 0.0081, 0.0081, 0.008])
-        wt_err[name]['u_var'] = 0.5 * np.asarray([0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 
-                                0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0039, 0.0039, 0.0047, 0.0047, 0.0047, 0.0006])
-        wt_err[name]['v_var'] = 0.5 * np.asarray([0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 
-                                0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0039, 0.0039, 0.0047, 0.0047, 0.0047, 0.0006])
-        wt_err[name]['covar'] = 0.5 * np.asarray([0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 
-                                0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0039, 0.0039, 0.0047, 0.0047, 0.0047, 0.0006])
-        wt_err[name]['lux'] =   0.5 * np.asarray([3.1814, 3.1814, 3.1814, 3.1814, 3.1814, 3.1814, 3.1814, 3.1814, 3.1814, 3.1814, 
-                                3.1814, 3.1814, 3.1814, 1.5144, 1.5144, 1.5144, 2.9411, 2.9411, 2.2647, 2.2647, 2.2647, 26.5786])
-    elif name[3:5] == 'BR_later':
-        wt_err[name]['umean'] = 0.5 * np.asarray([0.0255, 0.0255, 0.0255, 0.0255, 0.0255, 0.0255, 0.0255, 0.0255, 0.0465, 0.0465, 
-                                0.0465, 0.0292, 0.0292, 0.0179, 0.0179, 0.0179, 0.0202])
-        wt_err[name]['vmean'] = 0.5 * np.asarray([0.0156, 0.0156, 0.0156, 0.0156, 0.0156, 0.0156, 0.0156, 0.0156, 0.0116, 0.0116, 
-                                0.0116, 0.0101, 0.0101, 0.0114, 0.0114, 0.0114, 0.0073])
-        wt_err[name]['u_var'] = 0.5 * np.asarray([0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 
-                                0.0029, 0.0048, 0.0048, 0.0037, 0.0037, 0.0037, 0.0007])
-        wt_err[name]['v_var'] = 0.5 * np.asarray([0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 
-                                0.0029, 0.0048, 0.0048, 0.0037, 0.0037, 0.0037, 0.0007])
-        wt_err[name]['covar'] = 0.5 * np.asarray([0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 0.0029, 
-                                0.0029, 0.0048, 0.0048, 0.0037, 0.0037, 0.0037, 0.0007])
-        wt_err[name]['lux'] =   0.5 * np.asarray([2.6852, 2.6852, 2.6852, 2.6852, 2.6852, 2.6852, 2.6852, 2.6852, 3.3587, 3.3587, 
-                                3.3587, 1.9594, 1.9594, 4.7631, 4.7631, 4.7631, 22.5726])
-    else:
-        wt_err[name]['umean'] = 0.5 * np.asarray(0.0098)
-        wt_err[name]['vmean'] = 0.5 * np.asarray(0.0171)
-        wt_err[name]['u_var'] = 0.5 * np.asarray(0.0011)
-        wt_err[name]['v_var'] = 0.5 * np.asarray(0.0011)
-        wt_err[name]['covar'] = 0.5 * np.asarray(0.0011)
-        wt_err[name]['lux'] = 0.5 * np.asarray(1.9619)
+    if name[3:5] == 'FL':
+        wt_err[name]['umean'] = 0.0179
+        wt_err[name]['vmean'] = 0.0140
+        wt_err[name]['u_var'] = 0.0021
+        wt_err[name]['v_var'] = 0.0014
+        wt_err[name]['covar'] = 0.0020
+        wt_err[name]['lux'] = 1.1119
+    if name[3:5] == 'BR':
+        wt_err[name]['umean'] = 0.0224
+        wt_err[name]['vmean'] = 0.0151
+        wt_err[name]['u_var'] = 0.0029
+        wt_err[name]['v_var'] = 0.0019
+        wt_err[name]['covar'] = 0.0013
+        wt_err[name]['lux'] = 0.9680
+    if name[3:5] == 'WB':
+        wt_err[name]['umean'] = 0.0120
+        wt_err[name]['vmean'] = 0.0084
+        wt_err[name]['u_var'] = 0.0022
+        wt_err[name]['v_var'] = 0.0038
+        wt_err[name]['covar'] = 0.0016
+        wt_err[name]['lux'] = 0.8757
 
 data_nd = 1
 time_series = {}
@@ -319,7 +314,7 @@ if compute_LE_mean:
                 
         ax.grid(True, 'both', 'both')
         ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
-                    borderaxespad = 0., ncol = 2, 
+                    borderaxespad = 0.,  
                     numpoints = 1, fontsize = 18)
         ax.set_xlabel(r'$\Delta x$ (m)', fontsize = 18)
         # save plots
@@ -379,7 +374,7 @@ if compute_LE_pdfs:
                             label=r'$\overline{w}$' + r'$u_{ref}^{-1}$')
             ax.grid(True, 'both', 'both')
             ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
-                        borderaxespad = 0., ncol = 2, 
+                        borderaxespad = 0.,  
                         numpoints = 1, fontsize = 18)
             ax.set_xlabel(r'${}$'.format(var_name) + r'$u_{ref}^{-1}$ (-)', fontsize = 18)
             ax.set_ylabel(r'relative frequency', fontsize = 18)            
@@ -417,7 +412,7 @@ if compute_LE_pdfs:
                 ax.set_xlabel(r'$w^\prime w^\prime$ ' + r'$u_{ref}^{-2}$ (-)', fontsize = 18)
             ax.grid(True, 'both', 'both')
             ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
-                        borderaxespad = 0., ncol = 2, 
+                        borderaxespad = 0.,  
                         numpoints = 1, fontsize = 18)
             ax.set_ylabel(r'relative frequency', fontsize = 18)
             # save plots
@@ -461,7 +456,7 @@ if compute_LE_pdfs:
                         label=r'$\overline{u^\prime v^\prime}$ ' + r'$u_{ref}^{-2}$')
         ax.grid(True, 'both', 'both')
         ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
-                    borderaxespad = 0., ncol = 2, 
+                    borderaxespad = 0.,  
                     numpoints = 1, fontsize = 18)
         ax.set_xlabel(r'$u^\prime v^\prime$ ' + r'$u_{ref}^{-2}$ (-)', fontsize = 18)
         ax.set_ylabel(r'relative frequency', fontsize = 18)
@@ -559,7 +554,7 @@ if compute_LE_highermoments:
                 ax.set_ylabel(r'$\gamma_w$ (-)', fontsize = 18)
         ax.grid(True, 'both', 'both')
         ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
-                    borderaxespad = 0., ncol = 2, 
+                    borderaxespad = 0.,  
                     numpoints = 1, fontsize = 18)
         ax.set_xlabel(r'$\Delta x$ (m)', fontsize = 18)
         # save plots
@@ -614,7 +609,7 @@ if compute_LE_highermoments:
                 ax.set_ylabel(r'$\beta_w$ (-)', fontsize = 18)
         ax.grid(True, 'both', 'both')
         ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
-                    borderaxespad = 0., ncol = 2, 
+                    borderaxespad = 0.,  
                     numpoints = 1, fontsize = 18)
         ax.set_xlabel(r'$\Delta x$ (m)', fontsize = 18)
         # save plots
@@ -697,7 +692,7 @@ if compute_LE_var:
                 ax.set_ylabel(r'$\overline{w^\prime w^\prime}$ $u_{ref}^{-2}$ (-)', fontsize = 18)
         ax.grid(True, 'both', 'both')
         ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
-                    borderaxespad = 0., ncol = 2, 
+                    borderaxespad = 0.,  
                     numpoints = 1, fontsize = 18)
         ax.set_xlabel(r'$\Delta x$ (m)', fontsize = 18)
         ax.set_xscale('log')
@@ -768,7 +763,7 @@ if compute_LE_covar:
                     fmt=marker_list[i], color=c_list[i])
     ax.grid(True, 'both')
     # ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
-    #             borderaxespad = 0., ncol = 2, 
+    #             borderaxespad = 0.,  
     #             numpoints = 1, fontsize = 18)
     ax.set_xlabel(r'$\Delta x$ (m)', fontsize = 18)
     ax.set_ylabel(r'$\overline{u^\prime w^\prime} u_{ref}^{-2}$ ' + r'(-)', fontsize = 18)
@@ -842,7 +837,7 @@ if compute_LE_lux:
 
     ax.grid(True, 'both', 'both')
     ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
-                borderaxespad = 0., ncol = 2, 
+                borderaxespad = 0.,  
                 numpoints = 1, fontsize = 18)
     ax.set_ylabel(r'$L_{u}^x$ (m)', fontsize = 18)
     ax.set_xlabel(r'$\Delta x$ (m)', fontsize = 18)
@@ -948,7 +943,7 @@ if compute_quadrant_analysis:
                     markersize=2, label='Q4')
             ax.grid(True, 'both', 'both')
             ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
-                        borderaxespad = 0., ncol = 2, 
+                        borderaxespad = 0.,  
                         numpoints = 1, fontsize = 18)
             ax.set_xlabel(r'$u^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
             ax.set_ylabel(r'$w^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
@@ -1076,7 +1071,7 @@ if compute_quadrant_analysis:
                         markersize=2, label='Q4')
                 ax.grid(True, 'both', 'both')
                 ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
-                            borderaxespad = 0., ncol = 2, 
+                            borderaxespad = 0.,  
                             numpoints = 1, fontsize = 18)
                 ax.set_xlabel(r'$u^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
                 ax.set_ylabel(r'$w^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 18)
@@ -1158,7 +1153,7 @@ if compute_quadrant_analysis:
                     linestyles='dashed')                
         ax.grid(True, 'both', 'both')
         ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
-                    borderaxespad = 0., ncol = 2, 
+                    borderaxespad = 0.,  
                     numpoints = 1, fontsize = 18)
         ax.set_ylim(-5., 5.)
         ax.set_ylabel(r'$\overline{u^\prime w^\prime_{q_i}}$ $\overline{u^\prime w^\prime}^{-1}$ (-)', fontsize = 18)
@@ -1190,7 +1185,7 @@ if compute_quadrant_analysis:
                 linestyles='dashed')                
     ax.grid(True, 'both', 'both')
     ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
-                borderaxespad = 0., ncol = 2, 
+                borderaxespad = 0.,  
                 numpoints = 1, fontsize = 18)
     ax.set_ylim(-5., 5.)
     ax.set_ylabel(r'$\overline{u^\prime w^\prime_{q_i}}$ $\overline{u^\prime w^\prime}^{-1}$ (-)', fontsize = 18)
