@@ -79,7 +79,7 @@ GLOBAL VARIABLES
 ################
 # PALM input files
 papy.globals.run_name = 'SB_SI_BL'
-# papy.globals.run_name = 'yshift_SB_BL_corr'
+papy.globals.run_name = 'yshift_SB_BL_corr'
 papy.globals.run_numbers = ['.008', '.009', '.010', '.011', '.012', 
                             '.013', '.014', '.015', '.016', '.017', '.018',
                             '.019', '.020', '.021', '.022', '.023', '.024',
@@ -158,32 +158,46 @@ if data_nd == 1:
     u_err = 0.009552720502061733
     v_err = 0.0011673986655155527
     flux_err = 0.0005127975028476365
-
-    u_v_err = u_err
     I_u_err = 0.004383914423607249
     I_v_err = 0.002449995506950048
     lux_err = 8.298036937278763
+
+    PALM_u_err = 0.015858/2.
+    PALM_v_err = 0.004881333/2.
+    PALM_w_err = 0.006863333/2.
+    PALM_flux_err = 0.000780667/2.
+    PALM_I_u_err = 0.003302333*palm_ref/2.
+    PALM_I_v_err = 0.001813333*palm_ref/2.
+    PALM_I_w_err = 0.0034*palm_ref/2.    
+    PALM_lux_err = 8.298036937278763/2.
 
 elif data_nd == 0:
     u_err = 0.009552720502061733
     v_err = 0.0011673986655155527
     flux_err = 0.0005127975028476365
-
-    u_v_err = u_err
     I_u_err = 0.004383914423607249
     I_v_err = 0.002449995506950048
     lux_err = 8.298036937278763
 
+    PALM_u_err = 0.015858/2.
+    PALM_v_err = 0.004881333/2.
+    PALM_w_err = 0.006863333/2.
+    PALM_flux_err = 0.000780667/2.
+    PALM_I_u_err = 0.003302333*palm_ref/2.
+    PALM_I_v_err = 0.001813333*palm_ref/2.
+    PALM_I_w_err = 0.0034*palm_ref/2.    
+    PALM_lux_err = 8.298036937278763/2.
 
 
 # Steeringflags
-compute_BL_mean = True
-compute_BL_var = True
-compute_BL_covar = True
+compute_BL_mean = False
+compute_BL_var = False
+compute_BL_covar = False
+compute_BL_turbint = False
 compute_BL_lux = False
 compute_quadrant_analysis = False
 
-compute_BL_correlation = False
+compute_BL_correlation = True
 ################
 """
 MAIN
@@ -391,12 +405,12 @@ if compute_BL_mean:
             fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
 
             # plot PALM masked output
-            ax.errorbar(mean_vars, wall_dists, xerr=err, 
-                        label= r'PALM', fmt='o', c='darkmagenta')
             if var_name == 'u':
+                ax.errorbar(mean_vars, wall_dists, xerr=PALM_u_err, 
+                        label= r'PALM', fmt='o', c='darkmagenta')
                 # plot wind tunnel data
                 ax.errorbar(wt_var1, wt_z_SB, xerr=u_err, 
-                        label=r'reference profile', fmt='^', c='orangered')                        
+                        label=r'reference profile', fmt='^', c='orangered')
                 # plot theoretical profile
                 ax.plot(np.asarray(z0_x), np.asarray(z0_y), 
                             color='darkorange', 
@@ -408,6 +422,8 @@ if compute_BL_mean:
                             label = r'$\delta_{cf}$')
                 ax.set_xlim(0.5,1.2)
             elif var_name == 'v':
+                ax.errorbar(mean_vars, wall_dists, xerr=PALM_v_err, 
+                        label= r'PALM', fmt='o', c='darkmagenta')
                 # plot wind tunnel data
                 ax.errorbar(wt_var2, wt_z_SB, xerr=v_err, 
                            label=r'reference profile', fmt='^', c='orangered')
@@ -417,6 +433,8 @@ if compute_BL_mean:
                             label = r'$\delta_{cf}$')
                 ax.set_xlim(-0.015, 0.025)
             elif var_name == 'w':
+                ax.errorbar(mean_vars, wall_dists, xerr=PALM_v_err, 
+                        label= r'PALM', fmt='o', c='darkmagenta')
                 # plot wind tunnel data
                 ax.errorbar(wt_var3, wt_z_BL, xerr=v_err,
                             label=r'reference profile', fmt='^', c='orangered')
@@ -431,7 +449,7 @@ if compute_BL_mean:
                         borderaxespad = 0., 
                         numpoints = 1)
             ax.set_xlabel(r'$z$ (m)')
-            ax.set_ylabel(r'${}$ '.format(var_name) + r'(m s$^{-1}$)')
+            ax.set_ylabel(r'$\overline {}$ '.format(var_name) + r' $u_{ref}^{-1}$ (-)')
             
             # save plots
             fig.savefig('../palm_results/{}/run_{}/maskprofiles/{}_mean_{}_mask.{}'.format(papy.globals.run_name,
@@ -590,7 +608,7 @@ if compute_BL_var:
             err = np.mean(var_vars)*0.05
             fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
             # plot PALM masked output
-            ax.errorbar(var_vars, wall_dists, xerr=err, 
+            ax.errorbar(var_vars, wall_dists, xerr=PALM_flux_err, 
                         label= r'PALM', fmt='o', c='darkmagenta')
             ax.plot(1./3.*var_e[time_show,:-1]/palm_ref**2., z_e[:-1],
                     label = r'PALM: $1/3$ $e_{SGS}$', 
@@ -744,10 +762,9 @@ if compute_BL_covar:
     #plot profiles
     plot_wn_profiles = True
     if plot_wn_profiles:
-        err = np.mean(var_vars)*0.05
         fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
         # plot PALM masked output
-        ax.errorbar(var_vars, wall_dists, xerr=err, 
+        ax.errorbar(var_vars, wall_dists, xerr=PALM_flux_err, 
                     label= r'PALM', fmt='o', c='darkmagenta')
         # plot SGS-Fluxes
         ax.plot(var_e[time_show,:-1], z_e[:-1],
@@ -774,6 +791,238 @@ if compute_BL_covar:
         fig.savefig('../palm_results/{}/run_{}/maskprofiles/{}_covariance_{}_mask_log.{}'.format(papy.globals.run_name,
                     papy.globals.run_number[-3:], 'BL','uw', file_type), bbox_inches='tight', dpi=300)
         plt.close(12)
+
+
+######################################################
+# compute BL turbints in front of building
+######################################################
+if compute_BL_turbint:
+    experiment = 'single_building'
+    wt_filename = 'SB_BL_UV_001'    
+    namelist = [wt_filename]
+    wt_path = '../../Documents/phd/experiments/{}/{}'.format(experiment, wt_filename[3:5])
+    wt_file = '{}/coincidence/timeseries/{}.txt'.format(wt_path, wt_filename)
+    path = '{}/coincidence/timeseries/'.format(wt_path) # path to timeseries folder
+    wtref_path = '{}/wtref/'.format(wt_path)
+    if wt_filename == 'SB_BL_UV_001':
+        wtref_factor = 0.738
+    elif wt_filename == 'BA_BL_UW_001':
+        wtref_factor = 0.731    
+    scale = wt_scale
+    # data_nd = 1
+    time_series = {}
+    time_series.fromkeys(namelist)
+    # Gather all files into Timeseries objects
+    for name in namelist:
+        files = wt.get_files(path,name)
+        time_series[name] = {}
+        time_series[name].fromkeys(files)
+        wt_var1 = []
+        wt_var2 = []        
+        wt_z_SB = []
+        for i,file in enumerate(files):
+            ts = wt.Timeseries.from_file(path+file)            
+            ts.get_wind_comps(path+file)
+            ts.get_wtref(wtref_path,name,index=i)
+            ts.wtref = ts.wtref*wtref_factor
+            # edit 6/20/19: Assume that input data is dimensional, not non-dimensional
+            if data_nd == 0:
+                print('Warning: Assuming that data is dimensional. If using non-dimensional input data, set variable data_nd to 1')
+                # ts.nondimensionalise()
+            else:
+                if data_nd == 1:
+                    []
+                else:
+                    print('Warning: data_nd can only be 1 (for non-dimensional input data) or 0 (for dimensional input data)')        
+            #edit 06/20/19: added seperate functionto  calculate equidistant timesteps             
+            ts.adapt_scale(scale)         
+            ts.mask_outliers()
+            ts.index = ts.t_arr         
+            ts.weighted_component_mean
+            ts.weighted_component_variance
+            time_series[name][file] = ts
+    for name in namelist:
+        files = wt.get_files(path,name)
+        for file in files:    
+            time_series[name][file].u = time_series[name][file].u/time_series[name][file].wtref
+            time_series[name][file].v = time_series[name][file].v/time_series[name][file].wtref
+            wt_var1.append(wt.calc_turb_data_wght(time_series[name][file].t_transit, 
+                                            time_series[name][file].u,
+                                            time_series[name][file].v)[0])
+            wt_var2.append(wt.calc_turb_data_wght(time_series[name][file].t_transit, 
+                                            time_series[name][file].u,
+                                            time_series[name][file].v)[1])
+            # M = np.mean(np.sqrt(time_series[name][file].u**2 + time_series[name][file].v**2))
+            # wt_var1.append(np.sqrt(time_series[name][file].weighted_component_variance[0])/M)
+            # wt_var2.append(np.sqrt(time_series[name][file].weighted_component_variance[1])/M)
+            wt_z_SB.append(time_series[name][file].z)
+
+    experiment = 'balcony'
+    wt_filename = 'BA_BL_UW_001'
+    namelist = [wt_filename]
+    wt_path = '../../Documents/phd/experiments/{}/{}'.format(experiment, wt_filename[3:5])
+    wt_file = '{}/coincidence/timeseries/{}.txt'.format(wt_path, wt_filename)
+    path = '{}/coincidence/timeseries/'.format(wt_path) # path to timeseries folder
+    wtref_path = '{}/wtref/'.format(wt_path)
+    if wt_filename == 'SB_BL_UV_001':
+        wtref_factor = 0.738
+    elif wt_filename == 'BA_BL_UW_001':
+        wtref_factor = 0.731    
+    scale = wt_scale
+    # data_nd = 1
+    time_series = {}
+    time_series.fromkeys(namelist)
+    # Gather all files into Timeseries objects
+    for name in namelist:
+        files = wt.get_files(path,name)
+        time_series[name] = {}
+        time_series[name].fromkeys(files)
+        wt_var3 = []
+        wt_z_BL = []
+        for i,file in enumerate(files):
+            ts = wt.Timeseries.from_file(path+file)            
+            ts.get_wind_comps(path+file)
+            ts.get_wtref(wtref_path,name,index=i)
+            ts.wtref = ts.wtref*wtref_factor
+            # edit 6/20/19: Assume that input data is dimensional, not non-dimensional
+            if data_nd == 0:
+                print('Warning: Assuming that data is dimensional. If using non-dimensional input data, set variable data_nd to 1')
+                # ts.nondimensionalise()
+            else:
+                if data_nd == 1:
+                    []
+                else:
+                    print('Warning: data_nd can only be 1 (for non-dimensional input data) or 0 (for dimensional input data)')        
+            #edit 06/20/19: added seperate functionto  calculate equidistant timesteps             
+            ts.adapt_scale(scale)         
+            ts.mask_outliers()
+            ts.index = ts.t_arr         
+            ts.weighted_component_mean
+            ts.weighted_component_variance
+            time_series[name][file] = ts
+    for name in namelist:
+        files = wt.get_files(path,name)
+        for file in files:    
+            time_series[name][file].u = time_series[name][file].u/time_series[name][file].wtref
+            time_series[name][file].v = time_series[name][file].v/time_series[name][file].wtref
+            wt_var3.append(wt.calc_turb_data_wght(time_series[name][file].t_transit, 
+                                            time_series[name][file].u,
+                                            time_series[name][file].v)[1])
+            # M = np.mean(np.sqrt(time_series[name][file].u**2 + time_series[name][file].v**2))
+            # wt_var3.append(np.sqrt(time_series[name][file].weighted_component_variance[1])/M)
+            wt_z_BL.append(time_series[name][file].z)
+
+    var_name_list = ['u', 'v', 'w']
+    print('     compute variances')
+    for var_name in var_name_list:
+        var_vars = np.array([])
+        wall_dists = np.array([])
+        for mask in mask_name_list:
+            total_var = np.array([])
+            total_var_2 = np.array([])
+            total_time = np.array([])
+            for run_no in papy.globals.run_numbers:
+                nc_file = '{}_masked_{}{}.nc'.format(papy.globals.run_name, mask, run_no)
+                # var_name = 'u'
+                time, time_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'time')
+                if var_name == 'u':
+                    var, var_unit = papy.read_nc_var_ms(nc_file_path, nc_file, var_name)
+                    var_2 , var_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'v')
+                    y, y_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'zu_3d')
+                elif var_name == 'v':
+                    var, var_unit = papy.read_nc_var_ms(nc_file_path, nc_file, var_name)
+                    var_2 , var_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'u')
+                    y, y_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'zu_3d')
+                elif var_name == 'w':
+                    var, var_unit = papy.read_nc_var_ms(nc_file_path, nc_file, var_name)
+                    var_2 , var_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'u')
+                    y, y_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'zw_3d')
+
+                total_time = np.concatenate([total_time, time])
+                total_var = np.concatenate([total_var, var/palm_ref])
+                total_var_2 = np.concatenate([total_var_2, var_2/palm_ref])
+            # gather values
+            # if var_name == 'u':
+            var_variance = np.asarray([wt.calc_turb_data(total_var,total_var_2)[0]])
+            # else: 
+            #     var_variance = np.asarray([wt.calc_turb_data(total_var,total_var_2)[1]])
+            # wall_dist = np.asarray([abs(y[0]-530.)])
+            wall_dist = np.asarray([abs(y[0])])
+            var_vars = np.concatenate([var_vars, var_variance])
+            wall_dists = np.concatenate([wall_dists, wall_dist])
+        ABL_file = 'single_building_ABL_1m_RE_z03_pr.015.nc'.format(papy.globals.run_name,papy.globals.run_number)
+        ABL_file_path = '../palm/current_version/JOBS/single_building_ABL_1m_RE_z03/OUTPUT/'
+        var_e, var_e_max, var_e_unit = papy.read_nc_var_ver_pr(ABL_file_path, ABL_file, 'e')
+        z_e, z_unit_e = papy.read_nc_grid(ABL_file_path, ABL_file, 'ze')
+        ABL_time, ABL_time_unit = papy.read_nc_time(ABL_file_path,ABL_file)
+        time_show = time.nonzero()[0][0]
+
+        #plot profiles
+        plot_wn_profiles = True
+        if plot_wn_profiles:
+            fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
+            # plot PALM masked output            
+            #plot wt_data
+            wt_z_plot = wt_z_SB[:5] +  wt_z_SB[7:]
+            if var_name == 'u':
+                ax.errorbar(var_vars, wall_dists, xerr=PALM_I_u_err, 
+                        label= r'PALM', fmt='o', c='darkmagenta')                
+                wt_var_plot = wt_var1[:5] +  wt_var1[7:]
+                ax.errorbar(wt_var_plot, wt_z_plot, xerr = I_u_err,
+                            label='reference profile', 
+                            fmt='^', 
+                            c='orangered')
+                ax.hlines(45., 0., 0.25,
+                    linestyle='--', 
+                    colors = 'cornflowerblue', 
+                    label = r'$\delta_{cf}$')
+                ax.set_xlim(0.,0.25)
+            elif var_name == 'v':
+                ax.errorbar(var_vars, wall_dists, xerr=PALM_I_v_err, 
+                        label= r'PALM', fmt='o', c='darkmagenta')     
+                wt_var_plot = wt_var2[:5] +  wt_var2[7:]
+                ax.errorbar(wt_var_plot, wt_z_plot, xerr = I_v_err,
+                            label='reference profile', 
+                            fmt='^', 
+                            c='orangered')
+                ax.hlines(45., 0., 0.25,
+                    linestyle='--', 
+                    colors = 'cornflowerblue', 
+                    label = r'$\delta_{cf}$')
+                ax.set_xlim(0.,0.2)
+            elif var_name == 'w':
+                ax.errorbar(var_vars, wall_dists, xerr=PALM_I_w_err, 
+                        label= r'PALM', fmt='o', c='darkmagenta')     
+                wt_z_plot = wt_z_BL[:5] +  wt_z_BL[7:]
+                wt_var_plot = wt_var3[:5] +  wt_var3[7:]
+                ax.errorbar(wt_var_plot, wt_z_plot, xerr = I_v_err,
+                            label='reference profile', 
+                            fmt='^', 
+                            c='orangered')         
+                ax.hlines(45., 0., 0.25, 
+                    linestyle='--', 
+                    colors = 'cornflowerblue', 
+                    label = r'$\delta_{cf}$')
+                ax.set_xlim(0.,0.15)
+            ax.set_ylim(4.,140.)
+
+            # ax.grid()
+            if var_name == 'w':
+                ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
+                        borderaxespad = 0.,  
+                        numpoints = 1, ncol=3)
+            ax.set_xlabel(r'$z$ (m)')
+            ax.set_ylabel(r'$I_{}$ '.format(var_name) + r'(-)')
+            fig.savefig('../palm_results/{}/run_{}/maskprofiles/{}_turbint_I{}_mask.{}'.format(papy.globals.run_name,
+                        papy.globals.run_number[-3:], 'BL',var_name, file_type), bbox_inches='tight', dpi=300)
+            ax.set_yscale('log')
+            ax.set_ylim(4.,140.)
+            fig.savefig('../palm_results/{}/run_{}/maskprofiles/{}_turbint_I{}_mask_log.{}'.format(papy.globals.run_name,
+                        papy.globals.run_number[-3:], 'BL',var_name, file_type), bbox_inches='tight', dpi=300)
+            plt.close(12)
+            print('         plotted turbints of {}'.format(var_name))
+
+
 
 
 ######################################################
