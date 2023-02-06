@@ -42,11 +42,12 @@ if plotformat == 'pgf':
         'font.family': 'sans-serif',
         'text.usetex': True,
         'pgf.rcfonts': False,
+        'mathtext.fontset': 'cm',        
         'xtick.labelsize' : 11,
         'ytick.labelsize' : 11,
         'legend.fontsize' : 11,
-        'lines.linewidth' : 0.5,
-        'lines.markersize' : 2.5,
+        'lines.linewidth' : 0.75,
+        'lines.markersize' : 2.,
         'figure.dpi' : 300,
     })
     print('Textwidth in inch = ' + str(426/72.27))
@@ -59,8 +60,12 @@ else:
         'font.family': 'sans-serif',
         'text.usetex': False,
         'mathtext.fontset': 'cm',
-        'xtick.labelsize' : 16,
-        'ytick.labelsize' : 16,
+        'xtick.labelsize' : 11,
+        'ytick.labelsize' : 11,
+        'legend.fontsize' : 11,
+        'lines.linewidth' : 0.75,
+        'lines.markersize' : 2.,
+        'figure.dpi' : 300,
     })
 
 ################
@@ -163,7 +168,6 @@ path = '{}/coincidence/timeseries/'.format(wt_path) # path to timeseries folder
 wtref_path = '{}/wtref/'.format(wt_path)
 wtref_factor = 0.738
 scale = wt_scale
-
 wt_err = {}
 wt_err.fromkeys(namelist)
 for name in namelist:
@@ -171,18 +175,27 @@ for name in namelist:
     var_names = ['umean', 'vmean', 'u_var', 'v_var', 'covar', 'lux']    
     wt_err[name] = {}
     wt_err[name].fromkeys(var_names)
-    wt_err[name]['umean'] = [0.0395, 0.0395, 0.0395, 0.0395, 0.0395, 0.0395, 0.0217,  0.0217, 
-                            0.0217, 0.0217, 0.0167, 0.0167, 0.0229, 0.0229, 0.0229, 0.0229, 0.0173, 0.0173, 0.0173,  0.0173]
-    wt_err[name]['vmean'] = [0.0107, 0.0107, 0.0107, 0.0107, 0.0107, 0.0107, 0.0107, 0.0107, 
-                            0.0107, 0.0107, 0.0107, 0.0101, 0.0101, 0.0101, 0.0152, 0.0152, 0.0081, 0.0081, 0.0081, 0.008]
-    wt_err[name]['u_var'] = [0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 
-                            0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0039, 0.0039, 0.0047, 0.0047, 0.0047, 0.0006]
-    wt_err[name]['v_var'] = [0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 
-                            0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0039, 0.0039, 0.0047, 0.0047, 0.0047, 0.0006]
-    wt_err[name]['covar'] = [0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 
-                            0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0024, 0.0039, 0.0039, 0.0047, 0.0047, 0.0047, 0.0006]
-    wt_err[name]['lux'] =   [3.1814, 3.1814, 3.1814, 3.1814, 3.1814, 3.1814, 3.1814, 3.1814, 
-                            3.1814, 3.1814, 3.1814, 1.5144, 1.5144, 1.5144, 2.9411, 2.9411, 2.2647, 2.2647, 2.2647, 26.5786]
+    if name[3:5] == 'FL':
+        wt_err[name]['umean'] = 0.0192
+        wt_err[name]['vmean'] = 0.0085
+        wt_err[name]['u_var'] = 0.0085
+        wt_err[name]['v_var'] = 0.0030
+        wt_err[name]['covar'] = 0.0021
+        wt_err[name]['lux'] =   3.6480
+    if name[3:5] == 'BR':
+        wt_err[name]['umean'] = 0.0165
+        wt_err[name]['vmean'] = 0.0076
+        wt_err[name]['u_var'] = 0.0051
+        wt_err[name]['v_var'] = 0.0034
+        wt_err[name]['covar'] = 0.0018
+        wt_err[name]['lux'] =   4.4744
+    if name[3:5] == 'WB':
+        wt_err[name]['umean'] = 0.0195
+        wt_err[name]['vmean'] = 0.0069
+        wt_err[name]['u_var'] = 0.0052
+        wt_err[name]['v_var'] = 0.0029
+        wt_err[name]['covar'] = 0.0021
+        wt_err[name]['lux'] =   3.5338
 
 
 data_nd = 1
@@ -253,7 +266,7 @@ if compute_middle_mean:
 
         #plot profiles
         err = np.mean(mean_vars/palm_ref)*0.05
-        fig, ax = plt.subplots()
+        fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
         # plot PALM masked output
         ax.errorbar(wall_dists, mean_vars/palm_ref, yerr=err, 
                     label= r'PALM', 
@@ -278,7 +291,7 @@ if compute_middle_mean:
                     ax.vlines(0.0066*150.*5., 0., 1.2, colors='tab:red', 
                             linestyles='dashed', 
                             label=r'$5 \cdot h_{r}$')
-                ax.set_ylabel(r'$\overline{u}$ $u_{ref}^{-1}$ (-)', fontsize = 11)                            
+                ax.set_ylabel(r'$\overline{u}$ $u_{ref}^{-1}$ (-)')                            
             elif var_name == 'v':
                 wt_var_plot = wt_var2                
                 ax.errorbar(wt_z_plot, wt_var_plot, yerr = wt_err[name]['vmean'],
@@ -288,13 +301,13 @@ if compute_middle_mean:
                     ax.vlines(0.0066*150.*5., -0.1, 0.04, colors='tab:red', 
                             linestyles='dashed', 
                             label=r'$5 \cdot h_{r}$')
-                ax.set_ylabel(r'$\overline{v}$ $u_{ref}^{-1}$ (-)', fontsize = 11)                            
+                ax.set_ylabel(r'$\overline{v}$ $u_{ref}^{-1}$ (-)')                            
                 
         ax.grid(True, 'both', 'both')
         ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                     borderaxespad = 0.,  
-                    numpoints = 1, fontsize = 11)
-        ax.set_xlabel(r'$\Delta y$ (m)', fontsize = 11)
+                    numpoints = 1)
+        ax.set_xlabel(r'$\Delta y$ (m)')
         # save plots
         ax.set_xscale('log')
         fig.savefig('../palm_results/{}/run_{}/maskprofiles/{}_mean_{}_mask_log.png'.format(papy.globals.run_name,
@@ -334,7 +347,7 @@ if compute_middle_pdfs:
             wall_dist = np.asarray([abs(y[0]-530.)])
 
             #plot PDF
-            fig, ax = plt.subplots()
+            fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
             # plot PALM masked output
             ax.hist(total_var/palm_ref, bins=100, density=True,
                     label=r'${}$ at $\Delta y={}$ m'.format(var_name, wall_dist[0]))
@@ -353,9 +366,9 @@ if compute_middle_pdfs:
             ax.grid(True, 'both', 'both')
             ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                         borderaxespad = 0.,  
-                        numpoints = 1, fontsize = 11)
-            ax.set_xlabel(r'${}$'.format(var_name) + r'$u_{ref}^{-1}$ (-)', fontsize = 11)
-            ax.set_ylabel(r'relative frequency', fontsize = 11)            
+                        numpoints = 1)
+            ax.set_xlabel(r'${}$'.format(var_name) + r'$u_{ref}^{-1}$ (-)')
+            ax.set_ylabel(r'relative frequency')            
             if abs(min(total_var/palm_ref))<abs(max(total_var/palm_ref)):
                 ax.set_xlim(-abs(max(total_var/palm_ref)), abs(max(total_var/palm_ref)))
             else:
@@ -369,7 +382,7 @@ if compute_middle_pdfs:
                     papy.globals.run_number[-3:],
                     'middle', var_name, mask))
             plt.close(12)
-            fig, ax = plt.subplots()
+            fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
             # plot PALM masked output
             ax.hist(total_variance/palm_ref**2., bins=100, density=True,
                     label=r'${}$ at $\Delta y={}$ m'.format(var_name, wall_dist[0]))
@@ -377,22 +390,22 @@ if compute_middle_pdfs:
                 ax.vlines(np.mean(total_variance/palm_ref**2.), 0., 2., colors='tab:red', 
                             linestyles='dashed', 
                             label=r'$\overline{u}$ ' + r'$u_{ref}^{-2}$')
-                ax.set_xlabel(r'$u^\prime u^\prime$ ' + r'$u_{ref}^{-2}$ (-)', fontsize = 11)
+                ax.set_xlabel(r'$u^\prime u^\prime$ ' + r'$u_{ref}^{-2}$ (-)')
             elif var_name == 'v':
                 ax.vlines(np.mean(total_variance/palm_ref**2.), 0., 2., colors='tab:red', 
                             linestyles='dashed', 
                             label=r'$\overline{v}$ ' + r'$u_{ref}^{-2}$')
-                ax.set_xlabel(r'$v^\prime v^\prime$ ' + r'$u_{ref}^{-2}$ (-)', fontsize = 11)
+                ax.set_xlabel(r'$v^\prime v^\prime$ ' + r'$u_{ref}^{-2}$ (-)')
             elif var_name == 'w':
                 ax.vlines(np.mean(total_variance/palm_ref**2.), 0., 2., colors='tab:red', 
                             linestyles='dashed', 
                             label=r'$\overline{w}$ ' + r'$u_{ref}^{-2}$')
-                ax.set_xlabel(r'$w^\prime w^\prime$ ' + r'$u_{ref}^{-2}$ (-)', fontsize = 11)
+                ax.set_xlabel(r'$w^\prime w^\prime$ ' + r'$u_{ref}^{-2}$ (-)')
             ax.grid(True, 'both', 'both')
             ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                         borderaxespad = 0.,  
-                        numpoints = 1, fontsize = 11)
-            ax.set_ylabel(r'relative frequency', fontsize = 11)
+                        numpoints = 1)
+            ax.set_ylabel(r'relative frequency')
             # save plots
             fig.savefig('../palm_results/{}/run_{}/histogram/{}_hist_{}{}_{}.png'.format(papy.globals.run_name,
                         papy.globals.run_number[-3:],
@@ -425,7 +438,7 @@ if compute_middle_pdfs:
         var_flux = np.asarray(var1_fluc*var2_fluc/palm_ref**2.)
         wall_dist = np.asarray([abs(y[0]-530.)])
         #plot PDF
-        fig, ax = plt.subplots()
+        fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
         # plot PALM masked output
         ax.hist(var_flux, bins=100, density=True,
                 label=r'$u^\prime v^\prime$ at $\Delta y={}$ m'.format(wall_dist[0]))
@@ -435,9 +448,9 @@ if compute_middle_pdfs:
         ax.grid(True, 'both', 'both')
         ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                     borderaxespad = 0.,  
-                    numpoints = 1, fontsize = 11)
-        ax.set_xlabel(r'$u^\prime v^\prime$ ' + r'$u_{ref}^{-2}$ (-)', fontsize = 11)
-        ax.set_ylabel(r'relative frequency', fontsize = 11)
+                    numpoints = 1)
+        ax.set_xlabel(r'$u^\prime v^\prime$ ' + r'$u_{ref}^{-2}$ (-)')
+        ax.set_ylabel(r'relative frequency')
         if abs(min(var_flux))<abs(max(var_flux)):        
             ax.set_xlim(-abs(max(var_flux)), abs(max(var_flux)))
         else:
@@ -487,7 +500,7 @@ if compute_middle_highermoments:
 
         #plot profiles
         err = 0.05
-        fig, ax = plt.subplots()
+        fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
         # plot PALM masked output
         ax.errorbar(wall_dists, skew_vars, yerr=err, 
                     label= r'PALM', 
@@ -514,7 +527,7 @@ if compute_middle_highermoments:
                     ax.vlines(0.0066*150.*5., -1.5, 1, colors='tab:red', 
                             linestyles='dashed', 
                             label=r'$5 \cdot h_{r}$')
-                ax.set_ylabel(r'$\gamma_u$ (-)', fontsize = 11)
+                ax.set_ylabel(r'$\gamma_u$ (-)')
             elif var_name == 'v':             
                 ax.errorbar(wt_z_plot, wt_skew, yerr = 0.05,
                             label=label_list[i], 
@@ -523,12 +536,12 @@ if compute_middle_highermoments:
                     ax.vlines(0.0066*150.*5., -0.5, 1, colors='tab:red', 
                             linestyles='dashed', 
                             label=r'$5 \cdot h_{r}$')
-                ax.set_ylabel(r'$\gamma_v$ (-)', fontsize = 11)
+                ax.set_ylabel(r'$\gamma_v$ (-)')
         ax.grid(True, 'both', 'both')
         ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                     borderaxespad = 0.,  
-                    numpoints = 1, fontsize = 11)
-        ax.set_xlabel(r'$\Delta y$ (m)', fontsize = 11)
+                    numpoints = 1)
+        ax.set_xlabel(r'$\Delta y$ (m)')
         # save plots
         ax.set_xscale('log')
         fig.savefig('../palm_results/{}/run_{}/maskprofiles/{}_skewness_{}_mask_log.png'.format(papy.globals.run_name,
@@ -542,7 +555,7 @@ if compute_middle_highermoments:
 
         #plot profiles
         err = 0.1
-        fig, ax = plt.subplots()
+        fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
         # plot PALM masked output
         ax.errorbar(wall_dists, kurt_vars, yerr=err, 
                     label= r'PALM', 
@@ -569,7 +582,7 @@ if compute_middle_highermoments:
                     ax.vlines(0.0066*150.*5., 1, 7, colors='tab:red', 
                             linestyles='dashed', 
                             label=r'$5 \cdot h_{r}$')
-                ax.set_ylabel(r'$\beta_u$ (-)', fontsize = 11)
+                ax.set_ylabel(r'$\beta_u$ (-)')
             elif var_name == 'v':             
                 ax.errorbar(wt_z_plot, wt_kurt, yerr = 0.1,
                             label=label_list[i], 
@@ -578,12 +591,12 @@ if compute_middle_highermoments:
                     ax.vlines(0.0066*150.*5., 1, 7, colors='tab:red', 
                             linestyles='dashed', 
                             label=r'$5 \cdot h_{r}$')
-                ax.set_ylabel(r'$\beta_v$ (-)', fontsize = 11)
+                ax.set_ylabel(r'$\beta_v$ (-)')
         ax.grid(True, 'both', 'both')
         ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                     borderaxespad = 0.,  
-                    numpoints = 1, fontsize = 11)
-        ax.set_xlabel(r'$\Delta y$ (m)', fontsize = 11)
+                    numpoints = 1)
+        ax.set_xlabel(r'$\Delta y$ (m)')
         # save plots
         ax.set_xscale('log')
         fig.savefig('../palm_results/{}/run_{}/maskprofiles/{}_kurtosis_{}_mask_log.png'.format(papy.globals.run_name,
@@ -625,7 +638,7 @@ if compute_middle_var:
 
         #plot profiles
         err = np.mean(var_vars/palm_ref**2)*0.1
-        fig, ax = plt.subplots()
+        fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
         # plot PALM masked output
         ax.errorbar(wall_dists, var_vars/palm_ref**2., yerr=err, 
                     label= r'PALM', 
@@ -651,7 +664,7 @@ if compute_middle_var:
                     ax.vlines(0.0066*150.*5., 0., 0.14, colors='tab:red', 
                             linestyles='dashed', 
                             label=r'$5 \cdot h_{r}$')
-                ax.set_ylabel(r'$\overline{u^\prime u^\prime}$ $u_{ref}^{-2}$ (-)', fontsize = 11)
+                ax.set_ylabel(r'$\overline{u^\prime u^\prime}$ $u_{ref}^{-2}$ (-)')
             elif var_name == 'v':
                 wt_var_plot = wt_var2                
                 ax.errorbar(wt_z_plot, wt_var_plot, yerr = wt_err[name]['v_var'],
@@ -661,12 +674,12 @@ if compute_middle_var:
                     ax.vlines(0.0066*150.*5., 0., 0.08, colors='tab:red', 
                             linestyles='dashed', 
                             label=r'$5 \cdot h_{r}$')
-                ax.set_ylabel(r'$\overline{v^\prime v^\prime}$ $u_{ref}^{-2}$ (-)', fontsize = 11)
+                ax.set_ylabel(r'$\overline{v^\prime v^\prime}$ $u_{ref}^{-2}$ (-)')
         ax.grid(True, 'both', 'both')
         ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                     borderaxespad = 0.,  
-                    numpoints = 1, fontsize = 11)
-        ax.set_xlabel(r'$\Delta y$ (m)', fontsize = 11)
+                    numpoints = 1)
+        ax.set_xlabel(r'$\Delta y$ (m)')
         ax.set_xscale('log')
         fig.savefig('../palm_results/{}/run_{}/maskprofiles/{}_variance_{}_mask_log.png'.format(papy.globals.run_name,
                     papy.globals.run_number[-3:],
@@ -710,7 +723,7 @@ if compute_middle_covar:
 
     #plot profiles
     err = 0.001
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
     # plot PALM masked output
     ax.errorbar(wall_dists, var_vars, yerr=err, 
                 label= r'PALM', fmt='o', c='darkmagenta')
@@ -736,9 +749,9 @@ if compute_middle_covar:
     ax.grid(True, 'both')
     ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                 borderaxespad = 0.,  
-                numpoints = 1, fontsize = 11)
-    ax.set_xlabel(r'$\Delta y$ (m)', fontsize = 11)
-    ax.set_ylabel(r'$\overline{u^\prime v^\prime} u_{ref}^{-2}$ ' + r'(-)', fontsize = 11)
+                numpoints = 1)
+    ax.set_xlabel(r'$\Delta y$ (m)')
+    ax.set_ylabel(r'$\overline{u^\prime v^\prime} u_{ref}^{-2}$ ' + r'(-)')
     ax.set_xscale('log')
     fig.savefig('../palm_results/{}/run_{}/maskprofiles/{}_covariance_{}_mask_log.png'.format(papy.globals.run_name,
                 papy.globals.run_number[-3:],
@@ -793,7 +806,7 @@ if compute_middle_lux:
 
     #plot profiles
     err = lux*0.1
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
     # plot PALM-LUX
     ax.errorbar(wall_dists, lux, yerr=err, 
                 label= r'PALM', 
@@ -810,9 +823,9 @@ if compute_middle_lux:
     ax.grid(True, 'both', 'both')
     ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                 borderaxespad = 0.,  
-                numpoints = 1, fontsize = 11)
-    ax.set_ylabel(r'$L_{u}^x$ (m)', fontsize = 11)
-    ax.set_xlabel(r'$\Delta y$ (m)', fontsize = 11)
+                numpoints = 1)
+    ax.set_ylabel(r'$L_{u}^x$ (m)')
+    ax.set_xlabel(r'$\Delta y$ (m)')
     # save plots
     ax.set_xscale('log')
     fig.savefig('../palm_results/{}/run_{}/maskprofiles/{}_lux_{}_mask_log.png'.format(papy.globals.run_name,
@@ -902,7 +915,7 @@ if compute_quadrant_analysis:
         plot_QA_PALM = True
         if plot_QA_PALM:
             # PLOT SINGLE Quadrant-scatterplots
-            fig, ax = plt.subplots()
+            fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
             fig.gca().set_aspect('equal', adjustable='box')
             ax.plot(varu_fluc[q1_ind], varv_fluc[q1_ind] ,'o', color='blue',
                     markersize=2,label='Q1')
@@ -915,9 +928,9 @@ if compute_quadrant_analysis:
             ax.grid(True, 'both', 'both')
             ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                         borderaxespad = 0.,  
-                        numpoints = 1, fontsize = 11)
-            ax.set_xlabel(r'$u^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 11)
-            ax.set_ylabel(r'$v^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 11)
+                        numpoints = 1)
+            ax.set_xlabel(r'$u^\prime$ $u_{ref}^{-1}$ (-)')
+            ax.set_ylabel(r'$v^\prime$ $u_{ref}^{-1}$ (-)')
             # save plots
             fig.savefig('../palm_results/{}/run_{}/quadrant_analysis/scatter/{}_QA_scatter_mask_{}.png'.format(papy.globals.run_name,
                         papy.globals.run_number[-3:],
@@ -939,7 +952,7 @@ if compute_quadrant_analysis:
             kernel = stats.gaussian_kde(values)
             jpdf = np.reshape(kernel.evaluate(positions).T, u_jpdf.shape)        
             # plot
-            fig, ax = plt.subplots()
+            fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
             fig.gca().set_aspect('equal', adjustable='box')
             extent_val = 0.6
             ax.set_xlim(-extent_val, extent_val)
@@ -958,8 +971,8 @@ if compute_quadrant_analysis:
                     linestyles='dashed')
             ax.grid(True, 'both', 'both')
             plt.colorbar(im1, label=r'$\rho (u^\prime_{q_i},  v^\prime_{q_i})$ (-)')
-            ax.set_xlabel(r'$u^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 11)
-            ax.set_ylabel(r'$v^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 11)
+            ax.set_xlabel(r'$u^\prime$ $u_{ref}^{-1}$ (-)')
+            ax.set_ylabel(r'$v^\prime$ $u_{ref}^{-1}$ (-)')
             # save plots
             fig.savefig('../palm_results/{}/run_{}/quadrant_analysis/jpdf/{}_QA_jpdf_mask_{}.png'.format(papy.globals.run_name,
                         papy.globals.run_number[-3:],
@@ -1029,7 +1042,7 @@ if compute_quadrant_analysis:
             # PLOT SINGLE Quadrant-scatterplots
             plot_WT_QA = True
             if plot_WT_QA:
-                fig, ax = plt.subplots()
+                fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
                 fig.gca().set_aspect('equal', adjustable='box')
                 ax.plot(wt_varu_fluc[wt_q1_ind], wt_varv_fluc[wt_q1_ind] ,'o', color='blue',
                         markersize=2,label='Q1')
@@ -1042,9 +1055,9 @@ if compute_quadrant_analysis:
                 ax.grid(True, 'both', 'both')
                 ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                             borderaxespad = 0.,  
-                            numpoints = 1, fontsize = 11)
-                ax.set_xlabel(r'$u^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 11)
-                ax.set_ylabel(r'$v^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 11)
+                            numpoints = 1)
+                ax.set_xlabel(r'$u^\prime$ $u_{ref}^{-1}$ (-)')
+                ax.set_ylabel(r'$v^\prime$ $u_{ref}^{-1}$ (-)')
                 # save plots
                 fig.savefig('../palm_results/{}/run_{}/quadrant_analysis/scatter/{}_QA_scatter_WT_{}.png'.format(papy.globals.run_name,
                             papy.globals.run_number[-3:],
@@ -1066,7 +1079,7 @@ if compute_quadrant_analysis:
                 kernel = stats.gaussian_kde(values)
                 jpdf = np.reshape(kernel.evaluate(positions).T, u_jpdf.shape)
                 # plot
-                fig, ax = plt.subplots()
+                fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
                 fig.gca().set_aspect('equal', adjustable='box')
                 ax.set_xlim(-extent_val, extent_val)
                 ax.set_ylim(-extent_val, extent_val)
@@ -1085,8 +1098,8 @@ if compute_quadrant_analysis:
                 ax.grid(True, 'both', 'both')
                 plt.colorbar(im1, 
                             label=r'$\rho (u^\prime_{q_i},  v^\prime_{q_i})$ (-)')
-                ax.set_xlabel(r'$u^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 11)
-                ax.set_ylabel(r'$v^\prime$ $u_{ref}^{-1}$ (-)', fontsize = 11)
+                ax.set_xlabel(r'$u^\prime$ $u_{ref}^{-1}$ (-)')
+                ax.set_ylabel(r'$v^\prime$ $u_{ref}^{-1}$ (-)')
                 # save plots
                 fig.savefig('../palm_results/{}/run_{}/quadrant_analysis/jpdf/{}_QA_jpdf_WT_{}.png'.format(papy.globals.run_name,
                             papy.globals.run_number[-3:],
@@ -1098,7 +1111,7 @@ if compute_quadrant_analysis:
                 plt.close()
 
         # quadrant contributions
-        fig, ax = plt.subplots()
+        fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
         ax.errorbar(wt_wall_dists, wt_s1_all, yerr=0.1,
                 label = 'Q1', fmt='o', c='blue')
         ax.errorbar(wt_wall_dists, wt_s2_all, yerr=0.1,
@@ -1115,10 +1128,10 @@ if compute_quadrant_analysis:
         ax.grid(True, 'both', 'both')
         ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                     borderaxespad = 0.,  
-                    numpoints = 1, fontsize = 11)
+                    numpoints = 1)
         ax.set_ylim(-5., 5.)
-        ax.set_ylabel(r'$\overline{u^\prime v^\prime_{q_i}}$ $\overline{u^\prime v^\prime}^{-1}$ (-)', fontsize = 11)
-        ax.set_xlabel(r'$\Delta y$ (m)', fontsize = 11)
+        ax.set_ylabel(r'$\overline{u^\prime v^\prime_{q_i}}$ $\overline{u^\prime v^\prime}^{-1}$ (-)')
+        ax.set_xlabel(r'$\Delta y$ (m)')
         ax.set_xscale('log')
         # save plots
         fig.savefig('../palm_results/{}/run_{}/quadrant_analysis/{}_quadrantcontribution_profile_{}.png'.format(papy.globals.run_name,
@@ -1130,7 +1143,7 @@ if compute_quadrant_analysis:
                     'middle', name))
 
     # quadrant contributions
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
     ax.errorbar(wall_dists, s1_all, yerr=0.1,
             label = 'Q1', fmt='o', c='blue')
     ax.errorbar(wall_dists, s2_all, yerr=0.1,
@@ -1147,10 +1160,10 @@ if compute_quadrant_analysis:
     ax.grid(True, 'both', 'both')
     ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                 borderaxespad = 0.,  
-                numpoints = 1, fontsize = 11)
+                numpoints = 1)
     ax.set_ylim(-5., 5.)
-    ax.set_ylabel(r'$\overline{u^\prime v^\prime_{q_i}}$ $\overline{u^\prime v^\prime}^{-1}$ (-)', fontsize = 11)
-    ax.set_xlabel(r'$\Delta y$ (m)', fontsize = 11)
+    ax.set_ylabel(r'$\overline{u^\prime v^\prime_{q_i}}$ $\overline{u^\prime v^\prime}^{-1}$ (-)')
+    ax.set_xlabel(r'$\Delta y$ (m)')
     ax.set_xscale('log')
     # save plots
     fig.savefig('../palm_results/{}/run_{}/quadrant_analysis/{}_quadrantcontribution_profile_PALM.png'.format(papy.globals.run_name,

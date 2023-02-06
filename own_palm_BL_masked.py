@@ -41,6 +41,7 @@ if plotformat == 'pgf':
         'font.family': 'sans-serif',
         'text.usetex': True,
         'pgf.rcfonts': False,
+        'mathtext.fontset': 'cm',        
         'xtick.labelsize' : 11,
         'ytick.labelsize' : 11,
         'legend.fontsize' : 11,

@@ -41,11 +41,12 @@ if plotformat == 'pgf':
         'font.family': 'sans-serif',
         'text.usetex': True,
         'pgf.rcfonts': False,
+        'mathtext.fontset': 'cm',        
         'xtick.labelsize' : 11,
         'ytick.labelsize' : 11,
         'legend.fontsize' : 11,
-        'lines.linewidth' : 0.5,
-        'lines.markersize' : 2.5,
+        'lines.linewidth' : 0.75,
+        'lines.markersize' : 2.,
         'figure.dpi' : 300,
     })
     print('Textwidth in inch = ' + str(426/72.27))
@@ -58,8 +59,12 @@ else:
         'font.family': 'sans-serif',
         'text.usetex': False,
         'mathtext.fontset': 'cm',
-        'xtick.labelsize' : 16,
-        'ytick.labelsize' : 16,
+        'xtick.labelsize' : 11,
+        'ytick.labelsize' : 11,
+        'legend.fontsize' : 11,
+        'lines.linewidth' : 0.75,
+        'lines.markersize' : 2.,
+        'figure.dpi' : 300,
     })
 
 ################
@@ -267,7 +272,7 @@ if compute_front_mean:
 
         #plot profiles
         err = np.mean(mean_vars/palm_ref)*0.05
-        fig, ax = plt.subplots()
+        fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
         # plot PALM masked output
         ax.errorbar(wall_dists, mean_vars/palm_ref, yerr=err, 
                     label= r'PALM', 
@@ -348,7 +353,7 @@ if compute_front_pdfs:
             wall_dist = np.asarray([abs(y[0]-530.)])
 
             #plot PDF
-            fig, ax = plt.subplots()
+            fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
             # plot PALM masked output
             ax.hist(total_var/palm_ref, bins=100, density=True,
                     label=r'${}$ at $\Delta y={}$ m'.format(var_name, wall_dist[0]))
@@ -383,7 +388,7 @@ if compute_front_pdfs:
                     papy.globals.run_number[-3:],
                     'front', var_name, mask, plotformat))
             plt.close(12)
-            fig, ax = plt.subplots()
+            fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
             # plot PALM masked output
             ax.hist(total_variance/palm_ref**2., bins=100, density=True,
                     label=r'${}$ at $\Delta y={}$ m'.format(var_name, wall_dist[0]))
@@ -439,7 +444,7 @@ if compute_front_pdfs:
         var_flux = np.asarray(var1_fluc*var2_fluc/palm_ref**2.)
         wall_dist = np.asarray([abs(y[0]-530.)])
         #plot PDF
-        fig, ax = plt.subplots()
+        fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
         # plot PALM masked output
         ax.hist(var_flux, bins=100, density=True,
                 label=r'$u^\prime v^\prime$ at $\Delta y={}$ m'.format(wall_dist[0]))
@@ -502,7 +507,7 @@ if compute_front_highermoments:
 
         #plot profiles
         err = 0.05
-        fig, ax = plt.subplots()
+        fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
         ax.xaxis.get_major_formatter()._usetex = False
         ax.yaxis.get_major_formatter()._usetex = False
         # plot PALM masked output
@@ -562,7 +567,7 @@ if compute_front_highermoments:
 
         #plot profiles
         err = 0.1
-        fig, ax = plt.subplots()
+        fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
         # plot PALM masked output
         ax.errorbar(wall_dists, kurt_vars, yerr=err, 
                     label= r'PALM', 
@@ -649,7 +654,7 @@ if compute_front_var:
 
         #plot profiles
         err = np.mean(var_vars/palm_ref**2)*0.05
-        fig, ax = plt.subplots()
+        fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
         # plot PALM masked output
         ax.errorbar(wall_dists, var_vars/palm_ref**2., yerr=err, 
                     label= r'PALM', 
@@ -735,7 +740,7 @@ if compute_front_covar:
 
     #plot profiles
     err = 0.001
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
     # plot PALM masked output
     ax.errorbar(wall_dists, var_vars, yerr=err, 
                 label= r'PALM', fmt='o', c='darkmagenta')
@@ -819,7 +824,7 @@ if compute_front_lux:
 
     #plot profiles
     err = lux*0.1
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
     # plot PALM-LUX
     ax.errorbar(wall_dists, lux, yerr=err, 
                 label= r'PALM', 
@@ -934,7 +939,7 @@ if compute_quadrant_analysis:
         plot_QA_PALM = False
         if plot_QA_PALM:
             # PLOT SINGLE Quadrant-scatterplots
-            fig, ax = plt.subplots()
+            fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
             fig.gca().set_aspect('equal', adjustable='box')
             ax.plot(varu_fluc[q1_ind], varv_fluc[q1_ind] ,'o', color='blue',
                     markersize=2,label='Q1')
@@ -971,7 +976,7 @@ if compute_quadrant_analysis:
             kernel = stats.gaussian_kde(values)
             jpdf = np.reshape(kernel.evaluate(positions).T, u_jpdf.shape)        
             # plot
-            fig, ax = plt.subplots()
+            fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
             fig.gca().set_aspect('equal', adjustable='box')
             ax.set_xlim(-extent_val, extent_val)
             ax.set_ylim(-extent_val, extent_val)
@@ -1069,7 +1074,7 @@ if compute_quadrant_analysis:
             # PLOT SINGLE Quadrant-scatterplots
             plot_WT_QA = False
             if plot_WT_QA:
-                fig, ax = plt.subplots()
+                fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
                 fig.gca().set_aspect('equal', adjustable='box')
                 ax.plot(wt_varu_fluc[wt_q1_ind], wt_varv_fluc[wt_q1_ind] ,'o', color='blue',
                         markersize=2,label='Q1')
@@ -1106,7 +1111,7 @@ if compute_quadrant_analysis:
                 kernel = stats.gaussian_kde(values)
                 jpdf = np.reshape(kernel.evaluate(positions).T, u_jpdf.shape)
                 # plot
-                fig, ax = plt.subplots()
+                fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
                 fig.gca().set_aspect('equal', adjustable='box')
                 ax.set_xlim(-extent_val, extent_val)
                 ax.set_ylim(-extent_val, extent_val)
@@ -1151,7 +1156,7 @@ if compute_quadrant_analysis:
                 plt.close()
 
         # quadrant contributions
-        fig, ax = plt.subplots()
+        fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
         ax.errorbar(wt_wall_dists, wt_s1_all, yerr=0.1,
                 label = '{}: Q1'.format(name[3:5]), fmt='d', c='blue')
         ax.errorbar(wt_wall_dists, wt_s2_all, yerr=0.1,
@@ -1183,7 +1188,7 @@ if compute_quadrant_analysis:
                     'front', name, plotformat))
 
     # quadrant contributions
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
     ax.errorbar(wall_dists, s1_all, yerr=0.1,
             label = 'PALM: Q1', fmt='d', c='blue')
     ax.errorbar(wall_dists, s2_all, yerr=0.1,
