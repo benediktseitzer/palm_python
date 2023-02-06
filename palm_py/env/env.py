@@ -51,6 +51,7 @@ def prepare_plotfolder(run_name,run_number):
     path_lux = '{}/lux'.format(path)
     path_turbint = '{}/turbint'.format(path)
     path_maskedprofiles = '{}/maskprofiles'.format(path)
+    path_compprofiles = '{}/comparison_profiles'.format(path)
     path_palminput = '../palm/current_version/JOBS/{}/INPUT'.format(run_name)
 
     # initial 
@@ -79,6 +80,7 @@ def prepare_plotfolder(run_name,run_number):
             os.mkdir(path_hist)
             os.mkdir(path_spectra)
             os.mkdir(path_maskedprofiles)
+            os.mkdir(path_compprofiles)
             os.mkdir(path_lux)
             os.mkdir(path_turbint)
             # copies INPUT-file of PALM-run to path
