@@ -31,6 +31,7 @@ class globals():
         self.alpha = None # fitting parameter power law
         # environmental parameters
         self.run_name = None
+        self.run_name_list = None
         self.run_number = None
         self.run_numbers = None
         self.jobchain_numbers = None
