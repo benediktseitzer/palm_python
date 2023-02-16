@@ -32,7 +32,7 @@ import warnings
 warnings.simplefilter("ignore")
 
 plotformat = 'pgf'
-plotformat = 'png'
+# plotformat = 'png'
 # plotformat = 'pdf'
 if plotformat == 'pgf':
     plt.style.use('default')
@@ -71,7 +71,6 @@ else:
     # 5.89 inch
     textwidth = 5
     textwidth_half = 0.5*textwidth
-
 
 ################
 """
@@ -139,8 +138,19 @@ compute_LE_pdfs = False
 compute_LE_highermoments = True
 compute_LE_var = True
 compute_LE_covar = True
-compute_LE_lux = True
-compute_quadrant_analysis = True
+compute_LE_lux = False
+compute_quadrant_analysis = False
+
+deltarsl_mean_u = 0.0066 * 150.* 3.
+deltarsl_mean_v = 0.0066 * 150.* 0.
+deltarsl_variance_u = 0.0066 * 150. * 3.
+deltarsl_variance_v = 0.0066 * 150. * 0.
+deltarsl_covariance = 0.0066 * 150.* 0.
+deltarsl_skewness_u = 0.0066 * 150.* 0.
+deltarsl_skewness_v = 0.0066 * 150.* 0.
+deltarsl_kurtosis_u = 0.0066 * 150.* 2.
+deltarsl_kurtosis_v = 0.0066 * 150.* 0.
+# mean = 2.66
 
 ################
 """
@@ -253,6 +263,7 @@ for name in namelist:
 c_list = ['forestgreen', 'darkorange', 'navy', 'tab:red', 'tab:olive', 'cyan']
 marker_list = ['^', 'o', 'd', 'x', '8', '<']
 label_list = ['flat facade', 'rough facade', 'medium rough facade']
+label_list = ['FL', 'BR', 'WB', '{}']
 # label_list = namelist
 
 ######################################################
@@ -284,7 +295,10 @@ if compute_LE_mean:
             wall_dists = np.concatenate([wall_dists, wall_dist])
 
         #plot profiles
-        err = np.mean(mean_vars/palm_ref)*0.05
+        if var_name == 'u':
+            err = 0.016
+        elif var_name == 'w':
+            err = 0.0069
         fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
         # plot PALM masked output
         ax.errorbar(wall_dists, mean_vars/palm_ref, yerr = 0.5 *err, 
@@ -307,7 +321,7 @@ if compute_LE_mean:
                             label=label_list[i], 
                             fmt=marker_list[i], color=c_list[i])
                 if i==1:
-                    ax.vlines(0.0066*150.*5., -0.4, 0.0, colors='tab:red', 
+                    ax.vlines(deltarsl_mean_u, -0.4, 0.0, colors='tab:red', 
                             linestyles='dashed', 
                             label=r'$5 \cdot h_{r}$')
                 ax.set_ylabel(r'$\overline{u}$ $u_{ref}^{-1}$ (-)')                            
@@ -317,15 +331,16 @@ if compute_LE_mean:
                             label=label_list[i], 
                             fmt=marker_list[i], color=c_list[i])
                 if i==1:                            
-                    ax.vlines(0.0066*150.*5., 0., 0.3, colors='tab:red', 
+                    ax.vlines(deltarsl_mean_v, 0., 0.2, colors='tab:red', 
                             linestyles='dashed', 
                             label=r'$5 \cdot h_{r}$')
                 ax.set_ylabel(r'$\overline{w}$ $u_{ref}^{-1}$ (-)')                            
                 
         ax.grid(False, 'both', 'both')
-        ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
-                    borderaxespad = 0.,  
-                    numpoints = 1)
+        ax.set_xlim(0.08, 80.)
+        # ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
+        #             borderaxespad = 0.,  
+        #             numpoints = 1, ncol = 2)
         ax.set_xlabel(r'$\Delta x$ (m)')
         # save plots
         ax.set_xscale('log')
@@ -383,9 +398,9 @@ if compute_LE_pdfs:
                             linestyles='dashed', 
                             label=r'$\overline{w}$' + r'$u_{ref}^{-1}$')
             ax.grid(False, 'both', 'both')
-            ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
-                        borderaxespad = 0.,  
-                        numpoints = 1)
+            # ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
+            #             borderaxespad = 0.,  
+            #             numpoints = 1, ncol = 2)
             ax.set_xlabel(r'${}$'.format(var_name) + r'$u_{ref}^{-1}$ (-)')
             ax.set_ylabel(r'relative frequency')            
             if abs(min(total_var/palm_ref))<abs(max(total_var/palm_ref)):
@@ -421,9 +436,9 @@ if compute_LE_pdfs:
                             label=r'$\overline{w}$ ' + r'$u_{ref}^{-2}$')
                 ax.set_xlabel(r'$w^\prime w^\prime$ ' + r'$u_{ref}^{-2}$ (-)')
             ax.grid(False, 'both', 'both')
-            ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
-                        borderaxespad = 0.,  
-                        numpoints = 1)
+            # ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
+            #             borderaxespad = 0.,  
+            #             numpoints = 1, ncol = 2)
             ax.set_ylabel(r'relative frequency')
             # save plots
             fig.savefig('../palm_results/{}/run_{}/histogram/{}{}_hist_{}{}_{}.{}'.format(papy.globals.run_name,
@@ -465,9 +480,9 @@ if compute_LE_pdfs:
                         linestyles='dashed', 
                         label=r'$\overline{u^\prime v^\prime}$ ' + r'$u_{ref}^{-2}$')
         ax.grid(False, 'both', 'both')
-        ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
-                    borderaxespad = 0.,  
-                    numpoints = 1)
+        # ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
+        #             borderaxespad = 0.,  
+        #             numpoints = 1, ncol = 2)
         ax.set_xlabel(r'$u^\prime v^\prime$ ' + r'$u_{ref}^{-2}$ (-)')
         ax.set_ylabel(r'relative frequency')
         if abs(min(var_flux))<abs(max(var_flux)):        
@@ -523,7 +538,7 @@ if compute_LE_highermoments:
         #plot profiles
         fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
         # plot PALM masked output
-        ax.errorbar(wall_dists, skew_vars, yerr = 0.5 *skew_errs, 
+        ax.errorbar(wall_dists, skew_vars, yerr = 0.1, 
                     label= r'PALM', 
                     fmt='o', c='darkmagenta')                        
         #plot wt_data
@@ -545,27 +560,30 @@ if compute_LE_highermoments:
                 wt_z.append(abs(time_series[name][file].x))
             wt_z_plot = np.asarray(wt_z)-0.115*scale
             if var_name == 'u':
-                ax.errorbar(wt_z_plot, wt_skew, yerr = wt_skew_errs,
+                ax.errorbar(wt_z_plot, wt_skew, yerr = 0.1,
                             label=label_list[i], 
                             fmt=marker_list[i], color=c_list[i])
                 if i==1:
-                    ax.vlines(0.0066*150.*5., -0.5, 0.5, colors='tab:red', 
+                    ax.vlines(deltarsl_skewness_u, -0.5, 0.5, colors='tab:red', 
                             linestyles='dashed', 
                             label=r'$5 \cdot h_{r}$')
                 ax.set_ylabel(r'$\gamma_u$ (-)')
             elif var_name == 'w':             
-                ax.errorbar(wt_z_plot, wt_skew, yerr = wt_skew_errs,
+                ax.errorbar(wt_z_plot, wt_skew, yerr = 0.1,
                             label=label_list[i], 
                             fmt=marker_list[i], color=c_list[i])
                 if i==1:
-                    ax.vlines(0.0066*150.*5., -0.6, 0.2, colors='tab:red', 
+                    ax.vlines(deltarsl_skewness_v, -0.4, 0.2, colors='tab:red', 
                             linestyles='dashed', 
                             label=r'$5 \cdot h_{r}$')
                 ax.set_ylabel(r'$\gamma_w$ (-)')
         ax.grid(False, 'both', 'both')
-        ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
-                    borderaxespad = 0.,  
-                    numpoints = 1)
+        ax.set_xlim(0.08, 80.)
+        ax.hlines(0., 0.1, 60., colors='gray', 
+        linestyles='dashdot')
+        # ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
+        #             borderaxespad = 0.,  
+        #             numpoints = 1, ncol = 2)
         ax.set_xlabel(r'$\Delta x$ (m)')
         # save plots
         ax.set_xscale('log')
@@ -579,10 +597,10 @@ if compute_LE_highermoments:
         plt.close(12)
 
         #plot profiles
-        err = 0.1
+        err = 0.2
         fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
         # plot PALM masked output
-        ax.errorbar(wall_dists, kurt_vars, yerr = 0.5 *err, 
+        ax.errorbar(wall_dists, kurt_vars, yerr = err, 
                     label= r'PALM', 
                     fmt='o', c='darkmagenta')                        
         #plot wt_data
@@ -600,27 +618,30 @@ if compute_LE_highermoments:
                 wt_z.append(abs(time_series[name][file].x))
             wt_z_plot = np.asarray(wt_z)-0.115*scale
             if var_name == 'u':
-                ax.errorbar(wt_z_plot, wt_kurt, yerr = 0.1,
+                ax.errorbar(wt_z_plot, wt_kurt, yerr = 0.2,
                             label=label_list[i], 
                             fmt=marker_list[i], color=c_list[i])
                 if i==1:
-                    ax.vlines(0.0066*150.*5., 2, 5, colors='tab:red', 
+                    ax.vlines(deltarsl_kurtosis_u, 2.5, 5, colors='tab:red', 
                             linestyles='dashed', 
                             label=r'$5 \cdot h_{r}$')
                 ax.set_ylabel(r'$\beta_u$ (-)')
             elif var_name == 'w':             
-                ax.errorbar(wt_z_plot, wt_kurt, yerr = 0.1,
+                ax.errorbar(wt_z_plot, wt_kurt, yerr = 0.2,
                             label=label_list[i], 
                             fmt=marker_list[i], color=c_list[i])
                 if i==1:
-                    ax.vlines(0.0066*150.*5., 2.5, 4.5, colors='tab:red', 
+                    ax.vlines(deltarsl_kurtosis_v, 2.5, 4., colors='tab:red', 
                             linestyles='dashed', 
                             label=r'$5 \cdot h_{r}$')
                 ax.set_ylabel(r'$\beta_w$ (-)')
         ax.grid(False, 'both', 'both')
-        ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
-                    borderaxespad = 0.,  
-                    numpoints = 1)
+        ax.set_xlim(0.08, 80.)
+        ax.hlines(3., 0.1, 60., colors='gray', 
+        linestyles='dashdot')
+        # ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
+        #             borderaxespad = 0.,  
+        #             numpoints = 1, ncol = 2)
         ax.set_xlabel(r'$\Delta x$ (m)')
         # save plots
         ax.set_xscale('log')
@@ -662,7 +683,10 @@ if compute_LE_var:
             wall_dists = np.concatenate([wall_dists, wall_dist])
 
         #plot profiles
-        err = np.mean(var_vars/palm_ref**2)*0.1
+        if var_name == 'u':
+            err = 0.0033
+        elif var_name == 'w':
+            err = 0.0034
         fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
         # plot PALM masked output
         ax.errorbar(wall_dists, var_vars/palm_ref**2., yerr = 0.5 *err, 
@@ -686,7 +710,7 @@ if compute_LE_var:
                             label=label_list[i], 
                             fmt=marker_list[i], color=c_list[i])
                 if i==1:
-                    ax.vlines(0.0066*150.*5., 0.0, 0.06, colors='tab:red', 
+                    ax.vlines(deltarsl_variance_u, 0.0, 0.05, colors='tab:red', 
                             linestyles='dashed', 
                             label=r'$5 \cdot h_{r}$')
                 ax.set_ylabel(r'$\overline{u^\prime u^\prime}$ $u_{ref}^{-2}$ (-)')
@@ -696,14 +720,15 @@ if compute_LE_var:
                             label=label_list[i], 
                             fmt=marker_list[i], color=c_list[i])
                 if i==1:
-                    ax.vlines(0.0066*150.*5., 0., 0.06, colors='tab:red', 
+                    ax.vlines(deltarsl_variance_v, 0., 0.06, colors='tab:red', 
                             linestyles='dashed', 
                             label=r'$5 \cdot h_{r}$')
                 ax.set_ylabel(r'$\overline{w^\prime w^\prime}$ $u_{ref}^{-2}$ (-)')
         ax.grid(False, 'both', 'both')
-        ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
-                    borderaxespad = 0.,  
-                    numpoints = 1)
+        ax.set_xlim(0.08, 80.)
+        # ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
+        #             borderaxespad = 0.,  
+        #             numpoints = 1, ncol = 2)
         ax.set_xlabel(r'$\Delta x$ (m)')
         ax.set_xscale('log')
         fig.savefig('../palm_results/{}/run_{}/maskprofiles/{}{}_variance_{}_mask_log.{}'.format(papy.globals.run_name,
@@ -717,7 +742,7 @@ if compute_LE_var:
 
 
 ######################################################
-# compute covariance in back of building
+# compute covariance in front of building
 ######################################################
 if compute_LE_covar:
     print('\n   compute co-variance')
@@ -747,12 +772,12 @@ if compute_LE_covar:
         wall_dists = np.concatenate([wall_dists, wall_dist])
 
     #plot profiles
-    err = 0.001
+    err = 0.0008
     fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
     # plot PALM masked output
-    ax.errorbar(wall_dists, var_vars, yerr = 0.5 *err, 
+    ax.errorbar(wall_dists, var_vars, yerr = err, 
                 label= r'PALM', fmt='o', c='darkmagenta')
-    ax.vlines(0.0066*150.*5., -0.02, 0.005, colors='tab:red', 
+    ax.vlines(deltarsl_covariance, -0.01, 0.005, colors='tab:red', 
                 linestyles='dashed', 
                 label=r'$5 \cdot h_{r}$')
     # plot wind tunnel data
@@ -772,12 +797,13 @@ if compute_LE_covar:
                     label=label_list[i], 
                     fmt=marker_list[i], color=c_list[i])
     ax.grid(False, 'both', 'both')
+    ax.set_xlim(0.08, 80.)
     # ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
     #             borderaxespad = 0.,  
-    #             numpoints = 1)
+    #             numpoints = 1, ncol = 2)
     ax.set_xlabel(r'$\Delta x$ (m)')
     ax.set_ylabel(r'$\overline{u^\prime w^\prime} u_{ref}^{-2}$ ' + r'(-)')
-    ax.set_ylim(-0.01, 0.002)
+    # ax.set_ylim(-0.01, 0.002)
     ax.set_xscale('log')
     fig.savefig('../palm_results/{}/run_{}/maskprofiles/{}{}_covariance_{}_mask_log.{}'.format(papy.globals.run_name,
                 papy.globals.run_number[-3:],
@@ -846,9 +872,9 @@ if compute_LE_lux:
             label=r'$5 \cdot h_{r}$')
 
     ax.grid(False, 'both', 'both')
-    ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
-                borderaxespad = 0.,  
-                numpoints = 1)
+    # ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
+    #             borderaxespad = 0.,  
+    #             numpoints = 1, ncol = 2)
     ax.set_ylabel(r'$L_{u}^x$ (m)')
     ax.set_xlabel(r'$\Delta x$ (m)')
     # save plots
@@ -954,7 +980,7 @@ if compute_quadrant_analysis:
             ax.grid(False, 'both', 'both')
             ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                         borderaxespad = 0.,  
-                        numpoints = 1)
+                        numpoints = 1, ncol = 2)
             ax.set_xlabel(r'$u^\prime$ $u_{ref}^{-1}$ (-)')
             ax.set_ylabel(r'$w^\prime$ $u_{ref}^{-1}$ (-)')
             # save plots
@@ -1082,7 +1108,7 @@ if compute_quadrant_analysis:
                 ax.grid(False, 'both', 'both')
                 ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                             borderaxespad = 0.,  
-                            numpoints = 1)
+                            numpoints = 1, ncol = 2)
                 ax.set_xlabel(r'$u^\prime$ $u_{ref}^{-1}$ (-)')
                 ax.set_ylabel(r'$w^\prime$ $u_{ref}^{-1}$ (-)')
                 # save plots
@@ -1164,7 +1190,7 @@ if compute_quadrant_analysis:
         ax.grid(False, 'both', 'both')
         ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                     borderaxespad = 0.,  
-                    numpoints = 1)
+                    numpoints = 1, ncol = 2)
         ax.set_ylim(-5., 5.)
         ax.set_ylabel(r'$\overline{u^\prime w^\prime_{q_i}}$ $\overline{u^\prime w^\prime}^{-1}$ (-)')
         ax.set_xlabel(r'$\Delta x$ (m)')
@@ -1196,7 +1222,7 @@ if compute_quadrant_analysis:
     ax.grid(False, 'both', 'both')
     ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                 borderaxespad = 0.,  
-                numpoints = 1)
+                numpoints = 1, ncol = 2)
     ax.set_ylim(-5., 5.)
     ax.set_ylabel(r'$\overline{u^\prime w^\prime_{q_i}}$ $\overline{u^\prime w^\prime}^{-1}$ (-)')
     ax.set_xlabel(r'$\Delta x$ (m)')

@@ -32,7 +32,7 @@ import warnings
 warnings.simplefilter("ignore")
 
 plotformat = 'pgf'
-plotformat = 'png'
+# plotformat = 'png'
 # plotformat = 'pdf'
 if plotformat == 'pgf':
     plt.style.use('default')
@@ -129,13 +129,24 @@ papy.globals.dx = 1.
 Steeringflags
 """
 ################
-compute_back_mean = True
+compute_back_mean = False
 compute_back_pdfs = False
-compute_back_highermoments = True
-compute_back_var = True
+compute_back_highermoments = False
+compute_back_var = False
 compute_back_covar = True
-compute_back_lux = True
-compute_quadrant_analysis = True
+compute_back_lux = False
+compute_quadrant_analysis = False
+
+deltarsl_mean_u = 0.0066 * 150.* 3.
+deltarsl_mean_v = 0.0066 * 150.* 0.
+deltarsl_variance_u = 0.0066 * 150. * 5.
+deltarsl_variance_v = 0.0066 * 150. * 9.
+deltarsl_covariance = 0.0066 * 150.* 13.
+deltarsl_skewness_u = 0.0066 * 150.* 0.
+deltarsl_skewness_v = 0.0066 * 150.* 0.
+deltarsl_kurtosis_u = 0.0066 * 150.* 0.
+deltarsl_kurtosis_v = 0.0066 * 150.* 2.
+# mean = 6
 
 ################
 """
@@ -249,6 +260,7 @@ for name in namelist:
 c_list = ['forestgreen', 'darkorange', 'navy', 'tab:red', 'tab:olive', 'cyan']
 marker_list = ['^', 'o', 'd', 'x', '8', '<']
 label_list = ['flat facade', 'rough facade', 'medium rough facade']
+label_list = ['FL', 'BR', 'WB', '{}']
 # label_list = namelist
 
 ######################################################
@@ -280,9 +292,12 @@ if compute_back_mean:
             wall_dists = np.concatenate([wall_dists, wall_dist])
 
         #plot profiles
-        err = np.mean(mean_vars/palm_ref)*0.05
+        if var_name == 'u':
+            err = 0.016
+        elif var_name == 'v':
+            err = 0.0048
         fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
-        # plot PALM masked output
+        # plot PALM masked outputx
         ax.errorbar(wall_dists, mean_vars/palm_ref, yerr = err, 
                     label= r'PALM', 
                     fmt='o', c='darkmagenta')
@@ -303,9 +318,9 @@ if compute_back_mean:
                             label=label_list[i], 
                             fmt=marker_list[i], color=c_list[i])
                 if i==1:
-                    ax.vlines(0.0066*150.*5., 0., 1.2, colors='tab:red', 
+                    ax.vlines(deltarsl_mean_u, 0., 1., colors='tab:red', 
                             linestyles='dashed', 
-                            label=r'$5 \cdot h_{r}$')
+                            label=r'$\approx \delta_{rsl}$')
                 ax.set_ylabel(r'$\overline{u}$ $u_{ref}^{-1}$ (-)')                            
             elif var_name == 'v':
                 wt_var_plot = wt_var2                
@@ -313,15 +328,16 @@ if compute_back_mean:
                             label=label_list[i], 
                             fmt=marker_list[i], color=c_list[i])
                 if i==1:                            
-                    ax.vlines(0.0066*150.*5., -0.1, 0.04, colors='tab:red', 
+                    ax.vlines(deltarsl_mean_v, -0.08, 0.02, colors='tab:red', 
                             linestyles='dashed', 
-                            label=r'$5 \cdot h_{r}$')
+                            label=r'$\approx \delta_{rsl}$')
                 ax.set_ylabel(r'$\overline{v}$ $u_{ref}^{-1}$ (-)')                            
                 
         ax.grid(False)
+        ax.set_xlim(0.08, 80.)
         # ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
-        #             borderaxespad = 0.,  
-        #             numpoints = 1)
+                    # borderaxespad = 0.,  
+                    # numpoints = 1, ncol = 2)
         ax.set_xlabel(r'$\Delta y$ (m)')
         # save plots
         ax.set_xscale('log')
@@ -380,8 +396,8 @@ if compute_back_pdfs:
                             label=r'$\overline{w}$' + r'$u_{ref}^{-1}$')
             ax.grid(False, 'both', 'both')
             # ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
-            #             borderaxespad = 0.,  
-            #             numpoints = 1)
+                        # borderaxespad = 0.,  
+                        # numpoints = 1, ncol = 2)
             ax.set_xlabel(r'${}$'.format(var_name) + r'$u_{ref}^{-1}$ (-)')
             ax.set_ylabel(r'relative frequency')            
             if abs(min(total_var/palm_ref))<abs(max(total_var/palm_ref)):
@@ -417,9 +433,9 @@ if compute_back_pdfs:
                             label=r'$\overline{w}$ ' + r'$u_{ref}^{-2}$')
                 ax.set_xlabel(r'$w^\prime w^\prime$ ' + r'$u_{ref}^{-2}$ (-)')
             ax.grid(False, 'both', 'both')
-            # ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
+            # # ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
             #             borderaxespad = 0.,  
-            #             numpoints = 1)
+            #             numpoints = 1, ncol = 2)
             ax.set_ylabel(r'relative frequency')
             # save plots
             fig.savefig('../palm_results/{}/run_{}/histogram/{}_hist_{}{}_{}.{}'.format(papy.globals.run_name,
@@ -461,9 +477,9 @@ if compute_back_pdfs:
                         linestyles='dashed', 
                         label=r'$\overline{u^\prime v^\prime}$ ' + r'$u_{ref}^{-2}$')
         ax.grid(False, 'both', 'both')
-        # ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
+        # # ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
         #             borderaxespad = 0.,  
-        #             numpoints = 1)
+        #             numpoints = 1, ncol = 2)
         ax.set_xlabel(r'$u^\prime v^\prime$ ' + r'$u_{ref}^{-2}$ (-)')
         ax.set_ylabel(r'relative frequency')
         if abs(min(var_flux))<abs(max(var_flux)):        
@@ -520,7 +536,7 @@ if compute_back_highermoments:
         #plot profiles
         fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
         # plot PALM masked output
-        ax.errorbar(wall_dists, skew_vars, yerr = skew_errs, 
+        ax.errorbar(wall_dists, skew_vars, yerr = 0.1, 
                     label= r'PALM', 
                     fmt='o', c='darkmagenta')                        
         #plot wt_data
@@ -545,27 +561,30 @@ if compute_back_highermoments:
                 wt_z.append(time_series[name][file].y)
             wt_z_plot = np.asarray(wt_z)-0.115*scale
             if var_name == 'u':
-                ax.errorbar(wt_z_plot, wt_skew_weight, yerr = wt_skew_errs,
+                ax.errorbar(wt_z_plot, wt_skew_weight, yerr = 0.1,
                             label=label_list[i], 
                             fmt=marker_list[i], color=c_list[i])
                 if i==1:
-                    ax.vlines(0.0066*150.*5., -1.5, 1, colors='tab:red', 
+                    ax.vlines(deltarsl_skewness_u, -1.5, 1, colors='tab:red', 
                             linestyles='dashed', 
-                            label=r'$5 \cdot h_{r}$')
+                            label=r'$\approx \delta_{rsl}$')
                 ax.set_ylabel(r'$\gamma_u$ (-)')
             elif var_name == 'v':             
-                ax.errorbar(wt_z_plot, wt_skew_weight, yerr = wt_skew_errs,
+                ax.errorbar(wt_z_plot, wt_skew_weight, yerr = 0.1,
                             label=label_list[i], 
                             fmt=marker_list[i], color=c_list[i])
                 if i==1:
-                    ax.vlines(0.0066*150.*5., -0.5, 1, colors='tab:red', 
+                    ax.vlines(deltarsl_skewness_v, -0.5, 1, colors='tab:red', 
                             linestyles='dashed', 
-                            label=r'$5 \cdot h_{r}$')
+                            label=r'$\approx \delta_{rsl}$')
                 ax.set_ylabel(r'$\gamma_v$ (-)')
         ax.grid(False, 'both', 'both')
+        ax.set_xlim(0.08, 80.)
+        ax.hlines(0., 0.1, 60., colors='gray', 
+        linestyles='dashdot')
         # ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
-        #             borderaxespad = 0.,  
-        #             numpoints = 1)
+                    # borderaxespad = 0.,  
+                    # numpoints = 1, ncol = 2)
         ax.set_xlabel(r'$\Delta y$ (m)')
         # save plots
         ax.set_xscale('log')
@@ -579,7 +598,7 @@ if compute_back_highermoments:
         plt.close(12)
 
         #plot profiles
-        err = 0.1
+        err = 0.2
         fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
         # plot PALM masked output
         ax.errorbar(wall_dists, kurt_vars, yerr = err, 
@@ -603,27 +622,30 @@ if compute_back_highermoments:
                 wt_z.append(time_series[name][file].y)
             wt_z_plot = np.asarray(wt_z)-0.115*scale
             if var_name == 'u':
-                ax.errorbar(wt_z_plot, wt_kurt_weight, yerr = 0.1,
+                ax.errorbar(wt_z_plot, wt_kurt_weight, yerr = 0.2,
                             label=label_list[i], 
                             fmt=marker_list[i], color=c_list[i])
                 if i==1:
-                    ax.vlines(0.0066*150.*5., 1, 7, colors='tab:red', 
+                    ax.vlines(deltarsl_kurtosis_u, 2, 7, colors='tab:red', 
                             linestyles='dashed', 
-                            label=r'$5 \cdot h_{r}$')
+                            label=r'$\approx \delta_{rsl}$')
                 ax.set_ylabel(r'$\beta_u$ (-)')
             elif var_name == 'v':             
-                ax.errorbar(wt_z_plot, wt_kurt_weight, yerr = 0.1,
+                ax.errorbar(wt_z_plot, wt_kurt_weight, yerr = 0.2,
                             label=label_list[i], 
                             fmt=marker_list[i], color=c_list[i])
                 if i==1:
-                    ax.vlines(0.0066*150.*5., 1, 7, colors='tab:red', 
+                    ax.vlines(deltarsl_kurtosis_v, 2, 7, colors='tab:red', 
                             linestyles='dashed', 
-                            label=r'$5 \cdot h_{r}$')
+                            label=r'$\approx \delta_{rsl}$')
                 ax.set_ylabel(r'$\beta_v$ (-)')
         ax.grid(False, 'both', 'both')
+        ax.set_xlim(0.08, 80.)
+        ax.hlines(3., 0.1, 60., colors='gray', 
+        linestyles='dashdot')
         # ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
-        #             borderaxespad = 0.,  
-        #             numpoints = 1)
+                    # borderaxespad = 0.,  
+                    # numpoints = 1, ncol = 2)
         ax.set_xlabel(r'$\Delta y$ (m)')
         # save plots
         ax.set_xscale('log')
@@ -665,7 +687,10 @@ if compute_back_var:
             wall_dists = np.concatenate([wall_dists, wall_dist])
 
         #plot profiles
-        err = np.mean(var_vars/palm_ref**2)*0.1
+        if var_name == 'u':
+            err = 0.0033
+        elif var_name == 'v':
+            err = 0.0018
         fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
         # plot PALM masked output
         ax.errorbar(wall_dists, var_vars/palm_ref**2., yerr = err, 
@@ -689,9 +714,9 @@ if compute_back_var:
                             label=label_list[i], 
                             fmt=marker_list[i], color=c_list[i])
                 if i==1:
-                    ax.vlines(0.0066*150.*5., 0., 0.14, colors='tab:red', 
+                    ax.vlines(deltarsl_variance_u, 0., 0.1, colors='tab:red', 
                             linestyles='dashed', 
-                            label=r'$5 \cdot h_{r}$')
+                            label=r'$\approx \delta_{rsl}$')
                 ax.set_ylabel(r'$\overline{u^\prime u^\prime}$ $u_{ref}^{-2}$ (-)')
             elif var_name == 'v':
                 wt_var_plot = wt_var2                
@@ -699,14 +724,15 @@ if compute_back_var:
                             label=label_list[i], 
                             fmt=marker_list[i], color=c_list[i])
                 if i==1:
-                    ax.vlines(0.0066*150.*5., 0., 0.08, colors='tab:red', 
+                    ax.vlines(deltarsl_variance_v, 0., 0.06, colors='tab:red', 
                             linestyles='dashed', 
-                            label=r'$5 \cdot h_{r}$')
+                            label=r'$\approx \delta_{rsl}$')
                 ax.set_ylabel(r'$\overline{v^\prime v^\prime}$ $u_{ref}^{-2}$ (-)')
         ax.grid(False, 'both', 'both')
+        ax.set_xlim(0.08, 80.)
         # ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
-        #             borderaxespad = 0.,  
-        #             numpoints = 1)
+                    # borderaxespad = 0.,  
+                    # numpoints = 1, ncol = 2)
         ax.set_xlabel(r'$\Delta y$ (m)')
         ax.set_xscale('log')
         fig.savefig('../palm_results/{}/run_{}/maskprofiles/{}_variance_{}_mask_log.{}'.format(papy.globals.run_name,
@@ -750,14 +776,14 @@ if compute_back_covar:
         wall_dists = np.concatenate([wall_dists, wall_dist])
 
     #plot profiles
-    err = 0.001
+    err = 0.0008
     fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
     # plot PALM masked output
     ax.errorbar(wall_dists, var_vars, yerr = err, 
                 label= r'PALM', fmt='o', c='darkmagenta')
-    ax.vlines(0.0066*150.*5., -0.04, 0.01, colors='tab:red', 
+    ax.vlines(deltarsl_covariance, -0.035, 0., colors='tab:red', 
                 linestyles='dashed', 
-                label=r'$5 \cdot h_{r}$')
+                label=r'$\approx \delta_{rsl}$')
     # plot wind tunnel data
     for i,name in enumerate(namelist):
         files = wt.get_files(path,name)
@@ -775,9 +801,10 @@ if compute_back_covar:
                     label=label_list[i], 
                     fmt=marker_list[i], color=c_list[i])
     ax.grid(False, 'both')
+    ax.set_xlim(0.08, 80.)
     # ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
-    #             borderaxespad = 0.,  
-    #             numpoints = 1)
+                # borderaxespad = 0.,  
+                # numpoints = 1, ncol = 2)
     ax.set_xlabel(r'$\Delta y$ (m)')
     ax.set_ylabel(r'$\overline{u^\prime v^\prime} u_{ref}^{-2}$ ' + r'(-)')
     ax.set_xscale('log')
@@ -845,12 +872,12 @@ if compute_back_lux:
                 fmt=marker_list[j], color=c_list[j])
     ax.vlines(0.0066*150.*5., 0, 90, colors='tab:red', 
             linestyles='dashed', 
-            label=r'$5 \cdot h_{r}$')
+            label=r'$\approx \delta_{rsl}$')
 
     ax.grid(False)
     # ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
     #             borderaxespad = 0.,  
-    #             numpoints = 1)
+    #             numpoints = 1, ncol = 2)
     ax.set_ylabel(r'$L_{u}^x$ (m)')
     ax.set_xlabel(r'$\Delta y$ (m)')
     # save plots
@@ -956,7 +983,7 @@ if compute_quadrant_analysis:
             ax.grid(False, 'both', 'both')
             # ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
             #             borderaxespad = 0.,  
-            #             numpoints = 1)
+            #             numpoints = 1, ncol = 2)
             ax.set_xlabel(r'$u^\prime$ $u_{ref}^{-1}$ (-)')
             ax.set_ylabel(r'$v^\prime$ $u_{ref}^{-1}$ (-)')
             # save plots
@@ -1085,7 +1112,7 @@ if compute_quadrant_analysis:
                     ax.grid(False, 'both', 'both')
                     # ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                     #             borderaxespad = 0.,  
-                    #             numpoints = 1)
+                    #             numpoints = 1, ncol = 2)
                     ax.set_xlabel(r'$u^\prime$ $u_{ref}^{-1}$ (-)')
                     ax.set_ylabel(r'$v^\prime$ $u_{ref}^{-1}$ (-)')
                     # save plots
@@ -1160,13 +1187,13 @@ if compute_quadrant_analysis:
                     label = '{}: Q4'.format(name[3:5]), fmt='d', c='red')
             ax.vlines(0.0066*150.*5., -5., 5., colors='tab:red', 
                         linestyles='dashed', 
-                        label=r'$5 \cdot h_{r}$')
+                        label=r'$\approx \delta_{rsl}$')
             ax.hlines(0., 0.1, 100, colors='darkgray', 
                         linestyles='dashed')                
             ax.grid(False, 'both', 'both')
             ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                         borderaxespad = 0.,  
-                        numpoints = 1)
+                        numpoints = 1, ncol = 2)
             ax.set_ylim(-5., 5.)
             ax.set_ylabel(r'$\overline{u^\prime v^\prime_{q_i}}$ $\overline{u^\prime v^\prime}^{-1}$ (-)')
             ax.set_xlabel(r'$\Delta y$ (m)')
@@ -1192,13 +1219,13 @@ if compute_quadrant_analysis:
             label = 'PALM: Q4', fmt='d', c='red')
     ax.vlines(0.0066*150.*5., -5., 5., colors='tab:red', 
                 linestyles='dashed', 
-                label=r'$5 \cdot h_{r}$')
+                label=r'$\approx \delta_{rsl}$')
     ax.hlines(0., 0.1, 100, colors='darkgray', 
                 linestyles='dashed')                
     ax.grid(False, 'both', 'both')
     ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                 borderaxespad = 0.,  
-                numpoints = 1)
+                numpoints = 1, ncol = 2)
     ax.set_ylim(-5., 5.)
     ax.set_ylabel(r'$\overline{u^\prime v^\prime_{q_i}}$ $\overline{u^\prime v^\prime}^{-1}$ (-)')
     ax.set_xlabel(r'$\Delta y$ (m)')

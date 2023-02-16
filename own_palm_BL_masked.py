@@ -66,6 +66,11 @@ else:
         'lines.markersize' : 2.,
         'figure.dpi' : 300,
     })
+    print('Textwidth in inch = ' + str(426/72.27))
+    # 5.89 inch
+    textwidth = 5
+    textwidth_half = 0.5*textwidth
+    
 
 ################
 """
