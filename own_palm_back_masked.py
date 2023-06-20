@@ -31,7 +31,7 @@ import windtunnel as wt
 import warnings
 warnings.simplefilter("ignore")
 
-plotformat = 'pgf'
+# plotformat = 'pgf'
 plotformat = 'png'
 # plotformat = 'pdf'
 if plotformat == 'pgf':
@@ -146,13 +146,13 @@ papy.globals.dx = 1.
 Steeringflags
 """
 ################
-compute_back_mean = True
+compute_back_mean = False
 compute_back_pdfs = False
-compute_back_highermoments = True
-compute_back_var = True
+compute_back_highermoments = False
+compute_back_var = False
 compute_back_covar = True
 compute_back_lux = False
-compute_quadrant_analysis = True
+compute_quadrant_analysis = False
 
 deltarsl_mean_u = 0.0066 * 150.* 3.
 deltarsl_mean_v = 0.0066 * 150.* 0.
@@ -277,7 +277,7 @@ for name in namelist:
 c_list = ['forestgreen', 'darkorange', 'navy', 'tab:red', 'tab:olive', 'cyan']
 marker_list = ['^', 'o', 'd', 'x', '8', '<']
 label_list = ['flat facade', 'rough facade', 'medium rough facade']
-label_list = ['glatte Fassade', 'raue Fassade', 'mäßig raue Fassade']
+# label_list = ['glatte Fassade', 'raue Fassade', 'mäßig raue Fassade']
 # label_list = ['FL', 'BR', 'WB', '{}']
 # label_list = namelist
 
@@ -335,27 +335,27 @@ if compute_back_mean:
                 ax.errorbar(wt_z_plot, wt_var_plot, yerr = wt_err[name]['umean'],
                             label=label_list[i], 
                             fmt=marker_list[i], color=c_list[i])
-                # if i==1:
-                #     ax.vlines(deltarsl_mean_u, 0., 1., colors='tab:red', 
-                #             linestyles='dashed', 
-                #             label=r'$\approx \delta_{rsl}$')
+                if i==1:
+                    ax.vlines(deltarsl_mean_u, 0., 1., colors='tab:red', 
+                            linestyles='dashed', 
+                            label=r'$\approx \delta_{rsl}$')
                 ax.set_ylabel(r'$\overline{u}$ $u_{ref}^{-1}$ (-)')                            
             elif var_name == 'v':
                 wt_var_plot = wt_var2                
                 ax.errorbar(wt_z_plot, wt_var_plot, yerr = wt_err[name]['vmean'],
                             label=label_list[i], 
                             fmt=marker_list[i], color=c_list[i])
-                # if i==1:                            
-                #     ax.vlines(deltarsl_mean_v, -0.08, 0.02, colors='tab:red', 
-                #             linestyles='dashed', 
-                #             label=r'$\approx \delta_{rsl}$')
+                if i==1:                            
+                    ax.vlines(deltarsl_mean_v, -0.08, 0.02, colors='tab:red', 
+                            linestyles='dashed', 
+                            label=r'$\approx \delta_{rsl}$')
                 ax.set_ylabel(r'$\overline{v}$ $u_{ref}^{-1}$ (-)')                            
                 
         ax.grid(False)
         ax.set_xlim(0.08, 80.)
-        ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
-                    borderaxespad = 0.,  
-                    numpoints = 1, ncol = 2)
+        # ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
+        #             borderaxespad = 0.,  
+        #             numpoints = 1, ncol = 2)
         ax.set_xlabel(r'$\Delta y$ (m)')
         # save plots
         ax.set_xscale('log')
@@ -731,20 +731,20 @@ if compute_back_var:
                 ax.errorbar(wt_z_plot, wt_var_plot, yerr = wt_err[name]['u_var'],
                             label=label_list[i], 
                             fmt=marker_list[i], color=c_list[i])
-                # if i==1:
-                #     ax.vlines(deltarsl_variance_u, 0., 0.1, colors='tab:red', 
-                #             linestyles='dashed', 
-                #             label=r'$\approx \delta_{rsl}$')
+                if i==1:
+                    ax.vlines(deltarsl_variance_u, 0., 0.1, colors='tab:red', 
+                            linestyles='dashed', 
+                            label=r'$\approx \delta_{rsl}$')
                 ax.set_ylabel(r'$\overline{u^\prime u^\prime}$ $u_{ref}^{-2}$ (-)')
             elif var_name == 'v':
                 wt_var_plot = wt_var2                
                 ax.errorbar(wt_z_plot, wt_var_plot, yerr = wt_err[name]['v_var'],
                             label=label_list[i], 
                             fmt=marker_list[i], color=c_list[i])
-                # if i==1:
-                #     ax.vlines(deltarsl_variance_v, 0., 0.06, colors='tab:red', 
-                #             linestyles='dashed', 
-                #             label=r'$\approx \delta_{rsl}$')
+                if i==1:
+                    ax.vlines(deltarsl_variance_v, 0., 0.06, colors='tab:red', 
+                            linestyles='dashed', 
+                            label=r'$\approx \delta_{rsl}$')
                 ax.set_ylabel(r'$\overline{v^\prime v^\prime}$ $u_{ref}^{-2}$ (-)')
         ax.grid(False, 'both', 'both')
         ax.set_xlim(0.08, 80.)
@@ -820,6 +820,7 @@ if compute_back_covar:
                     fmt=marker_list[i], color=c_list[i])
     ax.grid(False, 'both')
     ax.set_xlim(0.08, 80.)
+    ax.set_ylim(ymin=-0.035, ymax=0.005)
     # ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                 # borderaxespad = 0.,  
                 # numpoints = 1, ncol = 2)
@@ -888,9 +889,9 @@ if compute_back_lux:
         ax.errorbar(np.asarray(wt_z[name]), np.asarray(wt_lux[name]), 
                 yerr = wt_err[name]['lux'], label=label_list[j], 
                 fmt=marker_list[j], color=c_list[j])
-    # ax.vlines(0.0066*150.*5., 0, 90, colors='tab:red', 
-    #         linestyles='dashed', 
-    #         label=r'$\approx \delta_{rsl}$')
+    ax.vlines(0.0066*150.*5., 0, 90, colors='tab:red', 
+            linestyles='dashed', 
+            label=r'$\approx \delta_{rsl}$')
 
     ax.grid(False)
     # ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
@@ -1221,16 +1222,16 @@ if compute_quadrant_analysis:
             # quadrant contributions
             fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
             ax.errorbar(wt_wall_dists, wt_s1_all, yerr = np.mean(wt_flux)**(-1.)*wt_err[name]['covar']/4.,
-                    label = 'Q1'.format(name[3:5]), fmt='d', c='mediumblue')
+                    label = 'Q1'.format(name[3:5]), fmt='d', c='navy')
             ax.errorbar(wt_wall_dists, wt_s2_all, yerr = np.mean(wt_flux)**(-1.)*wt_err[name]['covar']/4.,
-                    label = 'Q2'.format(name[3:5]), fmt='o', c='darkorange')
+                    label = 'Q2'.format(name[3:5]), fmt='o', c='orange')
             ax.errorbar(wt_wall_dists, wt_s3_all, yerr = np.mean(wt_flux)**(-1.)*wt_err[name]['covar']/4.,
-                    label = 'Q3'.format(name[3:5]), fmt='o', c='deepskyblue')
+                    label = 'Q3'.format(name[3:5]), fmt='o', c='seagreen')
             ax.errorbar(wt_wall_dists, wt_s4_all, yerr = np.mean(wt_flux)**(-1.)*wt_err[name]['covar']/4.,
                     label = 'Q4'.format(name[3:5]), fmt='d', c='firebrick')
-            # ax.vlines(0.0066*150.*5., -5., 5., colors='tab:red', 
-            #             linestyles='dashed', 
-            #             label=r'$\approx \delta_{rsl}$')
+            ax.vlines(0.0066*150.*5., -5., 5., colors='tab:red', 
+                        linestyles='dashed', 
+                        label=r'$\approx \delta_{rsl}$')
             ax.hlines(0., 0.08, 80, colors='darkgray', 
                         linestyles='dotted')                
             ax.grid(False, 'both', 'both')
@@ -1256,16 +1257,16 @@ if compute_quadrant_analysis:
     PALM_flux_error = 0.0008
     fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
     ax.errorbar(wall_dists, s1_all, yerr = np.mean(total_flux)**(-1.) * PALM_flux_error/4.,
-            label = 'PALM: Q1', fmt='d', c='mediumblue')
+            label = 'PALM: Q1', fmt='d', c='navy')
     ax.errorbar(wall_dists, s2_all, yerr = np.mean(total_flux)**(-1.) * PALM_flux_error/4.,
-            label = 'PALM: Q2', fmt='o', c='darkorange')
+            label = 'PALM: Q2', fmt='o', c='orange')
     ax.errorbar(wall_dists, s3_all, yerr = np.mean(total_flux)**(-1.) * PALM_flux_error/4.,
-            label = 'PALM: Q3', fmt='o', c='deepskyblue')
+            label = 'PALM: Q3', fmt='o', c='seagreen')
     ax.errorbar(wall_dists, s4_all, yerr = np.mean(total_flux)**(-1.) * PALM_flux_error/4.,
             label = 'PALM: Q4', fmt='d', c='firebrick')
-    # ax.vlines(0.0066*150.*5., -5., 5., colors='tab:red', 
-    #             linestyles='dashed', 
-    #             label=r'$\approx \delta_{rsl}$')
+    ax.vlines(0.0066*150.*5., -5., 5., colors='tab:red', 
+                linestyles='dashed', 
+                label=r'$\approx \delta_{rsl}$')
     ax.hlines(0., 0.08, 80, colors='darkgray', 
                 linestyles='dotted')                
     ax.grid(False, 'both', 'both')

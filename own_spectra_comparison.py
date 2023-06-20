@@ -32,7 +32,7 @@ import warnings
 warnings.simplefilter("ignore")
 
 plotformat = 'pgf'
-plotformat = 'png'
+# plotformat = 'png'
 # plotformat = 'pdf'
 if plotformat == 'pgf':
     plt.style.use('default')
@@ -441,7 +441,8 @@ if compute_SI_back_spectra or compute_SI_front_spectra:
         var_u_eq = wt.equ_dist_ts(total_time, time_eq, total_var_u/palm_ref)
         var_v_eq = wt.equ_dist_ts(total_time, time_eq, total_var_v/palm_ref)
         scaling = 'u_hor' # u_hor, u_mean or v_mean
-        f_sm, S_uu_sm, S_vv_sm, S_uv_sm, u_aliasing, v_aliasing, uv_aliasing = wt.calc_spectra(var_u_eq,
+        f_sm, S_uu_sm, S_vv_sm, S_uv_sm, u_aliasing, v_aliasing, uv_aliasing = wt.calc_spectra(
+                            var_u_eq,
                             var_v_eq,
                             total_time,
                             wall_dist[0], scaling)
@@ -451,18 +452,21 @@ if compute_SI_back_spectra or compute_SI_front_spectra:
                             time_series_eq[FL_name][FL_file_list[i]].u_eq.dropna(),
                             time_series_eq[FL_name][FL_file_list[i]].v_eq.dropna(),
                             time_series_eq[FL_name][FL_file_list[i]].t_eq[~np.isnan(time_series_eq[FL_name][FL_file_list[i]].t_eq)],
+                            # wall_dist[0], scaling)
                             time_series_eq[FL_name][FL_file_list[i]].y-y_val_shift, scaling)
         BR_name = namelist[1]
         br_f_sm, br_S_uu_sm, br_S_vv_sm, br_S_uv_sm, br_u_aliasing, br_v_aliasing, br_uv_aliasing = wt.calc_spectra(
                             time_series_eq[BR_name][BR_file_list[i]].u_eq.dropna(),
                             time_series_eq[BR_name][BR_file_list[i]].v_eq.dropna(),
                             time_series_eq[BR_name][BR_file_list[i]].t_eq[~np.isnan(time_series_eq[BR_name][BR_file_list[i]].t_eq)],
+                            # wall_dist[0], scaling)
                             time_series_eq[BR_name][BR_file_list[i]].y-y_val_shift, scaling)
         WB_name = namelist[2]
         wb_f_sm, wb_S_uu_sm, wb_S_vv_sm, wb_S_uv_sm, wb_u_aliasing, wb_v_aliasing, wb_uv_aliasing = wt.calc_spectra(
                             time_series_eq[WB_name][WB_file_list[i]].u_eq.dropna(),
                             time_series_eq[WB_name][WB_file_list[i]].v_eq.dropna(),
                             time_series_eq[WB_name][WB_file_list[i]].t_eq[~np.isnan(time_series_eq[WB_name][WB_file_list[i]].t_eq)],
+                            # wall_dist[0], scaling)
                             time_series_eq[WB_name][WB_file_list[i]].y-y_val_shift, scaling)
 
         print('    calculated spectra for {}'.format(mask))
@@ -473,61 +477,61 @@ if compute_SI_back_spectra or compute_SI_front_spectra:
                 # palm
                 h1 = ax.loglog(f_sm[:u_aliasing], S_uu_sm[:u_aliasing], 'x', color='darkmagenta', 
                             label=r'PALM'.format(wall_dist[0]))
-                h2 = ax.loglog(f_sm[u_aliasing:], S_uu_sm[u_aliasing:], 'x',
+                h2 = ax.loglog(f_sm[u_aliasing:], S_uu_sm[u_aliasing:], 'x', color='darkmagenta', fillstyle='none'
                             )
                 # FL
                 fl_h1 = ax.loglog(fl_f_sm[:fl_u_aliasing], fl_S_uu_sm[:fl_u_aliasing], '^', color='forestgreen', 
                             label=r'FL'.format(str(time_series_eq[FL_name][FL_file_list[i]].y-y_val_shift)[0:4]))
-                fl_h2 = ax.loglog(fl_f_sm[fl_u_aliasing:], fl_S_uu_sm[fl_u_aliasing:], '^', color='forestgreen', 
+                fl_h2 = ax.loglog(fl_f_sm[fl_u_aliasing:], fl_S_uu_sm[fl_u_aliasing:], '^', color='forestgreen', fillstyle='none' 
                             )
                 # BR
                 br_h1 = ax.loglog(br_f_sm[:br_u_aliasing], br_S_uu_sm[:br_u_aliasing], 'o', color='darkorange', 
                             label=r'BR'.format(str(time_series_eq[BR_name][BR_file_list[i]].y-y_val_shift)[0:4]))
-                br_h2 = ax.loglog(br_f_sm[br_u_aliasing:], br_S_uu_sm[br_u_aliasing:], 'o', color='darkorange', 
+                br_h2 = ax.loglog(br_f_sm[br_u_aliasing:], br_S_uu_sm[br_u_aliasing:], 'o', color='darkorange', fillstyle='none' 
                             )
                 # WB
                 wb_h1 = ax.loglog(wb_f_sm[:wb_u_aliasing], wb_S_uu_sm[:wb_u_aliasing], 'd', color='navy', 
                             label=r'WB'.format(str(time_series_eq[WB_name][WB_file_list[i]].y-y_val_shift)[0:4]))
-                wb_h2 = ax.loglog(wb_f_sm[wb_u_aliasing:], wb_S_uu_sm[wb_u_aliasing:], 'd', color='navy', 
+                wb_h2 = ax.loglog(wb_f_sm[wb_u_aliasing:], wb_S_uu_sm[wb_u_aliasing:], 'd', color='navy', fillstyle='none'
                             )
                 ax.set_ylabel(r"$f\cdot S_{uu}\cdot (\sigma_u \sigma_u)^{-1}$")
             elif var_name == 'v':
                 h1 = ax.loglog(f_sm[:v_aliasing], S_vv_sm[:v_aliasing], 'x', color='darkmagenta', 
                             label=r'PALM'.format(wall_dist[0]))
-                h2 = ax.loglog(f_sm[v_aliasing:], S_vv_sm[v_aliasing:], 'x', 
+                h2 = ax.loglog(f_sm[v_aliasing:], S_vv_sm[v_aliasing:], 'x', color='darkmagenta', fillstyle='none' 
                             )
                 # FL
                 fl_h1 = ax.loglog(fl_f_sm[:fl_v_aliasing], fl_S_vv_sm[:fl_v_aliasing], '^', color='forestgreen', 
                             label=r'FL'.format(str(time_series_eq[FL_name][FL_file_list[i]].y-y_val_shift)[0:4]))
-                fl_h2 = ax.loglog(fl_f_sm[fl_v_aliasing:], fl_S_vv_sm[fl_v_aliasing:], '^', color='forestgreen', 
+                fl_h2 = ax.loglog(fl_f_sm[fl_v_aliasing:], fl_S_vv_sm[fl_v_aliasing:], '^', color='forestgreen', fillstyle='none' 
                             )
                 # BR
                 br_h1 = ax.loglog(br_f_sm[:br_v_aliasing], br_S_vv_sm[:br_v_aliasing], 'o', color='darkorange', 
                             label=r'BR'.format(str(time_series_eq[BR_name][BR_file_list[i]].y-y_val_shift)[0:4]))
-                br_h2 = ax.loglog(br_f_sm[br_v_aliasing:], br_S_vv_sm[br_v_aliasing:], 'o', color='darkorange', 
+                br_h2 = ax.loglog(br_f_sm[br_v_aliasing:], br_S_vv_sm[br_v_aliasing:], 'o', color='darkorange', fillstyle='none' 
                             )
                 # WB
                 wb_h1 = ax.loglog(wb_f_sm[:wb_v_aliasing], wb_S_vv_sm[:wb_v_aliasing], 'd', color='navy', 
                             label=r'WB'.format(str(time_series_eq[WB_name][WB_file_list[i]].y-y_val_shift)[0:4]))
-                wb_h2 = ax.loglog(wb_f_sm[wb_v_aliasing:], wb_S_vv_sm[wb_v_aliasing:], 'd', color='navy', 
+                wb_h2 = ax.loglog(wb_f_sm[wb_v_aliasing:], wb_S_vv_sm[wb_v_aliasing:], 'd', color='navy', fillstyle='none' 
                             )
                 ax.set_ylabel(r"$f\cdot S_{vv}\cdot (\sigma_v \sigma_v)^{-1}$")
             elif var_name == 'uv':
                 h1 = ax.loglog(f_sm[:uv_aliasing], S_uv_sm[:uv_aliasing], 'x', color='darkmagenta', 
                             label=r'PALM'.format(wall_dist[0]))
-                h2 = ax.loglog(f_sm[uv_aliasing:], S_uv_sm[uv_aliasing:], 'x')
+                h2 = ax.loglog(f_sm[uv_aliasing:], S_uv_sm[uv_aliasing:], 'x', color='darkmagenta', fillstyle='none')
                 # FL
                 fl_h1 = ax.loglog(fl_f_sm[:fl_uv_aliasing], fl_S_uv_sm[:fl_uv_aliasing], '^', color='forestgreen', 
-                            label=r'glatt'.format(str(time_series_eq[FL_name][FL_file_list[i]].y-y_val_shift)[0:4]))
-                fl_h2 = ax.loglog(fl_f_sm[fl_uv_aliasing:], fl_S_uv_sm[fl_uv_aliasing:], '^', color='forestgreen')
+                            label=r'FL'.format(str(time_series_eq[FL_name][FL_file_list[i]].y-y_val_shift)[0:4]))
+                fl_h2 = ax.loglog(fl_f_sm[fl_uv_aliasing:], fl_S_uv_sm[fl_uv_aliasing:], '^', color='lightgreen', fillstyle='none')
                 # BR
                 br_h1 = ax.loglog(br_f_sm[:br_uv_aliasing], br_S_uv_sm[:br_uv_aliasing], 'o', color='darkorange', 
-                            label=r'rau'.format(str(time_series_eq[BR_name][BR_file_list[i]].y-y_val_shift)[0:4]))
-                br_h2 = ax.loglog(br_f_sm[br_uv_aliasing:], br_S_uv_sm[br_uv_aliasing:], 'o', color='darkorange')
+                            label=r'BR'.format(str(time_series_eq[BR_name][BR_file_list[i]].y-y_val_shift)[0:4]))
+                br_h2 = ax.loglog(br_f_sm[br_uv_aliasing:], br_S_uv_sm[br_uv_aliasing:], 'o', color='moccasin', fillstyle='none')
                 # WB
                 wb_h1 = ax.loglog(wb_f_sm[:wb_uv_aliasing], wb_S_uv_sm[:wb_uv_aliasing], 'd', color='navy', 
-                            label=r'mäßig rau'.format(str(time_series_eq[WB_name][WB_file_list[i]].y-y_val_shift)[0:4]))
-                wb_h2 = ax.loglog(wb_f_sm[wb_uv_aliasing:], wb_S_uv_sm[wb_uv_aliasing:], 'd', color='navy')
+                            label=r'WB'.format(str(time_series_eq[WB_name][WB_file_list[i]].y-y_val_shift)[0:4]))
+                wb_h2 = ax.loglog(wb_f_sm[wb_uv_aliasing:], wb_S_uv_sm[wb_uv_aliasing:], 'd', color='lightblue', fillstyle='none')
                 # if mask == 'M02' or mask == 'M07':
                 ax.set_ylabel(r"$f\cdot S_{uv}\cdot (\sigma_u \sigma_v)^{-1}$")
             
@@ -539,7 +543,7 @@ if compute_SI_back_spectra or compute_SI_front_spectra:
             freq_slopey = np.logspace(np.log10(5*10.**(-2.)), np.log10(10.), num=20)
             twothird_slopey = 0.01*(freq_slopey)**(-2./3.)
             ax.plot(freq_slopey, twothird_slopey , label=r'K41: $-2/3$', color='black', linestyle='dashed')
-            ax.set_title(r'$\Delta y = {} m$'.format(wall_dist[0]))
+            ax.set_title(r'$\Delta y = {}$ m'.format(wall_dist[0]))
             ax.set_xlim(10.**-3., 10.**2.)
             ax.set_ylim(10.**-3., 1.)
             # if mask == 'M07' or mask == 'M10':
@@ -553,7 +557,7 @@ if compute_SI_back_spectra or compute_SI_front_spectra:
                 ax.set_xlabel(r"$f\cdot \Delta y\cdot \overline{u}^{-1}$")
 
             if mask == mask_name_list[0]:
-                ax.legend(bbox_to_anchor = (0., 1.25), loc = 'lower left', 
+                ax.legend(bbox_to_anchor = (-0.1, 1.22), loc = 'lower left', 
                     borderaxespad = 0., ncol = 5, 
                     numpoints = 1)
             ax.grid(False)

@@ -28,7 +28,7 @@ warnings.simplefilter("ignore")
 logger = logging.getLogger()
 
 plotformat = 'pgf'
-plotformat = 'png'
+# plotformat = 'png'
 # plotformat = 'pdf'
 if plotformat == 'pgf':
     plt.style.use('default')
@@ -77,8 +77,8 @@ MAIN
 
 #%%#
 
-papy.globals.run_name = 'SB_SI_front'
-# papy.globals.run_name = 'SB_SI'
+run_list = ['SB_SI_front', 'SB_SI_2', 'SB_SI_back']
+papy.globals.run_name = run_list[0]
 papy.globals.run_numbers = ['.007', '.008', '.009', '.010', '.011', '.012', 
                         '.013', '.014', '.015', '.016', '.017', '.018',
                         '.019', '.020', '.021', '.022', '.023', '.024',
@@ -86,14 +86,14 @@ papy.globals.run_numbers = ['.007', '.008', '.009', '.010', '.011', '.012',
                         '.031', '.032', '.033', '.034', '.035', '.036',
                         '.037', '.038', '.039', '.040', '.041', '.042',
                         '.043', '.044', '.045', '.046']
-# papy.globals.run_name = 'yshift_SB_SI'
-# papy.globals.run_numbers = ['.008', '.009', '.010', '.011', '.012', 
-#                             '.013', '.014', '.015', '.016', '.017', '.018',
-#                             '.019', '.020', '.021', '.022', '.023', '.024',
-#                             '.025', '.026', '.027', '.028', '.029', '.030',
-#                             '.031', '.032', '.033', '.034', '.035', '.036',
-#                             '.037']
+# papy.globals.run_numbers = ['.007', '.008', '.009', '.010', '.011', '.012', 
+#                             '.013', '.014', '.015', '.016', '.017']
 papy.globals.run_number = papy.globals.run_numbers[-1]
+mask_list_middle = ['M13', 'M14', 'M15', 'M16', 'M17', 'M18', 'M19', 'M20',
+                    'M21', 'M22', 'M23', 'M24']
+mask_list = ['M01', 'M02', 'M03', 'M04', 'M05', 'M06', 'M07', 'M08',
+                    'M09', 'M10', 'M11', 'M12']
+
 
 
 vectorplot_xy = True
@@ -258,9 +258,95 @@ if files==[]:
 ##### vector plot XY #####
 ##########################
 if vectorplot_xy:
+    plot_palm_vectors = True
     print('\n     compute vector plot in XY')
     c_list = ['firebrick', 'seagreen', 'orange']
     label_list = ['SB_SI_front', 'SB_SI_back', 'SB_SI_middle']
+    if plot_palm_vectors:
+        fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
+        y_PALM_shift = 530.
+        x_PALM_shift = 512.
+        for i,run in enumerate(run_list):
+            nc_file_path = '../palm/current_version/JOBS/{}/OUTPUT/'.format(run)
+            x = []
+            y = []
+            u_mean = []
+            v_mean = []
+            mean_uvars = np.array([])
+            mean_vvars = np.array([])
+            mask_list_cur = mask_list
+            if run == 'SB_SI_2':
+                mask_list_cur = mask_list_middle
+            for j, mask in enumerate(mask_list_cur):
+                total_var_u = np.array([])
+                total_var_v = np.array([])
+                total_time = np.array([])
+                for run_no in papy.globals.run_numbers: 
+                    nc_file = '{}_masked_{}{}.nc'.format(run, mask, run_no)
+                    time, time_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'time')
+                    var_u, var_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'u')
+                    var_v, var_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'v')
+                    yu, yu_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'y')
+                    xu, xu_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'x')
+                    total_time = np.concatenate([total_time, time])
+                    total_var_u = np.concatenate([total_var_u, var_u])
+                    total_var_v = np.concatenate([total_var_v, var_v])
+                # gather values
+                u_mean = np.asarray([np.mean(total_var_u)])
+                v_mean = np.asarray([np.mean(total_var_v)])
+                mean_uvars = np.concatenate([mean_uvars, u_mean])
+                mean_vvars = np.concatenate([mean_vvars, v_mean])
+                x.append(xu-x_PALM_shift)
+                y.append(yu-y_PALM_shift)
+
+        
+            if run == 'SB_SI_front':
+                ax.quiver(x, y, mean_uvars, mean_vvars, 
+                        color= 'firebrick', 
+                        label = 'SB_SI_front',
+                        scale = 25.,
+                        width=0.003*textwidth_half,)
+                        # headlength = 3., headaxislength=3.-0.5)
+            elif run == 'SB_SI_back':
+                ax.quiver(x, y, mean_uvars, mean_vvars, 
+                        color= 'seagreen', 
+                        label = 'SB_SI_back',
+                        scale = 25.,
+                        width=0.003*textwidth_half,)
+                        # headlength = 3., headaxislength=3.-0.5)
+            else:
+                ax.quiver(x, y, mean_uvars, mean_vvars, 
+                        color= 'orange', 
+                        label = '',
+                        scale = 25.,
+                        width=0.001*textwidth_half,)
+                        # headlength = 6., headaxislength=6.-0.5, 
+                        # headwidth=4.)    
+
+
+        ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
+                    borderaxespad = 0.,  
+                    numpoints = 1)    
+        
+        ax.set_xlabel(r'$x$ (m)')
+        ax.set_ylabel(r'$y$ (m)')
+
+        building = [(-76.5/2., -34.5/2.-y_val_shift), (-76.5/2., 0.), (76.5/2., 0.), (76.5/2, -34.5/2.-y_val_shift)]
+        ax.add_patch(patches.Polygon(building,
+                    facecolor = 'grey'))
+        # ax.hlines(0.0066*150.*5., -76.5/2., 76.5/2., colors='tab:red', 
+        #                         linestyles='dashed', linewidth=0.5)
+        #                         # , label=r'$5 \cdot h_{r}$')
+        ax.set_ylim(-10, 30.)
+        ax.set_xlim(-60., 60.)
+        plt.savefig(plot_path_0 + 'vectorplot_xy_PALM_' + namelist[0][3:8] + '.' + file_type,
+                    dpi=300,bbox_inches='tight')
+        plt.savefig(plot_path_0 + 'vectorplot_xy_PALM_' + namelist[0][3:8] + '.' + 'png',
+                    dpi=300,bbox_inches='tight')
+        print(' saved image to ' + plot_path_0 + 'vectorplot_xy_PALM_' + namelist[0][3:8] + '.' + file_type)
+        plt.close()
+
+    # wind tunnel
     fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
     for i,name in enumerate(namelist):
         files = wt.get_files(path,name)
@@ -286,24 +372,24 @@ if vectorplot_xy:
             ax.quiver(x, y, u_mean, v_mean, 
                     color= 'firebrick', 
                     label = 'SB_SI_front',
-                    scale = 7.5,
-                    width=0.003*textwidth_half,
-                    headlength = 3., headaxislength=3.-0.5)
+                    scale = 1.5,)
+                    # width=0.003*textwidth_half,
+                    # headlength = 3., headaxislength=3.-0.5)
         elif name == 'SB_FL_SI_UV_022' or name == 'SB_BR_SI_UV_011' or name == 'SB_WB_SI_UV_012':
             ax.quiver(x, y, u_mean, v_mean, 
                     color= 'seagreen', 
                     label = 'SB_SI_back',
-                    scale = 7.5,
-                    width=0.003*textwidth_half,
-                    headlength = 3., headaxislength=3.-0.5)
+                    scale = 7.5,)
+                    # width=0.003*textwidth_half,
+                    # headlength = 3., headaxislength=3.-0.5)
         else:
             ax.quiver(x, y, u_mean, v_mean, 
                     color= 'orange', 
                     label = '',
-                    scale = 7.5,
-                    width=0.001*textwidth_half,
-                    headlength = 6., headaxislength=6.-0.5, 
-                    headwidth=4.)    
+                    scale = 2.5,)
+                    # width=0.001*textwidth_half,
+                    # headlength = 6., headaxislength=6.-0.5, 
+                    # headwidth=4.)    
 
 
     ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
@@ -319,10 +405,8 @@ if vectorplot_xy:
     ax.hlines(0.0066*150.*5., -76.5/2., 76.5/2., colors='tab:red', 
                             linestyles='dashed', linewidth=0.5)
                             # , label=r'$5 \cdot h_{r}$')
-    # ax.set_ylim(-10, 30.)
-    # ax.set_xlim(-60., 60.)
-
-
+    ax.set_ylim(-10, 30.)
+    ax.set_xlim(-60., 60.)
     plt.savefig(plot_path_0 + 'vectorplot_xy_' + namelist[0][3:8] + '.' + file_type,
                 dpi=300,bbox_inches='tight')
     print(' saved image to ' + plot_path_0 + 'vectorplot_xy_' + namelist[0][3:8] + '.' + file_type)

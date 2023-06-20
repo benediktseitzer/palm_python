@@ -136,13 +136,13 @@ papy.globals.dx = 1.
 Steeringflags
 """
 ################
-compute_LU_mean = True
+compute_LU_mean = False
 compute_LU_pdfs = False
-compute_LU_highermoments = True
-compute_LU_var = True
-compute_LU_covar = True
+compute_LU_highermoments = False
+compute_LU_var = False
+compute_LU_covar = False
 compute_LU_lux = False
-compute_quadrant_analysis = False
+compute_quadrant_analysis = True
 
 deltarsl_mean_u = 0.0066 * 150.* 2.
 deltarsl_mean_v = 0.0066 * 150.* 2.
@@ -744,7 +744,7 @@ if compute_LU_var:
 
 
 ######################################################
-# compute covariance in front of building
+# compute covariance in LU of building
 ######################################################
 if compute_LU_covar:
     print('\n   compute co-variance')
@@ -918,7 +918,7 @@ if compute_quadrant_analysis:
         for run_no in papy.globals.run_numbers:
             nc_file = '{}_masked_{}{}.nc'.format(papy.globals.run_name, mask, run_no)
             varu, varu_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'u')
-            varv, varv_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'w')
+            varv, varv_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'v')
             y, y_unit = papy.read_nc_var_ms(nc_file_path, nc_file, 'x')
             total_varu = np.concatenate([total_varu, varu/palm_ref])
             total_varv = np.concatenate([total_varv, varv/palm_ref])
@@ -941,15 +941,13 @@ if compute_quadrant_analysis:
         q2_fluxes = np.concatenate([q2_fluxes, q2_flux])
         q3_fluxes = np.concatenate([q3_fluxes, q3_flux])
         q4_fluxes = np.concatenate([q4_fluxes, q4_flux])
-        
         wall_dist = np.asarray([abs(y[0]-494.)])
-        # wall_dist = np.asarray([abs(y[0])-530.])
         wall_dists = np.concatenate([wall_dists, wall_dist])
 
-        s1 = np.asarray([q1_flux[0]/np.mean(total_flux) * len(q1_ind[0])/len(total_flux)])
-        s2 = np.asarray([q2_flux[0]/np.mean(total_flux) * len(q2_ind[0])/len(total_flux)])
-        s3 = np.asarray([q3_flux[0]/np.mean(total_flux) * len(q3_ind[0])/len(total_flux)])
-        s4 = np.asarray([q4_flux[0]/np.mean(total_flux) * len(q4_ind[0])/len(total_flux)])
+        s1 = np.asarray([q1_flux[0]/(abs(np.mean(total_flux))*-1.) * len(q1_ind[0])/len(total_flux)])
+        s2 = np.asarray([q2_flux[0]/(abs(np.mean(total_flux))*-1.) * len(q2_ind[0])/len(total_flux)])
+        s3 = np.asarray([q3_flux[0]/(abs(np.mean(total_flux))*-1.) * len(q3_ind[0])/len(total_flux)])
+        s4 = np.asarray([q4_flux[0]/(abs(np.mean(total_flux))*-1.) * len(q4_ind[0])/len(total_flux)])
 
         s1_all = np.concatenate([s1_all, s1])
         s2_all = np.concatenate([s2_all, s2])
@@ -965,26 +963,26 @@ if compute_quadrant_analysis:
                                     s2[0]  + 
                                     s3[0]  + 
                                     s4[0])))
-
+        extent_val = 1.
         plot_QA_PALM = False
         if plot_QA_PALM:
             # PLOT SINGLE Quadrant-scatterplots
             fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
             fig.gca().set_aspect('equal', adjustable='box')
             ax.plot(varu_fluc[q1_ind], varv_fluc[q1_ind] ,'o', color='blue',
-                    label='Q1')
+                    markersize=2,label='Q1')
             ax.plot(varu_fluc[q2_ind], varv_fluc[q2_ind] ,'o', color='darkorange',
-                     label='Q2')
+                    markersize=2, label='Q2')
             ax.plot(varu_fluc[q3_ind], varv_fluc[q3_ind] ,'o', color='cyan',
-                     label='Q3')
+                    markersize=2, label='Q3')
             ax.plot(varu_fluc[q4_ind], varv_fluc[q4_ind] ,'o', color='red',
-                     label='Q4')
+                    markersize=2, label='Q4')
             ax.grid(False, 'both', 'both')
-            ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
-                        borderaxespad = 0.,  
-                        numpoints = 1, ncol = 2)
+            # ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
+            #             borderaxespad = 0.,  
+            #             numpoints = 1, ncol = 2)
             ax.set_xlabel(r'$u^\prime$ $u_{ref}^{-1}$ (-)')
-            ax.set_ylabel(r'$w^\prime$ $u_{ref}^{-1}$ (-)')
+            ax.set_ylabel(r'$v^\prime$ $u_{ref}^{-1}$ (-)')
             # save plots
             fig.savefig('../palm_results/{}/run_{}/quadrant_analysis/scatter/{}_QA_scatter_mask_{}.{}'.format(papy.globals.run_name,
                         papy.globals.run_number[-3:],
@@ -1000,232 +998,263 @@ if compute_quadrant_analysis:
             umax = varu_fluc.max()
             vmin = varv_fluc.min()
             vmax = varv_fluc.max()
+            umin = -extent_val
+            umax = extent_val
+            vmin = -extent_val
+            vmax = extent_val
             u_jpdf, v_jpdf = np.mgrid[umin:umax:100j, vmin:vmax:100j]
             positions = np.vstack([u_jpdf.ravel(), v_jpdf.ravel()])
             values = np.vstack([varu_fluc, varv_fluc])
             kernel = stats.gaussian_kde(values)
-            jpdf = np.reshape(kernel.evaluate(positions).T, u_jpdf.shape)
+            jpdf = np.reshape(kernel.evaluate(positions).T, u_jpdf.shape)        
             # plot
+            # from mpl_toolkits.axes_grid1.inset_locator import inset_axes
             fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
             fig.gca().set_aspect('equal', adjustable='box')
-            extent_val = 0.6
+
             ax.set_xlim(-extent_val, extent_val)
-            ax.set_ylim(-extent_val, extent_val)            
+            ax.set_ylim(-extent_val, extent_val)
             array = np.full((100,100), np.min(jpdf))
-            im0 = ax.contourf(array, colors='lemonchiffon',
-                                extent=[-extent_val, extent_val, -extent_val, extent_val], levels = 1)
+            # im0 = ax.contourf(array, colors='lemonchiffon',
+            #                     extent=[-extent_val, extent_val, -extent_val, extent_val], levels = 1)
             im1 = ax.contourf(jpdf.T, cmap='YlGnBu',
                     extent=[umin, umax, vmin, vmax], levels = 15)
-            im2 = ax.contour(jpdf.T, extent=[umin, umax, vmin, vmax], levels = 15,
-                    colors='gray')
+            im2 = ax.contour(jpdf.T, 
+                                extent=[umin, umax, vmin, vmax], levels = 15,
+                                colors='gray', linewidths = 0.2)
+
             ax.vlines(0., -extent_val, extent_val, colors='darkgray', 
-                    linestyles='dashed')
+                    linestyles='dotted')
             ax.hlines(0., -extent_val, extent_val, colors='darkgray', 
-                    linestyles='dashed')
+                    linestyles='dotted')
             ax.grid(False, 'both', 'both')
-            plt.colorbar(im1, label=r'$\rho (u^\prime_{q_i},  w^\prime_{q_i})$ (-)')
+
+            # cax = inset_axes(ax,
+            #         width="150%",  
+            #         height="7.5%",
+            #         loc='lower center',
+            #         borderpad=-4.5
+            #        )
+            # fig.colorbar(im1, cax=cax, label=r'$\rho (u^\prime_{q_i},  v^\prime_{q_i})$', 
+            #             orientation='horizontal')
+            fig.colorbar(im1, label=r'$\rho (u^\prime_{q_i},  v^\prime_{q_i})$')
             ax.set_xlabel(r'$u^\prime$ $u_{ref}^{-1}$ (-)')
-            ax.set_ylabel(r'$w^\prime$ $u_{ref}^{-1}$ (-)')
-            ax.set_title(r'PALM - $\Delta x = {} m$'.format(wall_dist[0]))            
+            ax.set_ylabel(r'$v^\prime$ $u_{ref}^{-1}$ (-)')
+            ax.set_title(r'$\Delta y = {} m$'.format(wall_dist[0]))
             # save plots
             fig.savefig('../palm_results/{}/run_{}/quadrant_analysis/jpdf/{}_QA_jpdf_mask_{}.{}'.format(papy.globals.run_name,
                         papy.globals.run_number[-3:],
-                        'LU', mask, plotformat), bbox_inches='tight', dpi=500)
+                        'LU', mask + '_' + str(wall_dist[0]), plotformat), bbox_inches='tight', dpi=500)
             print('     SAVED TO: ' 
                         + '../palm_results/{}/run_{}/quadrant_analysis/jpdf/{}_QA_jpdf_mask_{}.{}'.format(papy.globals.run_name,
                         papy.globals.run_number[-3:],
-                        'LU', mask, plotformat))
+                        'LU', mask + '_' + str(wall_dist[0]), plotformat))
             plt.close()
+            cmap_min = np.amin(jpdf.T) 
+            cmap_max = np.amax(jpdf.T)
+            print(cmap_min, cmap_max)
+
 
     # plot wind tunnel data
-    for i,name in enumerate(namelist):
-        files = wt.get_files(path,name)
-        wt_wall_dists = np.array([])
-        wt_q1_fluxes = np.array([])
-        wt_q2_fluxes = np.array([])
-        wt_q3_fluxes = np.array([])
-        wt_q4_fluxes = np.array([])
-        wt_s1_all = np.array([])
-        wt_s2_all = np.array([])
-        wt_s3_all = np.array([])
-        wt_s4_all = np.array([])
-        files = wt.get_files(path,name)            
-        for j,file in enumerate(files):
-            wt_varu_fluc = (time_series[name][file].weighted_component_mean[0] - time_series[name][file].u.dropna().values)/time_series[name][file].wtref
-            wt_varv_fluc = (time_series[name][file].weighted_component_mean[1] - time_series[name][file].v.dropna().values)/time_series[name][file].wtref
-            wt_flux = np.asarray(wt_varu_fluc * wt_varv_fluc)
+    include_wt_data = True
+    if include_wt_data:
+        for i,name in enumerate(namelist):
+            files = wt.get_files(path,name)
+            wt_wall_dists = np.array([])
+            wt_q1_fluxes = np.array([])
+            wt_q2_fluxes = np.array([])
+            wt_q3_fluxes = np.array([])
+            wt_q4_fluxes = np.array([])
+            wt_s1_all = np.array([])
+            wt_s2_all = np.array([])
+            wt_s3_all = np.array([])
+            wt_s4_all = np.array([])
+            files = wt.get_files(path,name)
+            for j,file in enumerate(files):
+                wt_varu_fluc = (time_series[name][file].weighted_component_mean[0] - time_series[name][file].u.dropna().values)/time_series[name][file].wtref
+                wt_varv_fluc = (time_series[name][file].weighted_component_mean[1] - time_series[name][file].v.dropna().values)/time_series[name][file].wtref
+                wt_flux = np.asarray(wt_varu_fluc * wt_varv_fluc)
 
-            wt_q1_ind = np.where(np.logical_and(wt_varu_fluc>0, wt_varv_fluc>0))
-            wt_q2_ind = np.where(np.logical_and(wt_varu_fluc<0, wt_varv_fluc>0))
-            wt_q3_ind = np.where(np.logical_and(wt_varu_fluc<0, wt_varv_fluc<0))
-            wt_q4_ind = np.where(np.logical_and(wt_varu_fluc>0, wt_varv_fluc<0))
+                wt_q1_ind = np.where(np.logical_and(wt_varu_fluc>0, wt_varv_fluc>0))
+                wt_q2_ind = np.where(np.logical_and(wt_varu_fluc<0, wt_varv_fluc>0))
+                wt_q3_ind = np.where(np.logical_and(wt_varu_fluc<0, wt_varv_fluc<0))
+                wt_q4_ind = np.where(np.logical_and(wt_varu_fluc>0, wt_varv_fluc<0))
 
-            wt_q1_flux = np.asarray([np.mean(wt_flux[wt_q1_ind])])
-            wt_q2_flux = np.asarray([np.mean(wt_flux[wt_q2_ind])])
-            wt_q3_flux = np.asarray([np.mean(wt_flux[wt_q3_ind])])
-            wt_q4_flux = np.asarray([np.mean(wt_flux[wt_q4_ind])])
+                wt_q1_flux = np.asarray([np.mean(wt_flux[wt_q1_ind])])
+                wt_q2_flux = np.asarray([np.mean(wt_flux[wt_q2_ind])])
+                wt_q3_flux = np.asarray([np.mean(wt_flux[wt_q3_ind])])
+                wt_q4_flux = np.asarray([np.mean(wt_flux[wt_q4_ind])])
 
-            wt_q1_fluxes = np.concatenate([wt_q1_fluxes, wt_q1_flux])
-            wt_q2_fluxes = np.concatenate([wt_q2_fluxes, wt_q2_flux])
-            wt_q3_fluxes = np.concatenate([wt_q3_fluxes, wt_q3_flux])
-            wt_q4_fluxes = np.concatenate([wt_q4_fluxes, wt_q4_flux])
+                wt_q1_fluxes = np.concatenate([wt_q1_fluxes, wt_q1_flux])
+                wt_q2_fluxes = np.concatenate([wt_q2_fluxes, wt_q2_flux])
+                wt_q3_fluxes = np.concatenate([wt_q3_fluxes, wt_q3_flux])
+                wt_q4_fluxes = np.concatenate([wt_q4_fluxes, wt_q4_flux])
 
-            wt_wall_dist = np.asarray([abs(time_series[name][file].x)-0.115*scale])
-            wt_wall_dists = np.concatenate([wt_wall_dists, wt_wall_dist])
+                wt_wall_dist = np.asarray([abs(time_series[name][file].x)-0.115*scale])
+                wt_wall_dists = np.concatenate([wt_wall_dists, wt_wall_dist])
 
-            wt_s1 = np.asarray([wt_q1_flux[0]/np.mean(wt_flux) * len(wt_q1_ind[0])/len(wt_flux)])
-            wt_s2 = np.asarray([wt_q2_flux[0]/np.mean(wt_flux) * len(wt_q2_ind[0])/len(wt_flux)])
-            wt_s3 = np.asarray([wt_q3_flux[0]/np.mean(wt_flux) * len(wt_q3_ind[0])/len(wt_flux)])
-            wt_s4 = np.asarray([wt_q4_flux[0]/np.mean(wt_flux) * len(wt_q4_ind[0])/len(wt_flux)])
+                wt_s1 = np.asarray([wt_q1_flux[0]/(abs(np.mean(wt_flux))*-1.) * len(wt_q1_ind[0])/len(wt_flux)])
+                wt_s2 = np.asarray([wt_q2_flux[0]/(abs(np.mean(wt_flux))*-1.) * len(wt_q2_ind[0])/len(wt_flux)])
+                wt_s3 = np.asarray([wt_q3_flux[0]/(abs(np.mean(wt_flux))*-1.) * len(wt_q3_ind[0])/len(wt_flux)])
+                wt_s4 = np.asarray([wt_q4_flux[0]/(abs(np.mean(wt_flux))*-1.) * len(wt_q4_ind[0])/len(wt_flux)])
 
-            wt_s1_all = np.concatenate([wt_s1_all, wt_s1])
-            wt_s2_all = np.concatenate([wt_s2_all, wt_s2])
-            wt_s3_all = np.concatenate([wt_s3_all, wt_s3])
-            wt_s4_all = np.concatenate([wt_s4_all, wt_s4])
+                wt_s1_all = np.concatenate([wt_s1_all, wt_s1])
+                wt_s2_all = np.concatenate([wt_s2_all, wt_s2])
+                wt_s3_all = np.concatenate([wt_s3_all, wt_s3])
+                wt_s4_all = np.concatenate([wt_s4_all, wt_s4])
 
-            print('\n S1 = {}'.format(str(wt_s1[0])[:6]) + '   N1 = {}'.format(len(wt_q1_ind[0])))
-            print(' S2 = {}'.format(str(wt_s2[0])[:6]) + '   N2 = {}'.format(len(wt_q2_ind[0])))
-            print(' S3 = {}'.format(str(wt_s3[0])[:6]) + '   N3 = {}'.format(len(wt_q3_ind[0])))
-            print(' S4 = {}'.format(str(wt_s4[0])[:6]) + '   N4 = {}'.format(len(wt_q4_ind[0])))
-            print(' Flux = {}'.format(str(np.mean(wt_flux))[:6]) + '   N = {}'.format(len(wt_flux)))        
-            print(' SUM = {}'.format(str(wt_s1[0] + 
-                                        wt_s2[0] + 
-                                        wt_s3[0] + 
-                                        wt_s4[0])))
+                print('\n S1 = {}'.format(str(wt_s1[0])[:6]) + '   N1 = {}'.format(len(wt_q1_ind[0])))
+                print(' S2 = {}'.format(str(wt_s2[0])[:6]) + '   N2 = {}'.format(len(wt_q2_ind[0])))
+                print(' S3 = {}'.format(str(wt_s3[0])[:6]) + '   N3 = {}'.format(len(wt_q3_ind[0])))
+                print(' S4 = {}'.format(str(wt_s4[0])[:6]) + '   N4 = {}'.format(len(wt_q4_ind[0])))
+                print(' Flux = {}'.format(str(np.mean(wt_flux))[:6]) + '   N = {}'.format(len(wt_flux)))
+                print(' SUM = {}'.format(str(wt_s1[0] + 
+                                            wt_s2[0] + 
+                                            wt_s3[0] + 
+                                            wt_s4[0])))
 
-            # PLOT SINGLE Quadrant-scatterplots
-            plot_WT_QA = False
-            if plot_WT_QA:
-                fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
-                fig.gca().set_aspect('equal', adjustable='box')
-                ax.plot(wt_varu_fluc[wt_q1_ind], wt_varv_fluc[wt_q1_ind] ,'o', color='blue',
-                        label='Q1')
-                ax.plot(wt_varu_fluc[wt_q2_ind], wt_varv_fluc[wt_q2_ind] ,'o', color='darkorange',
-                         label='Q2')
-                ax.plot(wt_varu_fluc[wt_q3_ind], wt_varv_fluc[wt_q3_ind] ,'o', color='cyan',
-                         label='Q3')
-                ax.plot(wt_varu_fluc[wt_q4_ind], wt_varv_fluc[wt_q4_ind] ,'o', color='red',
-                         label='Q4')
-                ax.grid(False, 'both', 'both')
-                ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
-                            borderaxespad = 0.,  
-                            numpoints = 1, ncol = 2)
-                ax.set_xlabel(r'$u^\prime$ $u_{ref}^{-1}$ (-)')
-                ax.set_ylabel(r'$w^\prime$ $u_{ref}^{-1}$ (-)')
-                # save plots
-                fig.savefig('../palm_results/{}/run_{}/quadrant_analysis/scatter/{}_QA_scatter_WT_{}.{}'.format(papy.globals.run_name,
-                            papy.globals.run_number[-3:],
-                            'LU', file, plotformat), bbox_inches='tight', dpi=500)
-                print('     SAVED TO: ' 
-                            + '../palm_results/{}/run_{}/quadrant_analysis/scatter/{}_QA_scatter_WT_{}.{}'.format(papy.globals.run_name,
-                            papy.globals.run_number[-3:],
-                            'LU', file, plotformat))
-                plt.close()
+                # PLOT SINGLE Quadrant-scatterplots
+                plot_WT_QA = False
+                if plot_WT_QA:
+                    fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
+                    fig.gca().set_aspect('equal', adjustable='box')
+                    ax.plot(wt_varu_fluc[wt_q1_ind], wt_varv_fluc[wt_q1_ind] ,'o', color='blue',
+                            markersize=2,label='Q1')
+                    ax.plot(wt_varu_fluc[wt_q2_ind], wt_varv_fluc[wt_q2_ind] ,'o', color='darkorange',
+                            markersize=2, label='Q2')
+                    ax.plot(wt_varu_fluc[wt_q3_ind], wt_varv_fluc[wt_q3_ind] ,'o', color='cyan',
+                            markersize=2, label='Q3')
+                    ax.plot(wt_varu_fluc[wt_q4_ind], wt_varv_fluc[wt_q4_ind] ,'o', color='red',
+                            markersize=2, label='Q4')
+                    ax.grid(False, 'both', 'both')
+                    # ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
+                    #             borderaxespad = 0.,  
+                    #             numpoints = 1, ncol = 2)
+                    ax.set_xlabel(r'$u^\prime$ $u_{ref}^{-1}$ (-)')
+                    ax.set_ylabel(r'$v^\prime$ $u_{ref}^{-1}$ (-)')
+                    # save plots
+                    fig.savefig('../palm_results/{}/run_{}/quadrant_analysis/scatter/{}_QA_scatter_WT_{}.{}'.format(papy.globals.run_name,
+                                papy.globals.run_number[-3:],
+                                'LU', file, plotformat), bbox_inches='tight', dpi=500)
+                    print('     SAVED TO: ' 
+                                + '../palm_results/{}/run_{}/quadrant_analysis/scatter/{}_QA_scatter_WT_{}.{}'.format(papy.globals.run_name,
+                                papy.globals.run_number[-3:],
+                                'LU', file, plotformat))
+                    plt.close()
 
-                # PLOT JOINT PROBABILITY DENSITY FUNCTIONS
-                umin = wt_varu_fluc.min()
-                umax = wt_varu_fluc.max()
-                vmin = wt_varv_fluc.min()
-                vmax = wt_varv_fluc.max()
-                u_jpdf, v_jpdf = np.mgrid[umin:umax:100j, vmin:vmax:100j]
-                positions = np.vstack([u_jpdf.ravel(), v_jpdf.ravel()])
-                values = np.vstack([wt_varu_fluc, wt_varv_fluc])
-                kernel = stats.gaussian_kde(values)
-                jpdf = np.reshape(kernel.evaluate(positions).T, u_jpdf.shape)
-                # plot
-                fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
-                fig.gca().set_aspect('equal', adjustable='box')
-                ax.set_xlim(-extent_val, extent_val)
-                ax.set_ylim(-extent_val, extent_val)
-                array = np.full((100,100), np.min(jpdf))
-                im0 = ax.contourf(array, colors='lemonchiffon',
-                                    extent=[-extent_val, extent_val, -extent_val, extent_val], levels = 1)                   
-                im1 = ax.contourf(jpdf.T, cmap='YlGnBu',
-                        extent=[umin, umax, vmin, vmax], levels = 15)
-                im2 = ax.contour(jpdf.T, extent=[umin, umax, vmin, vmax], levels = 15,
-                        colors='gray')
+                    # PLOT JOINT PROBABILITY DENSITY FUNCTIONS
+                    umin = wt_varu_fluc.min()
+                    umax = wt_varu_fluc.max()
+                    vmin = wt_varv_fluc.min()
+                    vmax = wt_varv_fluc.max()
+                    umin = -extent_val
+                    umax = extent_val
+                    vmin = -extent_val
+                    vmax = extent_val                    
+                    u_jpdf, v_jpdf = np.mgrid[umin:umax:100j, vmin:vmax:100j]
+                    positions = np.vstack([u_jpdf.ravel(), v_jpdf.ravel()])
+                    values = np.vstack([wt_varu_fluc, wt_varv_fluc])
+                    kernel = stats.gaussian_kde(values)
+                    jpdf = np.reshape(kernel.evaluate(positions).T, u_jpdf.shape)
+                    # plot
+                    fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
+                    fig.gca().set_aspect('equal', adjustable='box')
+                    ax.set_xlim(-extent_val, extent_val)
+                    ax.set_ylim(-extent_val, extent_val)
+                    array = np.full((100,100), np.min(jpdf))
+                    im0 = ax.contourf(array, colors='lemonchiffon',
+                                        extent=[-extent_val, extent_val, -extent_val, extent_val], levels = 1)                         
+                    im1 = ax.contourf(jpdf.T, cmap='YlGnBu', vmin = cmap_min, vmax = cmap_max,
+                            extent=[umin, umax, vmin, vmax], levels = 15)
+                    im2 = ax.contour(jpdf.T, extent=[umin, umax, vmin, vmax], levels = 15,
+                            colors='gray', linewidths = 0.2)
 
-                ax.vlines(0., -extent_val, extent_val, colors='darkgray', 
-                        linestyles='dashed')
-                ax.hlines(0., -extent_val, extent_val, colors='darkgray', 
-                        linestyles='dashed')
-                ax.grid(False, 'both', 'both')
-                if name[3:5] == 'FL':
-                    ax.set_title(r'Flat - $\Delta x = {} m$'.format(str(wt_wall_dist[0])[:5]))
-                elif name[3:5] == 'WB':
-                    ax.set_title(r'Medium Rough - $\Delta x = {} m$'.format(str(wt_wall_dist[0])[:5]))
-                elif name[3:5] == 'BR':
-                    ax.set_title(r'Rough - $\Delta x = {} m$'.format(str(wt_wall_dist[0])[:5]))
-                else:
-                    ax.set_title(r'Wind tunnel - $\Delta x = {} m$'.format(str(wt_wall_dist[0])[:5]))                
-                plt.colorbar(im1, 
-                            label=r'$\rho (u^\prime_{q_i},  w^\prime_{q_i})$ (-)')
-                ax.set_xlabel(r'$u^\prime$ $u_{ref}^{-1}$ (-)')
-                ax.set_ylabel(r'$w^\prime$ $u_{ref}^{-1}$ (-)')
-                # save plots
-                fig.savefig('../palm_results/{}/run_{}/quadrant_analysis/jpdf/{}_QA_jpdf_WT_{}.{}'.format(papy.globals.run_name,
-                            papy.globals.run_number[-3:],
-                            'LU', file, plotformat), bbox_inches='tight', dpi=500)
-                print('     SAVED TO: ' 
-                            + '../palm_results/{}/run_{}/quadrant_analysis/jpdf/{}_QA_jpdf_WT_{}.{}'.format(papy.globals.run_name,
-                            papy.globals.run_number[-3:],
-                            'LU', file, plotformat))
-                plt.close()
+                    ax.vlines(0., -extent_val, extent_val, colors='darkgray', 
+                            linestyles='dotted')
+                    ax.hlines(0., -extent_val, extent_val, colors='darkgray', 
+                            linestyles='dotted')
+                    ax.grid(False, 'both', 'both')
 
-        # quadrant contributions
-        fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
-        ax.errorbar(wt_wall_dists, wt_s1_all, yerr = 0.5 * 0.1,
-                label = 'Q1', fmt='o', c='blue')
-        ax.errorbar(wt_wall_dists, wt_s2_all, yerr = 0.5 * 0.1,
-                label = 'Q2', fmt='o', c='darkorange')
-        ax.errorbar(wt_wall_dists, wt_s3_all, yerr = 0.5 * 0.1,
-                label = 'Q3', fmt='o', c='cyan')
-        ax.errorbar(wt_wall_dists, wt_s4_all, yerr = 0.5 * 0.1,
-                label = 'Q4', fmt='o', c='red')
-        ax.vlines(0.0066*150.*5., -5., 5., colors='tab:red', 
-                    linestyles='dashed', 
-                    label=r'$5 \cdot h_{r}$')
-        ax.hlines(0., 0.1, 100, colors='darkgray', 
-                    linestyles='dashed')                
-        ax.grid(False, 'both', 'both')
-        ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
-                    borderaxespad = 0.,  
-                    numpoints = 1, ncol = 2)
-        ax.set_ylim(-5., 5.)
-        ax.set_ylabel(r'$\overline{u^\prime w^\prime_{q_i}}$ $\overline{u^\prime w^\prime}^{-1}$ (-)')
-        ax.set_xlabel(r'$\Delta x$ (m)')
-        ax.set_xscale('log')
-        # save plots
-        fig.savefig('../palm_results/{}/run_{}/quadrant_analysis/{}_quadrantcontribution_profile_{}.{}'.format(papy.globals.run_name,
-                    papy.globals.run_number[-3:],
-                    'LU', name, plotformat), bbox_inches='tight', dpi=500)
-        print('     SAVED TO: ' 
-                    + '../palm_results/{}/run_{}/quadrant_analysis/{}_quadrantcontribution_profile_{}.{}'.format(papy.globals.run_name,
-                    papy.globals.run_number[-3:],
-                    'LU', name, plotformat))
+                    if name[3:5] == 'FL':
+                        ax.set_title(r'$\Delta y = {} m$'.format(str(wt_wall_dist[0])[:5]))
+                    elif name[3:5] == 'WB':
+                        ax.set_title(r'$\Delta y = {} m$'.format(str(wt_wall_dist[0])[:5]))
+                    elif name[3:5] == 'BR':
+                        ax.set_title(r'$\Delta y = {} m$'.format(str(wt_wall_dist[0])[:5]))
+                    else:
+                        ax.set_title(r'$\Delta y = {} m$'.format(str(wt_wall_dist[0])[:5]))
+                    # plt.colorbar(im1, 
+                    #             label=r'$\rho (u^\prime_{q_i},  v^\prime_{q_i})$ (-)')
+                    ax.set_xlabel(r'$u^\prime$ $u_{ref}^{-1}$ (-)')
+                    ax.set_ylabel(r'$v^\prime$ $u_{ref}^{-1}$ (-)')
+                    # save plots
+                    fig.savefig('../palm_results/{}/run_{}/quadrant_analysis/jpdf/{}_QA_jpdf_WT_{}.{}'.format(papy.globals.run_name,
+                                papy.globals.run_number[-3:],
+                                'LU', file + '_' + str(wt_wall_dist[0])[:5], plotformat), bbox_inches='tight', dpi=500)
+                    print('     SAVED TO: ' 
+                                + '../palm_results/{}/run_{}/quadrant_analysis/jpdf/{}_QA_jpdf_WT_{}.{}'.format(papy.globals.run_name,
+                                papy.globals.run_number[-3:],
+                                'LU', file + '_' + str(wt_wall_dist[0])[:5], plotformat))
+                    plt.close()
+
+            # quadrant contributions
+            fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
+            ax.errorbar(wt_wall_dists, wt_s1_all, yerr = np.mean(wt_flux)**(-1.)*wt_err[name]['covar']/4.,
+                    label = 'Q1'.format(name[3:5]), fmt='d', c='navy')
+            ax.errorbar(wt_wall_dists, wt_s2_all, yerr = np.mean(wt_flux)**(-1.)*wt_err[name]['covar']/4.,
+                    label = 'Q2'.format(name[3:5]), fmt='o', c='orange')
+            ax.errorbar(wt_wall_dists, wt_s3_all, yerr = np.mean(wt_flux)**(-1.)*wt_err[name]['covar']/4.,
+                    label = 'Q3'.format(name[3:5]), fmt='o', c='seagreen')
+            ax.errorbar(wt_wall_dists, wt_s4_all, yerr = np.mean(wt_flux)**(-1.)*wt_err[name]['covar']/4.,
+                    label = 'Q4'.format(name[3:5]), fmt='d', c='firebrick')
+            # ax.vlines(0.0066*150.*5., -5., 5., colors='tab:red', 
+            #             linestyles='dashed', 
+            #             label=r'$\approx \delta_{rsl}$')
+            ax.hlines(0., 0.08, 80, colors='darkgray', 
+                        linestyles='dotted')                
+            ax.grid(False, 'both', 'both')
+            if name[3:5] == 'FL':
+                ax.legend(bbox_to_anchor = (0.25,1.15), loc = 'lower left', 
+                        borderaxespad = 0.,  
+                        numpoints = 1, ncol = 4)
+            ax.set_ylim(-15., 15.)
+            ax.set_xlim(0.08, 80.)
+            ax.set_ylabel(r'$\overline{u^\prime w^\prime_{q_i}}$ $\overline{u^\prime w^\prime}^{-1}$ (-)')
+            ax.set_xlabel(r'$\Delta y$ (m)')
+            ax.set_xscale('log')
+            # save plots
+            fig.savefig('../palm_results/{}/run_{}/quadrant_analysis/{}_quadrantcontribution_profile_{}.{}'.format(papy.globals.run_name,
+                        papy.globals.run_number[-3:],
+                        'LU', name, plotformat), bbox_inches='tight', dpi=500)
+            print('     SAVED TO: ' 
+                        + '../palm_results/{}/run_{}/quadrant_analysis/{}_quadrantcontribution_profile_{}.{}'.format(papy.globals.run_name,
+                        papy.globals.run_number[-3:],
+                        'LU', name, plotformat))
 
     # quadrant contributions
+    PALM_flux_error = 0.0008
     fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
-    ax.errorbar(wall_dists, s1_all, yerr = 0.5 * 0.1,
-            label = 'Q1', fmt='o', c='blue')
-    ax.errorbar(wall_dists, s2_all, yerr = 0.5 * 0.1,
-            label = 'Q2', fmt='o', c='darkorange')
-    ax.errorbar(wall_dists, s3_all, yerr = 0.5 * 0.1,
-            label = 'Q3', fmt='o', c='cyan')
-    ax.errorbar(wall_dists, s4_all, yerr = 0.5 * 0.1,
-            label = 'Q4', fmt='o', c='red')
-    ax.vlines(0.0066*150.*5., -5., 5., colors='tab:red', 
-                linestyles='dashed', 
-                label=r'$5 \cdot h_{r}$')
-    ax.hlines(0., 0.1, 100, colors='darkgray', 
-                linestyles='dashed')                
+    ax.errorbar(wall_dists, s1_all, yerr = np.mean(total_flux)**(-1.) * PALM_flux_error/4.,
+            label = 'PALM: Q1', fmt='d', c='navy')
+    ax.errorbar(wall_dists, s2_all, yerr = np.mean(total_flux)**(-1.) * PALM_flux_error/4.,
+            label = 'PALM: Q2', fmt='o', c='orange')
+    ax.errorbar(wall_dists, s3_all, yerr = np.mean(total_flux)**(-1.) * PALM_flux_error/4.,
+            label = 'PALM: Q3', fmt='o', c='seagreen')
+    ax.errorbar(wall_dists, s4_all, yerr = np.mean(total_flux)**(-1.) * PALM_flux_error/4.,
+            label = 'PALM: Q4', fmt='d', c='firebrick')
+    # ax.vlines(0.0066*150.*5., -5., 5., colors='tab:red', 
+    #             linestyles='dashed', 
+    #             label=r'$\approx \delta_{rsl}$')
+    ax.hlines(0., 0.08, 80, colors='darkgray', 
+                linestyles='dotted')                
     ax.grid(False, 'both', 'both')
-    ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
-                borderaxespad = 0.,  
-                numpoints = 1, ncol = 2)
-    ax.set_ylim(-5., 5.)
+    # ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
+    #             borderaxespad = 0.,  
+    #             numpoints = 1, ncol = 2)
+    ax.set_ylim(-15., 15.)
+    ax.set_xlim(0.08, 80.)    
     ax.set_ylabel(r'$\overline{u^\prime w^\prime_{q_i}}$ $\overline{u^\prime w^\prime}^{-1}$ (-)')
-    ax.set_xlabel(r'$\Delta x$ (m)')
+    ax.set_xlabel(r'$\Delta y$ (m)')
     ax.set_xscale('log')
     # save plots
     fig.savefig('../palm_results/{}/run_{}/quadrant_analysis/{}_quadrantcontribution_profile_PALM.{}'.format(papy.globals.run_name,
@@ -1235,7 +1264,6 @@ if compute_quadrant_analysis:
                 + '../palm_results/{}/run_{}/quadrant_analysis/{}_quadrantcontribution_profile_PALM.{}'.format(papy.globals.run_name,
                 papy.globals.run_number[-3:],
                 'LU', plotformat))
-
 
 
 print('')

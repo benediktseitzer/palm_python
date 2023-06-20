@@ -55,15 +55,19 @@ else:
     plt.style.use('default')
     matplotlib.rcParams.update({
         'font.family': 'sans-serif',
-        'text.usetex': False,
+        'text.usetex': True,
         'mathtext.fontset': 'cm',
         'xtick.labelsize' : 11,
         'ytick.labelsize' : 11,
         'legend.fontsize' : 11,
         'lines.linewidth' : 0.75,
-        'lines.markersize' : 2.5,
+        'lines.markersize' : 2.,
         'figure.dpi' : 300,
     })
+    print('Textwidth in inch = ' + str(426/72.27))
+    # 5.89 inch
+    textwidth = 5
+    textwidth_half = 0.5*textwidth
 
 ################
 """
@@ -119,9 +123,11 @@ GLOBAL VARIABLES
 """
 ################
 # PALM input files
-# papy.globals.run_name = 'Germano_BA_BL_z0_021'
-# papy.globals.run_numbers = ['.001', '.002', '.003', 
-#                             '.004', '.005', '.006']
+papy.globals.run_name = 'Germano_BA_BL_z0_021_wtprof'
+papy.globals.run_numbers = ['.001']
+# papy.globals.run_name = 'BA_BL_z0_021_wtprof'
+# papy.globals.run_numbers = ['.000', '.001', '.002', 
+#                             '.003', '.004', '.005']
 # papy.globals.run_name = 'BA_BL_z0_021'
 # papy.globals.run_numbers = ['.000', '.001', '.002', 
 #                             '.003', '.004', '.005']
@@ -137,6 +143,14 @@ papy.globals.run_numbers = ['.008', '.009',
                             '.080', '.081', '.082', '.083', '.084', '.085', '.086', '.087', '.088', '.089',
                             '.090', '.091', '.092', '.093', '.094', '.095', '.096', '.097', '.098', '.099',                            
                             '.100', '.101', '.102']
+# papy.globals.run_name = 'SB_SI_back'
+# papy.globals.run_numbers = ['.007', '.008', '.009', '.010', '.011', '.012', 
+#                         '.013', '.014', '.015', '.016', '.017', '.018',
+#                         '.019', '.020', '.021', '.022', '.023', '.024',
+#                         '.025', '.026', '.027', '.028', '.029', '.030', 
+#                         '.031', '.032', '.033', '.034', '.035', '.036',
+#                         '.037', '.038', '.039', '.040', '.041', '.042',
+#                         '.043', '.044', '.045', '.046']
 mask_name_list = ['M01', 'M02', 'M03', 'M04', 'M05', 'M06', 'M07', 'M08', 'M09', 
                     'M10','M11', 'M12']
 # papy.globals.run_name = 'single_building_ABL_2m'
@@ -160,6 +174,7 @@ wt_file = '{}/coincidence/timeseries/{}.txt'.format(wt_path, wt_filename)
 wt_file_pr = '{}/coincidence/mean/{}.000001.txt'.format(wt_path, wt_filename)
 wt_file_ref = '{}/wtref/{}_wtref.txt'.format(wt_path, wt_filename)
 wt_scale = 150.
+# wt_scale = 100.
 
 # PHYSICS
 papy.globals.z0 = 0.03
@@ -376,13 +391,13 @@ if compute_turbint:
                 c='orangered')
 
     ax.set_xlabel(r'$\overline{u^\prime u^\prime}$' + r' (m$^2$ s$^{-2}$)', 
-                fontsize = 18)
-    ax.set_ylabel(r'$z$ (m)', fontsize = 18)
+                )
+    ax.set_ylabel(r'$z$ (m)', )
 
     ax.set_ylim(papy.globals.dx/2., 140.)
     ax.set_xlim(0., 0.6)    
     ax.legend(bbox_to_anchor=(0.5, 1.04),
-                loc=8, numpoints=1, ncol=2, fontsize = 18)
+                loc=8, numpoints=1, ncol=2, )
     ax.grid(True)
     # save plot
     fig.savefig('../palm_results/{}/run_{}/profiles/{}_{}_{}_verpr.png'.format(
@@ -464,7 +479,7 @@ if compute_vertprof:
             ax.xaxis.set_major_locator(plt.MaxNLocator(7))
             ax.set_ylim(0., 140)
             ax.legend(bbox_to_anchor=(0.5, 1.04),
-                loc=8, numpoints=1, ncol=2, fontsize = 18)
+                loc=8, numpoints=1, ncol=2, )
             fig.savefig('../palm_results/{}/run_{}/profiles/{}_{}_{}_verpr.png'.format(
                                                     papy.globals.run_name,
                                                     papy.globals.run_number[-3:],
@@ -572,13 +587,13 @@ if compute_vertprof_flux:
             label = r'$\delta_{cfl}$')
     ax.grid(True, 'both')
     ax.set_xlabel(r'$\overline{u^\prime w^\prime}$' + r' (m$^2$ s$^{-2}$)', 
-                fontsize = 18)
-    ax.set_ylabel(r'$z$ (m)', fontsize = 18)
+                )
+    ax.set_ylabel(r'$z$ (m)', )
     ax.xaxis.set_major_locator(plt.MaxNLocator(7))
     #non-log plot
     ax.set_ylim(0., 140)
     ax.legend(bbox_to_anchor=(0.5, 1.04),
-                loc=8, numpoints=1, ncol=2, fontsize = 18)
+                loc=8, numpoints=1, ncol=2, )
     fig.savefig('../palm_results/{}/run_{}/profiles/{}_{}_{}_verpr.png'.format(
                 papy.globals.run_name,
                 papy.globals.run_number[-3:],
@@ -704,7 +719,7 @@ if compute_spectra:
         ax.set_xlabel(r"$f\cdot z\cdot U^{-1}$", fontsize=18)
         ax.set_ylabel(r"$f\cdot S_{ij}\cdot (\sigma_i\sigma_j)^{-1}$", fontsize=18)
         ax.legend(bbox_to_anchor=(0.5, 1.04),
-                loc=8, numpoints=1, ncol=2, fontsize = 18)
+                loc=8, numpoints=1, ncol=2, )
         # ax.grid()
 
         plt.savefig('../palm_results/{}/run_{}/spectra/{}_{}_spectra{}_all.png'.format(papy.globals.run_name, papy.globals.run_number[-3:],
@@ -763,7 +778,7 @@ if compute_spectra:
         ax.set_ylabel(r"$f\cdot S_{ij}\cdot (\sigma_i\sigma_j)^{-1}$", fontsize=18)
         ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
             borderaxespad = 0., ncol = 2, 
-            numpoints = 1, fontsize = 18)
+            numpoints = 1, )
         # ax.grid()
 
         plt.savefig('../palm_results/testing/spectra/filter_tests/spectra_{}_{}.png'.format(
@@ -801,7 +816,7 @@ if compute_spectra:
         plt.ylim(0.4,1.)
         ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
             borderaxespad = 0., ncol = 2, 
-            numpoints = 1, fontsize = 18)
+            numpoints = 1, )
         fig.savefig('../palm_results/testing/spectra/filter_tests/testing_{}_ts.png'.format('filter'), bbox_inches='tight')
     print(' Finished Spectra')
 
@@ -809,7 +824,7 @@ if compute_spectra:
 # plot crosssections
 if compute_crosssections:
     mode = 'averaged'
-    mode = 'snapshot'
+    # mode = 'snapshot'
     if mode =='averaged':
         nc_file = '{}_av_3d{}.nc'.format(papy.globals.run_name, papy.globals.run_number)
     elif 'snapshot':
@@ -909,7 +924,7 @@ if compute_modelinput:
         plt.xlabel(r'$u$ (m/s)')
         plt.ylabel(r'$z$ (m)')
         plt.legend(bbox_to_anchor=(0.5, 1.04),
-                loc=8, numpoints=1, ncol=2, fontsize = 18)
+                loc=8, numpoints=1, ncol=2, )
         plt.grid(True,'both')
         plt.show()
     if topo_file_building:
@@ -974,7 +989,7 @@ if compute_pure_fluxes:
     ax.set_yscale('log')
     plt.ylim(1.,300.)
     ax.legend(bbox_to_anchor=(0.5, 1.04),
-                loc=8, numpoints=1, ncol=2, fontsize = 18)
+                loc=8, numpoints=1, ncol=2, )
     plt.grid(True, 'both', 'both')
     # plt.show()
     fig.savefig('../palm_results/{}/run_{}/{}_{}.png'.format(papy.globals.run_name, papy.globals.run_number[-3:],
@@ -1038,7 +1053,7 @@ if compute_simrange:
                 print('Exception has occurred: StopIteration - plot_ver_profile')
             ax.fill_betweenx(z[:-1], palm_data[papy.globals.run_numbers[0]][var_name][i,:-1], 
                     palm_data[papy.globals.run_numbers[1]][var_name][i,:-1], color ='thistle')
-        plt.legend(numpoints=1, ncol =2, fontsize = 18)
+        plt.legend(numpoints=1, ncol =2, )
         plt.show()
     print(' End plotting of palm-runs of {}'.format(papy.globals.run_name))
 
@@ -1068,6 +1083,7 @@ if compute_convergence_test:
     wall_dists = np.array([])
 
     error_comp_list = ['M02', 'M07', 'M12']
+    error_comp_list = ['M02']
     for mask in mask_name_list:
         if mask in error_comp_list:
             print('MASK: {}'.format(mask))
@@ -1099,7 +1115,7 @@ if compute_convergence_test:
             # Convergence-test for u
             convergence_dict_u = wt.convergence_test(total_var1)
             time_scale = max(total_time)/(max(convergence_dict_u.keys())*3600.)
-            plt.figure(123)
+            fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
             handles = wt.plot_convergence_test(convergence_dict_u, scale = time_scale, 
                                                 ylabel=r'$\overline{u}$ $u_{ref}^{-1}$ (-)', calc_overlap = True)
             plt.hlines(np.mean(total_var1), 0., max(total_time/3600.), 
@@ -1119,18 +1135,20 @@ if compute_convergence_test:
             all_vals_min = min([min(sublist) for sublist in all_vals[1:]])
             plt.vlines(27000/3600., all_vals_min, all_vals_max, 
                         label = r'$T_{sim} = 7.5$ h', linestyles = '--', color = 'tab:red')
-            plt.legend()
+            ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
+                        borderaxespad = 0.,  
+                        numpoints = 1, ncol = 1)
             plt.savefig('../palm_results/{}/run_{}/{}_convergence_u.png'.format(papy.globals.run_name,
                     papy.globals.run_number[-3:], mask), bbox_inches='tight', dpi=300)
             print('     SAVED TO: ' 
                     + '../palm_results/{}/run_{}/{}_convergence_u.png'.format(papy.globals.run_name,
                     papy.globals.run_number[-3:], mask))
-            plt.close(123)
+            plt.close()
 
             # Convergence-test for v
             convergence_dict_v = wt.convergence_test(total_var2)
             time_scale = max(total_time)/(max(convergence_dict_v.keys())*3600.)    
-            plt.figure(123)
+            fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
             handles = wt.plot_convergence_test(convergence_dict_v, scale = time_scale, 
                                                 ylabel=r'$\overline{v}$ $u_{ref}^{-1}$ (-)', calc_overlap = True)
             plt.hlines(np.mean(total_var2), 0., max(total_time/3600.), 
@@ -1151,18 +1169,20 @@ if compute_convergence_test:
             all_vals_min = min([min(sublist) for sublist in all_vals[1:]])
             plt.vlines(27000/3600., all_vals_min, all_vals_max, 
                         label = r'$T_{sim} = 7.5$ h', linestyles = '--', color = 'tab:red')
-            plt.legend()
+            ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
+                        borderaxespad = 0.,  
+                        numpoints = 1, ncol = 1)
             plt.savefig('../palm_results/{}/run_{}/{}_convergence_v.png'.format(papy.globals.run_name,
                     papy.globals.run_number[-3:], mask), bbox_inches='tight', dpi=500)
             print('     SAVED TO: ' 
                     + '../palm_results/{}/run_{}/{}_convergence_v.png'.format(papy.globals.run_name,
                     papy.globals.run_number[-3:], mask))
-            plt.close(123)
+            plt.close()
 
             # Convergence-test for w
             convergence_dict_w = wt.convergence_test(total_var3)
             time_scale = max(total_time)/(max(convergence_dict_w.keys())*3600.)    
-            plt.figure(123)
+            fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
             handles = wt.plot_convergence_test(convergence_dict_w, scale = time_scale, 
                                                 ylabel=r'$\overline{w}$ $u_{ref}^{-1}$ (-)', calc_overlap = True)
             plt.hlines(np.mean(total_var3), 0., max(total_time/3600.), 
@@ -1183,18 +1203,20 @@ if compute_convergence_test:
             all_vals_min = min([min(sublist) for sublist in all_vals[1:]])
             plt.vlines(27000/3600., all_vals_min, all_vals_max, 
                         label = r'$T_{sim} = 7.5$ h', linestyles = '--', color = 'tab:red')
-            plt.legend()
+            ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
+                        borderaxespad = 0.,  
+                        numpoints = 1, ncol = 1)
             plt.savefig('../palm_results/{}/run_{}/{}_convergence_w.png'.format(papy.globals.run_name,
                     papy.globals.run_number[-3:], mask), bbox_inches='tight', dpi=500)
             print('     SAVED TO: ' 
                     + '../palm_results/{}/run_{}/{}_convergence_w.png'.format(papy.globals.run_name,
                     papy.globals.run_number[-3:], mask))
-            plt.close(123)
+            plt.close()
 
             # Convergence-test for variance u
             convergence_dict_varu = wt.convergence_test(var_varu)
             time_scale = max(total_time)/(max(convergence_dict_varu.keys())*3600.)
-            plt.figure(123)
+            fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
             handles = wt.plot_convergence_test(convergence_dict_varu, scale = time_scale, 
                                                 ylabel=r'$\overline{u^\prime u^\prime}$ $u_{ref}^{-2}$ (-)', calc_overlap = True)
             plt.hlines(np.mean(var_varu), 0., max(total_time/3600.), 
@@ -1215,18 +1237,20 @@ if compute_convergence_test:
             all_vals_min = min([min(sublist) for sublist in all_vals[1:]])
             plt.vlines(27000/3600., all_vals_min, all_vals_max, 
                         label = r'$T_{total} = 7.5$ h', linestyles = '--', color = 'tab:red')
-            plt.legend()
+            ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
+                        borderaxespad = 0.,  
+                        numpoints = 1, ncol = 1)
             plt.savefig('../palm_results/{}/run_{}/{}_convergence_variance_u.png'.format(papy.globals.run_name,
                     papy.globals.run_number[-3:], mask), bbox_inches='tight', dpi=500)
             print('     SAVED TO: ' 
                     + '../palm_results/{}/run_{}/{}_convergence_variance_u.png'.format(papy.globals.run_name,
                     papy.globals.run_number[-3:], mask))
-            plt.close(123)
+            plt.close()
 
             # Convergence-test for variance v
             convergence_dict_varv = wt.convergence_test(var_varv)
             time_scale = max(total_time)/(max(convergence_dict_varv.keys())*3600.)
-            plt.figure(123)
+            fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
             handles = wt.plot_convergence_test(convergence_dict_varv, scale = time_scale, 
                                                 ylabel=r'$\overline{v^\prime v^\prime}$ $u_{ref}^{-2}$ (-)', calc_overlap = True)
             plt.hlines(np.mean(var_varv), 0., max(total_time/3600.), 
@@ -1247,22 +1271,24 @@ if compute_convergence_test:
             all_vals_min = min([min(sublist) for sublist in all_vals[1:]])
             plt.vlines(27000/3600., all_vals_min, all_vals_max, 
                         label = r'$T_{sim} = 7.5$ h', linestyles = '--', color = 'tab:red')
-            plt.legend()
+            ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
+                        borderaxespad = 0.,  
+                        numpoints = 1, ncol = 1)
             plt.savefig('../palm_results/{}/run_{}/{}_convergence_variance_v.png'.format(papy.globals.run_name,
                     papy.globals.run_number[-3:], mask), bbox_inches='tight', dpi=500)
             print('     SAVED TO: ' 
                     + '../palm_results/{}/run_{}/{}_convergence_variance_v.png'.format(papy.globals.run_name,
                     papy.globals.run_number[-3:], mask))
-            plt.close(123)
+            plt.close()
 
             # Convergence-test for variance w
             convergence_dict_varw = wt.convergence_test(var_varw)
             time_scale = max(total_time)/(max(convergence_dict_varw.keys())*3600.)
-            plt.figure(123)
+            fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
             handles = wt.plot_convergence_test(convergence_dict_varw, scale = time_scale, 
-                                                ylabel=r'$\overline{v^\prime v^\prime}$ $u_{ref}^{-2}$ (-)', calc_overlap = True)
+                                                ylabel=r'$\overline{w^\prime w^\prime}$ $u_{ref}^{-2}$ (-)', calc_overlap = True)
             plt.hlines(np.mean(var_varw), 0., max(total_time/3600.), 
-                        label = r'$\overline{v^\prime v^\prime}_{total}$ $u_{ref}^{-2}$', linestyles = '--', color = 'black')
+                        label = r'$\overline{w^\prime w^\prime}_{total}$ $u_{ref}^{-2}$', linestyles = '--', color = 'black')
 
             key_list = []
             for key in convergence_dict_varw.keys():
@@ -1279,19 +1305,21 @@ if compute_convergence_test:
             all_vals_min = min([min(sublist) for sublist in all_vals[1:]])
             plt.vlines(27000/3600., all_vals_min, all_vals_max, 
                         label = r'$T_{sim} = 7.5$ h', linestyles = '--', color = 'tab:red')
-            plt.legend()
+            ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
+                        borderaxespad = 0.,  
+                        numpoints = 1, ncol = 1)
             plt.savefig('../palm_results/{}/run_{}/{}_convergence_variance_w.png'.format(papy.globals.run_name,
                     papy.globals.run_number[-3:], mask), bbox_inches='tight', dpi=500)
             print('     SAVED TO: ' 
                     + '../palm_results/{}/run_{}/{}_convergence_variance_w.png'.format(papy.globals.run_name,
                     papy.globals.run_number[-3:], mask))
-            plt.close(123)
+            plt.close()
 
 
             # Convergence-test for flux
             convergence_dict_flux = wt.convergence_test(var_flux)
             time_scale = max(total_time)/(max(convergence_dict_flux.keys())*3600.)
-            plt.figure(123)
+            fig, ax = plt.subplots(figsize=(textwidth_half,textwidth_half*0.75))
             handles = wt.plot_convergence_test(convergence_dict_flux, scale = time_scale, 
                                                 ylabel=r'$\overline{u^\prime v^\prime}$ $u_{ref}^{-2}$ (-)', calc_overlap = True)
             plt.hlines(np.mean(var_flux), 0., max(total_time/3600.), 
@@ -1312,13 +1340,15 @@ if compute_convergence_test:
             all_vals_min = min([min(sublist) for sublist in all_vals[1:]])
             plt.vlines(27000/3600., all_vals_min, all_vals_max, 
                         label = r'$T_{sim} = 7.5$ h', linestyles = '--', color = 'tab:red')
-            plt.legend()
+            ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
+                        borderaxespad = 0.,  
+                        numpoints = 1, ncol = 1)
             plt.savefig('../palm_results/{}/run_{}/{}_convergence_flux.png'.format(papy.globals.run_name,
                     papy.globals.run_number[-3:], mask), bbox_inches='tight', dpi=500)
             print('     SAVED TO: ' 
                     + '../palm_results/{}/run_{}/{}_convergence_flux.png'.format(papy.globals.run_name,
                     papy.globals.run_number[-3:], mask))
-            plt.close(123)
+            plt.close()
 
 print('')
 print('Finished processing of: {}{}'.format(papy.globals.run_name, papy.globals.run_number))

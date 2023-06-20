@@ -30,8 +30,8 @@ import windtunnel as wt
 import warnings
 warnings.simplefilter("ignore")
 
-plotformat = 'pgf'
-# plotformat = 'png'
+# plotformat = 'pgf'
+plotformat = 'png'
 # plotformat = 'pdf'
 if plotformat == 'pgf':
     plt.style.use('default')
@@ -57,7 +57,7 @@ else:
     plt.style.use('default')
     matplotlib.rcParams.update({
         'font.family': 'sans-serif',
-        'text.usetex': False,
+        'text.usetex': True,
         'mathtext.fontset': 'cm',
         'xtick.labelsize' : 11,
         'ytick.labelsize' : 11,
@@ -85,7 +85,7 @@ GLOBAL VARIABLES
 ################
 # PALM input files
 papy.globals.run_name = 'SB_SI_BL'
-papy.globals.run_name = 'yshift_SB_BL_corr'
+# papy.globals.run_name = 'yshift_SB_BL_corr'
 papy.globals.run_numbers = ['.008', '.009', '.010', '.011', '.012', 
                             '.013', '.014', '.015', '.016', '.017', '.018',
                             '.019', '.020', '.021', '.022', '.023', '.024',
@@ -196,14 +196,14 @@ elif data_nd == 0:
 
 
 # Steeringflags
-compute_BL_mean = False
-compute_BL_var = False
-compute_BL_covar = False
-compute_BL_turbint = False
+compute_BL_mean = True
+compute_BL_var = True
+compute_BL_covar = True
+compute_BL_turbint = True
 compute_BL_lux = False
 compute_quadrant_analysis = False
 
-compute_BL_correlation = True
+compute_BL_correlation = False
 ################
 """
 MAIN
@@ -454,8 +454,8 @@ if compute_BL_mean:
             ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                         borderaxespad = 0., 
                         numpoints = 1)
-            ax.set_xlabel(r'$z$ (m)')
-            ax.set_ylabel(r'$\overline {}$ '.format(var_name) + r' $u_{ref}^{-1}$ (-)')
+            ax.set_ylabel(r'$z$ (m)')
+            ax.set_xlabel(r'$\overline {}$ '.format(var_name) + r' $u_{ref}^{-1}$ (-)')
             
             # save plots
             fig.savefig('../palm_results/{}/run_{}/maskprofiles/{}_mean_{}_mask.{}'.format(papy.globals.run_name,
@@ -658,8 +658,8 @@ if compute_BL_var:
             ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                         borderaxespad = 0.,  
                         numpoints = 1)
-            ax.set_xlabel(r'$z$ (m)')
-            ax.set_ylabel(r'${}^\prime {}^\prime$ '.format(var_name, var_name) + r'(m$^2$ s$^{-2}$)')
+            ax.set_ylabel(r'$z$ (m)')
+            ax.set_xlabel(r'${}^\prime {}^\prime$ '.format(var_name, var_name) + r'(m$^2$ s$^{-2}$)')
             # fig.savefig('../palm_results/{}/run_{}/maskprofiles/{}_variance_{}_mask.{}'.format(papy.globals.run_name,
             #             papy.globals.run_number[-3:], 'BL',var_name, file_type), bbox_inches='tight', dpi=300)
             ax.set_yscale('log')
@@ -790,8 +790,8 @@ if compute_BL_covar:
         ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
                     borderaxespad = 0.,  
                     numpoints = 1)
-        ax.set_xlabel(r'$z$ (m)')
-        ax.set_ylabel(r'$\overline{u^\prime w^\prime}$ ' + r'(m$^2$ s$^{-2}$)')
+        ax.set_ylabel(r'$z$ (m)')
+        ax.set_xlabel(r'$\overline{u^\prime w^\prime}$ ' + r'(m$^2$ s$^{-2}$)')
         ax.set_yscale('log')
         ax.set_ylim(4.,140.)
         fig.savefig('../palm_results/{}/run_{}/maskprofiles/{}_covariance_{}_mask_log.{}'.format(papy.globals.run_name,
@@ -1013,12 +1013,12 @@ if compute_BL_turbint:
             ax.set_ylim(4.,140.)
 
             # ax.grid()
-            if var_name == 'w':
-                ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
-                        borderaxespad = 0.,  
-                        numpoints = 1, ncol=3)
-            ax.set_xlabel(r'$z$ (m)')
-            ax.set_ylabel(r'$I_{}$ '.format(var_name) + r'(-)')
+            # if var_name == 'w':
+            #     ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
+            #             borderaxespad = 0.,  
+            #             numpoints = 1, ncol=3)
+            ax.set_ylabel(r'$z$ (m)')
+            ax.set_xlabel(r'$I_{}$ '.format(var_name) + r'(-)')
             fig.savefig('../palm_results/{}/run_{}/maskprofiles/{}_turbint_I{}_mask.{}'.format(papy.globals.run_name,
                         papy.globals.run_number[-3:], 'BL',var_name, file_type), bbox_inches='tight', dpi=300)
             ax.set_yscale('log')
@@ -1429,14 +1429,18 @@ if compute_BL_correlation:
                 corr4,
                 label=r'$R(BL, S1)$')
         # ax.grid()
-        ax.legend(bbox_to_anchor = (0.5,1.05), loc = 'lower center', 
-                    borderaxespad = 0., 
-                    numpoints = 1)
+        if var_name == 'u':
+            ax.legend(bbox_to_anchor = (-0.15,1.2), loc = 'lower left', 
+                        borderaxespad = 0., ncol=4,
+                        numpoints = 1)
         ax.set_xlabel(r'timelag (s)')
-        ax.set_ylabel(r'Correlation')
+        ax.set_ylabel(r'Correlation for ${}$'.format(var_name))
         # ax.set_yscale('log')
+        
         fig.savefig('../palm_results/{}/run_{}/{}_correlations_{}.{}'.format(papy.globals.run_name,
                     papy.globals.run_number[-3:], 'BL', var_name, file_type), bbox_inches='tight', dpi=300)
+        print('     SAVED TO: ' + '../palm_results/{}/run_{}/{}_correlations_{}.{}'.format(papy.globals.run_name,
+                    papy.globals.run_number[-3:], 'BL', var_name, file_type))
         plt.close(12)
 
 print('\n Finished processing of: {}{}'.format(papy.globals.run_name, papy.globals.run_number))
